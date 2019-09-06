@@ -3,8 +3,10 @@ import glob
 import json
 import os.path
 import subprocess
+import datetime
 
-from flask import Flask
+from flask import Flask, request
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 settings = None
@@ -18,6 +20,7 @@ UPDATE_SCRIPT = 'sudo -u arma3server /home/arma3server/update_server.sh 2>&1'
 RUN_ARMA3SYNC = 'sudo -u arma3server /home/arma3server/build-armasync.sh 2>&1'
 GET_ARMA_PROCESS = 'sudo -u arma3server /home/arma3server/get_arma_process.sh 2>&1'
 INFO_SCRIPT = 'sudo -u arma3server /home/arma3server/modpack_info.sh 2>&1'
+DELETE_MISSION_SCRIPT = 'sudo -u arma3server /home/arma3server/deletemissions.sh 2>&1'
 
 LOGSHOW_SCRIPT_SERVER = 'tail -n 300 /home/arma3server/log/console/arma3server-console.log'
 LOGSHOW_SCRIPT_HC1 = 'tail -n 300 /home/arma3server/log/console/arma3hc1-console.log'
@@ -101,6 +104,42 @@ def missions():
     missions_list.sort(key=str.lower)
     missions_list = [os.path.basename(f) for f in missions_list]
     return '\n'.join(missions_list), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+
+@app.route("/missions/delete/<mission>")
+def missions_delete(mission):
+    script = DELETE_MISSION_SCRIPT + ' ' + mission
+    stdout, stderr = run_shell_command(script)
+    if not stdout:
+        return "Mission gelöscht", 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    else:
+        return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+
+@app.route("/missions/upload", methods=['POST'])
+def missions_upload():
+    uploader = request.form['uploader']
+    file = request.files['mission_file']
+    if not file:
+        return 'Fehler! Keine Datei übergeben', 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    if not uploader:
+        return 'Fehler! Kein Uploader übergeben', 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+    filename = secure_filename(file.filename)
+    if not ('.' in filename and filename.rsplit('.', 1)[1].lower() in {"pbo"}):
+        return 'Fehler! Datei muss mit .pbo enden: ' + file.filename, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+    filename_parts = filename.split('.')
+    if len(filename_parts < 3):
+        return 'Fehler! Dateiname muss die Form <name>.<mapname>.pbo haben: ' + file.filename, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+    mission_name = '.'.join(filename_parts[:-2])
+    mission_end = '.'.join(filename_parts[-2:])
+    datetime_now = datetime.datetime.now()
+    mission_name = mission_name + "." + datetime_now.strftime("%d%m%Y.%H%M%S") + "." + "uploaded_by_" + uploader + "." + mission_end
+
+    file.save(os.path.join(MISSIONS_DIR, mission_name))
+    return 'Mission erfolgreich hochgeladen', 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/logs/<name>")
