@@ -131,7 +131,7 @@ def missions_upload():
     if not ('.' in filename and filename.rsplit('.', 1)[1].lower() in {"pbo"}):
         return 'Fehler! Datei muss mit .pbo enden: ' + file.filename, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
-    p = re.compile(r"^([A-Za-z0-9]|_|-)+\\.([A-Za-z0-9]|_|-)+\\.pbo$")
+    p = re.compile(r"^([A-Za-z0-9]|_|-)+\.([A-Za-z0-9]|_|-)+\.pbo$")
     if not p.match(filename):
         return 'Fehler! Erlaubte Zeichen im Dateinamen A-Z a-z 0-9 - und _ sowie Endung .pbo!', 200, {
             'Content-Type': 'text/plain; charset=utf-8'}
