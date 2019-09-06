@@ -22,6 +22,7 @@ RUN_ARMA3SYNC = 'sudo -u arma3server /home/arma3server/build-armasync.sh 2>&1'
 GET_ARMA_PROCESS = 'sudo -u arma3server /home/arma3server/get_arma_process.sh 2>&1'
 INFO_SCRIPT = 'sudo -u arma3server /home/arma3server/modpack_info.sh 2>&1'
 DELETE_MISSION_SCRIPT = 'sudo -u arma3server /home/arma3server/deletemissions.sh 2>&1'
+FIXPERMISSIONS_SCRIPT = 'sudo -u root /home/arma3server/fixpermissions.sh 2>&1'
 
 LOGSHOW_SCRIPT_SERVER = 'tail -n 300 /home/arma3server/log/console/arma3server-console.log'
 LOGSHOW_SCRIPT_HC1 = 'tail -n 300 /home/arma3server/log/console/arma3hc1-console.log'
@@ -141,7 +142,9 @@ def missions_upload():
         "%Y%m%d.%H%M%S") + "." + "uploaded_by_" + uploader + "." + mission_end
 
     file.save(os.path.join(MISSIONS_DIR, mission_name))
-    return 'Mission erfolgreich hochgeladen als ' + mission_name, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    stdout, stderr = run_shell_command(FIXPERMISSIONS_SCRIPT)
+    return 'Mission erfolgreich hochgeladen als ' + mission_name + ' ' + stdout, 200, {
+        'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/logs/<name>")
@@ -155,7 +158,8 @@ def logs(name):
     elif name == "hc3":
         script = LOGSHOW_SCRIPT_HC3
     else:
-        return "Fehler! log file von unbekannter Quelle angefragt: " + name, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+        return "Fehler! log file von unbekannter Quelle angefragt: " + name, 200, {
+            'Content-Type': 'text/plain; charset=utf-8'}
 
     out = subprocess.Popen(script.split(" "),
                            stdout=subprocess.PIPE,
