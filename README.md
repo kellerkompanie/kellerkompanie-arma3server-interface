@@ -113,7 +113,9 @@ nano start_interface.sh
 Now put the following content inside and save/exit using ```CTRL+X``` 
 followed by ```y``` and ```ENTER```
 ```
-cd ~/kellerkompanie-arma3server-interface
+#!/usr/bin/env bash
+
+cd kellerkompanie-arma3server-interface
 source venv/bin/activate
 git pull
 python arma3server-interface.py
@@ -125,4 +127,32 @@ chmod +x start_interface.sh
 Now you can run the interface using
 ```
 ./start_interface.sh
+```
+
+### Declaring as service
+To have automatic start on machine boot, we add the script as systemd 
+service:
+```
+sudo nano /etc/systemd/system/arma3server-interface.service
+```
+Then we add the following content:
+```
+[Unit]
+Description=arma3server-interface Flask API
+After=network.target
+
+[Service]
+User=arma3server-interface
+ExecStart=/home/arma3server-interface/start_interface.sh
+WorkingDirectory=/home/arma3server-interface
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+Finally we enable the service and register it to run on boot:
+```
+sudo systemctl daemon-reload
+sudo systemctl start arma3server-interface.service
+sudo systemctl enable arma3server-interface.service
 ```
