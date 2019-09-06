@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+import datetime
 import glob
 import json
 import os.path
+import re
 import subprocess
-import datetime
 
 from flask import Flask, request
 from werkzeug.utils import secure_filename
@@ -138,14 +139,21 @@ def missions_upload():
     if not ('.' in filename and filename.rsplit('.', 1)[1].lower() in {"pbo"}):
         return 'Fehler! Datei muss mit .pbo enden: ' + file.filename, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
+    p = re.compile('/^([A-Za-z0-9]|_|-)+\\.([A-Za-z0-9]|_|-)+\\.pbo$/i')
+    if not p.match(filename):
+        return 'Fehler! Erlaubte Zeichen im Dateinamen A-Z a-z 0-9 - und _ sowie Endung .pbo!', 200, {
+            'Content-Type': 'text/plain; charset=utf-8'}
+
     filename_parts = filename.split('.')
     if len(filename_parts) < 3:
-        return 'Fehler! Dateiname muss die Form <name>.<mapname>.pbo haben: ' + file.filename, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+        return 'Fehler! Dateiname muss die Form <name>.<mapname>.pbo haben: ' + file.filename, 200, {
+            'Content-Type': 'text/plain; charset=utf-8'}
 
     mission_name = '.'.join(filename_parts[:-2])
     mission_end = '.'.join(filename_parts[-2:])
     datetime_now = datetime.datetime.now()
-    mission_name = mission_name + "." + datetime_now.strftime("%Y%m%d.%H%M%S") + "." + "uploaded_by_" + uploader + "." + mission_end
+    mission_name = mission_name + "." + datetime_now.strftime(
+        "%Y%m%d.%H%M%S") + "." + "uploaded_by_" + uploader + "." + mission_end
 
     file.save(os.path.join(MISSIONS_DIR, mission_name))
     return 'Mission erfolgreich hochgeladen', 200, {'Content-Type': 'text/plain; charset=utf-8'}
