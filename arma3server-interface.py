@@ -139,7 +139,7 @@ def missions_upload():
         return 'Fehler! Datei muss mit .pbo enden: ' + file.filename, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
     filename_parts = filename.split('.')
-    if len(filename_parts < 3):
+    if len(filename_parts) < 3:
         return 'Fehler! Dateiname muss die Form <name>.<mapname>.pbo haben: ' + file.filename, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
     mission_name = '.'.join(filename_parts[:-2])
