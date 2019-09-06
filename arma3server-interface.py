@@ -32,7 +32,7 @@ def logs(name):
     else:
         raise Exception("log file of unknown name requested: " + name)
 
-    out = subprocess.Popen(script,
+    out = subprocess.Popen(script.split(" "),
                            stdout=subprocess.PIPE,
                            stderr=subprocess.STDOUT)
     stdout, stderr = out.communicate()
