@@ -21,6 +21,13 @@ LOGSHOW_SCRIPT_HC2 = 'tail -n 300 /home/arma3server/log/console/arma3hc2-console
 LOGSHOW_SCRIPT_HC3 = 'tail -n 300 /home/arma3server/log/console/arma3hc3-console.log'
 
 
+def run_shell_command(command):
+    out = subprocess.Popen(command.split(" "),
+                           stdout=subprocess.PIPE,
+                           stderr=subprocess.STDOUT)
+    return out.communicate()
+
+
 @app.route("/")
 def hello():
     return "Hello World!"
@@ -28,37 +35,25 @@ def hello():
 
 @app.route("/start")
 def start():
-    out = subprocess.Popen(START_SCRIPT.split(" "),
-                           stdout=subprocess.PIPE,
-                           stderr=subprocess.STDOUT)
-    stdout, stderr = out.communicate()
+    stdout, stderr = run_shell_command(START_SCRIPT)
     return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/stop")
 def stop():
-    out = subprocess.Popen(STOP_SCRIPT.split(" "),
-                           stdout=subprocess.PIPE,
-                           stderr=subprocess.STDOUT)
-    stdout, stderr = out.communicate()
+    stdout, stderr = run_shell_command(STOP_SCRIPT)
     return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/update")
 def update():
-    out = subprocess.Popen(UPDATE_SCRIPT.split(" "),
-                           stdout=subprocess.PIPE,
-                           stderr=subprocess.STDOUT)
-    stdout, stderr = out.communicate()
+    stdout, stderr = run_shell_command(UPDATE_SCRIPT)
     return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/run_arma3sync")
 def run_arma3sync():
-    out = subprocess.Popen(RUN_ARMA3SYNC.split(" "),
-                           stdout=subprocess.PIPE,
-                           stderr=subprocess.STDOUT)
-    stdout, stderr = out.communicate()
+    stdout, stderr = run_shell_command(RUN_ARMA3SYNC)
     return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
