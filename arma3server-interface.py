@@ -21,7 +21,7 @@ UPDATE_SCRIPT = 'sudo -u arma3server /home/arma3server/update_server.sh 2>&1'
 RUN_ARMA3SYNC = 'sudo -u arma3server /home/arma3server/build-armasync.sh 2>&1'
 GET_ARMA_PROCESS = 'sudo -u arma3server /home/arma3server/get_arma_process.sh 2>&1'
 INFO_SCRIPT = 'sudo -u arma3server /home/arma3server/modpack_info.sh 2>&1'
-DELETE_MISSION_SCRIPT = 'sudo -u arma3server /home/arma3server/deletemissions.sh 2>&1'
+DELETE_MISSION_SCRIPT = 'sudo -u arma3server /home/arma3server/deletemissions.sh'
 FIXPERMISSIONS_SCRIPT = 'sudo -u root /home/arma3server/fixpermissions.sh 2>&1'
 
 LOGSHOW_SCRIPT_SERVER = 'tail -n 300 /home/arma3server/log/console/arma3server-console.log'
@@ -110,7 +110,7 @@ def missions():
 
 @app.route("/missions/delete/<mission>")
 def missions_delete(mission):
-    script = DELETE_MISSION_SCRIPT + ' ' + mission
+    script = DELETE_MISSION_SCRIPT + ' ' + mission + ' 2>&1'
     stdout, stderr = run_shell_command(script)
     if not stdout:
         return "Mission gelöscht", 200, {'Content-Type': 'text/plain; charset=utf-8'}
