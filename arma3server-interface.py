@@ -31,7 +31,10 @@ def run_shell_command(command):
 
 def arma3server_running():
     stdout, stderr = run_shell_command(GET_ARMA_PROCESS)
-    return not stdout
+    if not stdout:
+        return False
+    else:
+        return True
 
 
 @app.route("/")
