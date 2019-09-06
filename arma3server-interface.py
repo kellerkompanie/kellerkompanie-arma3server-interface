@@ -24,7 +24,7 @@ def load_config():
                     'ssl_context_privkey': '/etc/letsencrypt/live/server.kellerkompanie.com/privkey.pem'}
 
         with open('config.json', 'w') as outfile:
-            json.dump(settings, outfile)
+            json.dump(settings, outfile, sort_keys=True, indent=4)
 
 
 if __name__ == "__main__":
