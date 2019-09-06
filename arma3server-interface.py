@@ -94,7 +94,7 @@ def run_arma3sync():
 def info():
     if arma3server_running():
         stdout, stderr = run_shell_command(INFO_SCRIPT)
-        return "Aktuell laufende Mods:\n\n" + str(stdout), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+        return "Aktuell laufende Mods:\n\n" + stdout.decode("utf-8"), 200, {'Content-Type': 'text/plain; charset=utf-8'}
     else:
         return "Der Server ist aktuell offline.", 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
