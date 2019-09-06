@@ -1,15 +1,43 @@
 import json
 import os.path
+import subprocess
 
 from flask import Flask
 
 app = Flask(__name__)
 settings = None
 
+LOGSHOW_SCRIPT_SERVER = 'tail -n 300 /home/arma3server/log/console/arma3server-console.log'
+LOGSHOW_SCRIPT_HC1 = 'tail -n 300 /home/arma3server/log/console/arma3hc1-console.log'
+LOGSHOW_SCRIPT_HC2 = 'tail -n 300 /home/arma3server/log/console/arma3hc2-console.log'
+LOGSHOW_SCRIPT_HC3 = 'tail -n 300 /home/arma3server/log/console/arma3hc3-console.log'
+
 
 @app.route("/")
 def hello():
     return "Hello World!"
+
+
+@app.route("/logs/<name>")
+def logs(name):
+    if name == "arma3server":
+        script = LOGSHOW_SCRIPT_SERVER
+    elif name == "hc1":
+        script = LOGSHOW_SCRIPT_HC1
+    elif name == "hc2":
+        script = LOGSHOW_SCRIPT_HC2
+    elif name == "hc3":
+        script = LOGSHOW_SCRIPT_HC3
+    else:
+        raise Exception("log file of unknown name requested: " + name)
+
+    out = subprocess.Popen(script,
+                           stdout=subprocess.PIPE,
+                           stderr=subprocess.STDOUT)
+    stdout, stderr = out.communicate()
+    print(stdout)
+    print(stderr)
+    return stdout
 
 
 def load_config():
