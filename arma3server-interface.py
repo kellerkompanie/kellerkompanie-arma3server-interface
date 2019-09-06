@@ -143,7 +143,7 @@ def missions_upload():
 
     file.save(os.path.join(MISSIONS_DIR, mission_name))
     stdout, stderr = run_shell_command(FIXPERMISSIONS_SCRIPT)
-    return 'Mission erfolgreich hochgeladen als ' + mission_name + ' ' + stdout, 200, {
+    return 'Mission erfolgreich hochgeladen als ' + mission_name + ' ' + stdout.decode("utf-8"), 200, {
         'Content-Type': 'text/plain; charset=utf-8'}
 
 
