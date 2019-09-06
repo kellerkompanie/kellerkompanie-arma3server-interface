@@ -10,10 +10,10 @@ settings = None
 
 CONFIG_FILEPATH = 'config.json'
 
-START_SCRIPT = 'cd /home/arma3server ; sudo -u arma3server /home/arma3server/start_server.sh 2>&1'
-STOP_SCRIPT = 'cd /home/arma3server ; sudo -u arma3server /home/arma3server/stop_server.sh 2>&1'
-UPDATE_SCRIPT = 'cd /home/arma3server ; sudo -u arma3server /home/arma3server/update_server.sh 2>&1'
-RUN_ARMA3SYNC = 'cd /home/arma3server ; sudo -u arma3server /home/arma3server/build-armasync.sh 2>&1'
+START_SCRIPT = 'sudo -u arma3server /home/arma3server/start_server.sh 2>&1'
+STOP_SCRIPT = 'sudo -u arma3server /home/arma3server/stop_server.sh 2>&1'
+UPDATE_SCRIPT = 'sudo -u arma3server /home/arma3server/update_server.sh 2>&1'
+RUN_ARMA3SYNC = 'sudo -u arma3server /home/arma3server/build-armasync.sh 2>&1'
 GET_ARMA_PROCESS_CMD = 'ps ahxwwo pid:1,command:1|grep "./arma3server"|grep -v tmux|grep -v grep'
 
 LOGSHOW_SCRIPT_SERVER = 'tail -n 300 /home/arma3server/log/console/arma3server-console.log'
