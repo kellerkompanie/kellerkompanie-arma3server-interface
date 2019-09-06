@@ -7,6 +7,7 @@ from flask import Flask
 app = Flask(__name__)
 settings = None
 
+CONFIG_FILEPATH = 'config.json'
 LOGSHOW_SCRIPT_SERVER = 'tail -n 300 /home/arma3server/log/console/arma3server-console.log'
 LOGSHOW_SCRIPT_HC1 = 'tail -n 300 /home/arma3server/log/console/arma3hc1-console.log'
 LOGSHOW_SCRIPT_HC2 = 'tail -n 300 /home/arma3server/log/console/arma3hc2-console.log'
@@ -43,15 +44,15 @@ def logs(name):
 def load_config():
     global settings
 
-    if os.path.exists('config.json'):
-        with open('data.txt') as json_file:
+    if os.path.exists(CONFIG_FILEPATH):
+        with open(CONFIG_FILEPATH) as json_file:
             settings = json.load(json_file)
     else:
         settings = {'host': '0.0.0.0', 'port': 5000,
                     'ssl_context_fullchain': '/etc/letsencrypt/live/server.kellerkompanie.com/fullchain.pem',
                     'ssl_context_privkey': '/etc/letsencrypt/live/server.kellerkompanie.com/privkey.pem'}
 
-        with open('config.json', 'w') as outfile:
+        with open(CONFIG_FILEPATH, 'w') as outfile:
             json.dump(settings, outfile, sort_keys=True, indent=4)
 
 
