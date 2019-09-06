@@ -9,6 +9,12 @@ app = Flask(__name__)
 settings = None
 
 CONFIG_FILEPATH = 'config.json'
+
+START_SCRIPT = 'cd /home/arma3server ; sudo -u arma3server /home/arma3server/start_server.sh 2>&1'
+STOP_SCRIPT = 'cd /home/arma3server ; sudo -u arma3server /home/arma3server/stop_server.sh 2>&1'
+UPDATE_SCRIPT = 'cd /home/arma3server ; sudo -u arma3server /home/arma3server/update_server.sh 2>&1'
+RUN_ARMA3SYNC = 'cd /home/arma3server ; sudo -u arma3server /home/arma3server/build-armasync.sh 2>&1'
+
 LOGSHOW_SCRIPT_SERVER = 'tail -n 300 /home/arma3server/log/console/arma3server-console.log'
 LOGSHOW_SCRIPT_HC1 = 'tail -n 300 /home/arma3server/log/console/arma3hc1-console.log'
 LOGSHOW_SCRIPT_HC2 = 'tail -n 300 /home/arma3server/log/console/arma3hc2-console.log'
@@ -18,6 +24,42 @@ LOGSHOW_SCRIPT_HC3 = 'tail -n 300 /home/arma3server/log/console/arma3hc3-console
 @app.route("/")
 def hello():
     return "Hello World!"
+
+
+@app.route("/start")
+def start():
+    out = subprocess.Popen(START_SCRIPT.split(" "),
+                           stdout=subprocess.PIPE,
+                           stderr=subprocess.STDOUT)
+    stdout, stderr = out.communicate()
+    return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+
+@app.route("/stop")
+def stop():
+    out = subprocess.Popen(STOP_SCRIPT.split(" "),
+                           stdout=subprocess.PIPE,
+                           stderr=subprocess.STDOUT)
+    stdout, stderr = out.communicate()
+    return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+
+@app.route("/update")
+def update():
+    out = subprocess.Popen(UPDATE_SCRIPT.split(" "),
+                           stdout=subprocess.PIPE,
+                           stderr=subprocess.STDOUT)
+    stdout, stderr = out.communicate()
+    return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+
+@app.route("/run_arma3sync")
+def run_arma3sync():
+    out = subprocess.Popen(RUN_ARMA3SYNC.split(" "),
+                           stdout=subprocess.PIPE,
+                           stderr=subprocess.STDOUT)
+    stdout, stderr = out.communicate()
+    return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/logs/<name>")
@@ -37,8 +79,6 @@ def logs(name):
                            stdout=subprocess.PIPE,
                            stderr=subprocess.STDOUT)
     stdout, stderr = out.communicate()
-    print(stdout)
-    print(stderr)
     return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
