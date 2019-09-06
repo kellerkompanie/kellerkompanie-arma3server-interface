@@ -14,6 +14,7 @@ START_SCRIPT = 'cd /home/arma3server ; sudo -u arma3server /home/arma3server/sta
 STOP_SCRIPT = 'cd /home/arma3server ; sudo -u arma3server /home/arma3server/stop_server.sh 2>&1'
 UPDATE_SCRIPT = 'cd /home/arma3server ; sudo -u arma3server /home/arma3server/update_server.sh 2>&1'
 RUN_ARMA3SYNC = 'cd /home/arma3server ; sudo -u arma3server /home/arma3server/build-armasync.sh 2>&1'
+GET_ARMA_PROCESS_CMD = 'ps ahxwwo pid:1,command:1|grep "./arma3server"|grep -v tmux|grep -v grep'
 
 LOGSHOW_SCRIPT_SERVER = 'tail -n 300 /home/arma3server/log/console/arma3server-console.log'
 LOGSHOW_SCRIPT_HC1 = 'tail -n 300 /home/arma3server/log/console/arma3hc1-console.log'
@@ -28,6 +29,11 @@ def run_shell_command(command):
     return out.communicate()
 
 
+def is_arma3server_running():
+    stdout, stderr = run_shell_command(GET_ARMA_PROCESS_CMD)
+    return not stdout
+
+
 @app.route("/")
 def hello():
     return "Hello World!"
@@ -35,20 +41,29 @@ def hello():
 
 @app.route("/start")
 def start():
-    stdout, stderr = run_shell_command(START_SCRIPT)
-    return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    if is_arma3server_running():
+        return "server is already running"
+    else:
+        stdout, stderr = run_shell_command(START_SCRIPT)
+        return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/stop")
 def stop():
-    stdout, stderr = run_shell_command(STOP_SCRIPT)
-    return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    if is_arma3server_running():
+        stdout, stderr = run_shell_command(STOP_SCRIPT)
+        return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    else:
+        return "server is not running"
 
 
 @app.route("/update")
 def update():
-    stdout, stderr = run_shell_command(UPDATE_SCRIPT)
-    return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    if is_arma3server_running():
+        return "you have to stop the server first"
+    else:
+        stdout, stderr = run_shell_command(UPDATE_SCRIPT)
+        return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/run_arma3sync")
