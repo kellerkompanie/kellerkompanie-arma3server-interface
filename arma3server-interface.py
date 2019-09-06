@@ -15,6 +15,7 @@ STOP_SCRIPT = 'sudo -u arma3server /home/arma3server/stop_server.sh 2>&1'
 UPDATE_SCRIPT = 'sudo -u arma3server /home/arma3server/update_server.sh 2>&1'
 RUN_ARMA3SYNC = 'sudo -u arma3server /home/arma3server/build-armasync.sh 2>&1'
 GET_ARMA_PROCESS = 'sudo -u arma3server /home/arma3server/get_arma_process.sh 2>&1'
+INFO_SCRIPT = 'sudo -u arma3server /home/arma3server/modpack_info.sh 2>&1'
 
 LOGSHOW_SCRIPT_SERVER = 'tail -n 300 /home/arma3server/log/console/arma3server-console.log'
 LOGSHOW_SCRIPT_HC1 = 'tail -n 300 /home/arma3server/log/console/arma3hc1-console.log'
@@ -81,6 +82,15 @@ def update():
 def run_arma3sync():
     stdout, stderr = run_shell_command(RUN_ARMA3SYNC)
     return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+
+@app.route("/info")
+def info():
+    if arma3server_running():
+        stdout, stderr = run_shell_command(INFO_SCRIPT)
+        return "Aktuell laufende Mods:\n\n" + stdout
+    else:
+        return "Der Server ist aktuell offline."
 
 
 @app.route("/logs/<name>")
