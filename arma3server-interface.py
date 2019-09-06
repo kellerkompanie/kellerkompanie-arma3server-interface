@@ -39,6 +39,14 @@ def hello():
     return "Hello World!"
 
 
+@app.route("/running")
+def start():
+    stdout, stderr = run_shell_command(GET_ARMA_PROCESS_CMD)
+    print(stdout)
+    print(stderr)
+    return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+
 @app.route("/start")
 def start():
     if is_arma3server_running():
