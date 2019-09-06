@@ -52,15 +52,15 @@ def hello():
 @app.route("/running")
 def running():
     if arma3server_running():
-        return "server is running"
+        return "server is running", 200, {'Content-Type': 'text/plain; charset=utf-8'}
     else:
-        return "server is stopped"
+        return "server is stopped", 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/start")
 def start():
     if arma3server_running():
-        return "server is already running"
+        return "server is already running", 200, {'Content-Type': 'text/plain; charset=utf-8'}
     else:
         stdout, stderr = run_shell_command(START_SCRIPT)
         return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
@@ -72,13 +72,13 @@ def stop():
         stdout, stderr = run_shell_command(STOP_SCRIPT)
         return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
     else:
-        return "server is not running"
+        return "server is not running", 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/update")
 def update():
     if arma3server_running():
-        return "you have to stop the server first"
+        return "you have to stop the server first", 200, {'Content-Type': 'text/plain; charset=utf-8'}
     else:
         stdout, stderr = run_shell_command(UPDATE_SCRIPT)
         return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
@@ -94,9 +94,9 @@ def run_arma3sync():
 def info():
     if arma3server_running():
         stdout, stderr = run_shell_command(INFO_SCRIPT)
-        return "Aktuell laufende Mods:\n\n" + str(stdout)
+        return "Aktuell laufende Mods:\n\n" + str(stdout), 200, {'Content-Type': 'text/plain; charset=utf-8'}
     else:
-        return "Der Server ist aktuell offline."
+        return "Der Server ist aktuell offline.", 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/missions")
@@ -155,7 +155,7 @@ def logs(name):
     elif name == "hc3":
         script = LOGSHOW_SCRIPT_HC3
     else:
-        return "Fehler! log file von unbekannter Quelle angefragt: " + name, 200
+        return "Fehler! log file von unbekannter Quelle angefragt: " + name, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
     out = subprocess.Popen(script.split(" "),
                            stdout=subprocess.PIPE,
