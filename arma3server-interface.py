@@ -97,7 +97,7 @@ def info():
 
 @app.route("/missions")
 def missions():
-    missions_list = glob.glob(MISSIONS_DIR + "/*.pbo")
+    missions_list = glob.glob(MISSIONS_DIR + "/*.pbo").sort()
     missions_list = [os.path.basename(f) for f in missions_list]
     return '\n'.join(missions_list), 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
