@@ -14,7 +14,7 @@ START_SCRIPT = 'sudo -u arma3server /home/arma3server/start_server.sh 2>&1'
 STOP_SCRIPT = 'sudo -u arma3server /home/arma3server/stop_server.sh 2>&1'
 UPDATE_SCRIPT = 'sudo -u arma3server /home/arma3server/update_server.sh 2>&1'
 RUN_ARMA3SYNC = 'sudo -u arma3server /home/arma3server/build-armasync.sh 2>&1'
-GET_ARMA_PROCESS_CMD = 'sudo -u arma3server /home/arma3server/get_arma_process_cmd.sh 2>&1'
+GET_ARMA_PROCESS = 'sudo -u arma3server /home/arma3server/get_arma_process.sh 2>&1'
 
 LOGSHOW_SCRIPT_SERVER = 'tail -n 300 /home/arma3server/log/console/arma3server-console.log'
 LOGSHOW_SCRIPT_HC1 = 'tail -n 300 /home/arma3server/log/console/arma3hc1-console.log'
@@ -30,7 +30,7 @@ def run_shell_command(command):
 
 
 def is_arma3server_running():
-    stdout, stderr = run_shell_command(GET_ARMA_PROCESS_CMD)
+    stdout, stderr = run_shell_command(GET_ARMA_PROCESS)
     return not stdout
 
 
@@ -41,7 +41,7 @@ def hello():
 
 @app.route("/running")
 def running():
-    stdout, stderr = run_shell_command(GET_ARMA_PROCESS_CMD)
+    stdout, stderr = run_shell_command(GET_ARMA_PROCESS)
     print(stdout)
     print(stderr)
     return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
