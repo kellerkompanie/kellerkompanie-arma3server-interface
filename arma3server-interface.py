@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import json
 import os.path
 import subprocess
@@ -38,7 +39,7 @@ def logs(name):
     stdout, stderr = out.communicate()
     print(stdout)
     print(stderr)
-    return stdout
+    return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 def load_config():
