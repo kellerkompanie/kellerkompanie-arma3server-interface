@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import glob
 import json
 import os.path
 import subprocess
@@ -9,6 +10,7 @@ app = Flask(__name__)
 settings = None
 
 CONFIG_FILEPATH = 'config.json'
+MISSIONS_DIR = '/home/arma3server/serverfiles/mpmissions'
 
 START_SCRIPT = 'sudo -u arma3server /home/arma3server/start_server.sh 2>&1'
 STOP_SCRIPT = 'sudo -u arma3server /home/arma3server/stop_server.sh 2>&1'
@@ -91,6 +93,12 @@ def info():
         return "Aktuell laufende Mods:\n\n" + stdout
     else:
         return "Der Server ist aktuell offline."
+
+
+@app.route("/missions")
+def missions():
+    missions_list = glob.glob(MISSIONS_DIR + "/*.pbo")
+    return '\n'.join(missions_list), 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/logs/<name>")
