@@ -29,7 +29,7 @@ def run_shell_command(command):
     return out.communicate()
 
 
-def is_arma3server_running():
+def arma3server_running():
     stdout, stderr = run_shell_command(GET_ARMA_PROCESS)
     return not stdout
 
@@ -41,15 +41,15 @@ def hello():
 
 @app.route("/running")
 def running():
-    stdout, stderr = run_shell_command(GET_ARMA_PROCESS)
-    print(stdout)
-    print(stderr)
-    return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    if arma3server_running():
+        return "server is running"
+    else:
+        return "server is stopped"
 
 
 @app.route("/start")
 def start():
-    if is_arma3server_running():
+    if arma3server_running():
         return "server is already running"
     else:
         stdout, stderr = run_shell_command(START_SCRIPT)
@@ -58,7 +58,7 @@ def start():
 
 @app.route("/stop")
 def stop():
-    if is_arma3server_running():
+    if arma3server_running():
         stdout, stderr = run_shell_command(STOP_SCRIPT)
         return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
     else:
@@ -67,7 +67,7 @@ def stop():
 
 @app.route("/update")
 def update():
-    if is_arma3server_running():
+    if arma3server_running():
         return "you have to stop the server first"
     else:
         stdout, stderr = run_shell_command(UPDATE_SCRIPT)
