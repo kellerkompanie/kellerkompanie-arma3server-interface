@@ -1,1 +1,128 @@
-# kellerkompanie-arma3server-interface
+# Kellerkompanie arma3server-interface
+This is a flask framework that allows to control the arma3server via a
+HTTPS API, e.g., to be called from a website frontend.
+
+## Installation
+Users wanting to install this should be familiar with basic concepts of
+Linux and Python.
+
+### Requirements
+* Linux distribution (tested with Ubuntu 16.04)
+* Python 3.7 or higher (+packages: flask, werkzeug)
+
+### Create arma3server-interface user
+Create user with disabled-login
+```
+sudo adduser --disabled-login arma3server-interface
+```
+
+### Clone repository & copy scripts
+Go to the home directory of the new user and clone this repository
+```
+sudo su - arma3server-interface
+cd ~
+git clone https://github.com/kellerkompanie/kellerkompanie-arma3server-interface.git
+```
+
+The upcoming steps assert a python virtual environment inside the cloned
+repo. If not already present install the virtualenv tools:
+```
+sudo apt-get update
+sudo apt-get install python3-venv
+```
+Switch to the freshly cloned repo and initialize a virtual environment:
+```
+cd /home/arma3server-interface/kellerkompanie-arma3server-interface
+python3 -m venv venv
+```
+To install the requirements we switch to the virtual environment and
+install the packages using pip:
+```
+source venv/bin/activate
+pip install flask
+pip install werkzeug
+```
+
+Copy the shell scripts to the arma3server directory. You need to return to a user with sudo privileges using ```CTRL+D``` shortcut.
+```
+sudo cp /home/arma3server-interface/kellerkompanie-arma3server-interface/scripts/*.sh /home/arma3server/
+sudo chmod +x /home/arma3server/*.sh
+sudo chown arma3server:arma3server /home/arma3server/*.sh
+```
+
+
+
+### Allow command execution for arma3server-interface
+Since the arma3server-interface will execute its commands on behalf
+of the arma3server, we need to add the appropriate sudo rights.
+```
+sudo visudo
+```
+Now edit or add the following lines:
+```
+# Cmnd alias specification
+Cmnd_Alias      ARMACMDS = /home/arma3server/build-armasync.sh, /home/arma3server/update_server.sh, /home/arma3server/stop_server.sh, /home/arma3server/start_server.sh, /home/arma3server/deletemissions.sh, /home/arma3server/switch_modpack.sh, /home/arma3server/modpack_info.sh, /home/arma3server/get_arma_process.sh
+Cmnd_Alias      ARMAROOTCMDS = /home/arma3server/fixpermissions.sh, /home/arma3server/fixpermissions_mods.sh
+
+# ...
+
+# User privilege specification
+root    ALL=(ALL:ALL) ALL
+arma3server-interface   ALL=(arma3server:ALL) NOPASSWD:ARMACMDS
+arma3server-interface   ALL=(root:ALL) NOPASSWD:ARMAROOTCMDS
+```
+
+### SSL certificates
+You can skip this step if you already have SSL certificates for that 
+server.
+
+If not already installed, install the Let's Encrypt certbot
+```
+# necessary for Ubuntu 16.04
+sudo add-apt-repository ppa:certbot/certbot
+
+sudo apt-get update
+sudo apt-get install certbot
+```
+Certbot needs to answer cryptographic challenges, so we need to open the
+ports on the firewall
+```
+sudo ufw allow 80
+sudo ufw allow 443
+```
+Now, create the SSL certificates
+```
+sudo certbot certonly --standalone --preferred-challenges https -d server.kellerkompanie.com
+```
+Follow the steps and if everything was successful the required files 
+should be now visible
+```
+sudo ls /etc/letsencrypt/live/server.kellerkompanie.com
+```
+```
+cert.pem  chain.pem  fullchain.pem  privkey.pem  README
+```
+
+### Create startscript
+In order to start the interface we create a little runscript
+```
+sudo su - arma3server-interface
+cd ~
+nano start_interface.sh
+```
+Now put the following content inside and save/exit using ```CTRL+X``` 
+followed by ```y``` and ```ENTER```
+```
+cd ~/kellerkompanie-arma3server-interface
+source venv/bin/activate
+git pull
+python arma3server-interface.py
+```
+Make the shell script executable:
+```
+chmod +x start_interface.sh
+```
+Now you can run the interface using
+```
+./start_interface.sh
+```
