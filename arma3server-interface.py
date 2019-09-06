@@ -123,7 +123,7 @@ def missions_upload():
     print("request.files", request.files)
     print("request.args", request.args)
 
-    uploader = request.form.get('uploader')
+    uploader = request.form.get('uploader').lower()
     file = request.files.get('mission_file')
 
     print("uploader", uploader)
@@ -145,7 +145,7 @@ def missions_upload():
     mission_name = '.'.join(filename_parts[:-2])
     mission_end = '.'.join(filename_parts[-2:])
     datetime_now = datetime.datetime.now()
-    mission_name = mission_name + "." + datetime_now.strftime("%d%m%Y.%H%M%S") + "." + "uploaded_by_" + uploader + "." + mission_end
+    mission_name = mission_name + "." + datetime_now.strftime("%Y%m%d.%H%M%S") + "." + "uploaded_by_" + uploader + "." + mission_end
 
     file.save(os.path.join(MISSIONS_DIR, mission_name))
     return 'Mission erfolgreich hochgeladen', 200, {'Content-Type': 'text/plain; charset=utf-8'}
