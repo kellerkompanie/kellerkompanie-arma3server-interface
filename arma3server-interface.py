@@ -118,8 +118,12 @@ def missions_delete(mission):
 
 @app.route("/missions/upload", methods=['POST'])
 def missions_upload():
-    uploader = request.form['uploader']
-    file = request.files['mission_file']
+    uploader = request.form.get('uploader')
+    file = request.files.get('mission_file')
+
+    print("uploader", uploader)
+    print("file", file)
+
     if not file:
         return 'Fehler! Keine Datei übergeben', 200, {'Content-Type': 'text/plain; charset=utf-8'}
     if not uploader:
