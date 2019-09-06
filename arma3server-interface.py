@@ -40,7 +40,7 @@ def hello():
 
 
 @app.route("/running")
-def start():
+def running():
     stdout, stderr = run_shell_command(GET_ARMA_PROCESS_CMD)
     print(stdout)
     print(stderr)
