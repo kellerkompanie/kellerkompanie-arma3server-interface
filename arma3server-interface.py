@@ -118,6 +118,7 @@ def missions_delete(mission):
 
 @app.route("/missions/upload", methods=['POST'])
 def missions_upload():
+    print("request.get_data()", request.get_data())
     print("request.form", request.form)
     print("request.files", request.files)
     print("request.args", request.args)
