@@ -70,10 +70,14 @@ def start():
 @app.route("/select_mods/<query_string>")
 def select_mods(query_string):
     query_params = query_string.split('&')
+    query_dict = dict()
     for query_param in query_params:
-        print("query_param:", query_param)
+        param_split = query_param.split('=')
+        key = param_split[0]
+        value = param_split[1]
+        query_dict[key] = value
 
-    return "ok", 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    return str(query_dict), 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
     '''
     $aQuery = explode("&", $_SERVER['QUERY_STRING']);
