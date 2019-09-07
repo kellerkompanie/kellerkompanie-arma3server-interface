@@ -168,6 +168,22 @@ def logs(name):
     return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
+@app.route("/ls/<directory>")
+def ls(directory):
+    if directory == "mods.maps":
+        filepath = "/home/arma3server/serverfiles/mods.maps/"
+    elif directory == "mods.event":
+        filepath = "/home/arma3server/serverfiles/mods.event/"
+    else:
+        return "Fehler! ls von unbekannter Quelle angefragt: " + directory, 200, {
+            'Content-Type': 'text/plain; charset=utf-8'}
+
+    subfolders = [f.path for f in os.scandir(filepath) if f.is_dir() and f.name.startswith("@")]
+    output = "\n".join(subfolders)
+
+    return output, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+
 def load_config():
     global settings
 
