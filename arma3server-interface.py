@@ -70,12 +70,15 @@ def start():
 @app.route("/select_mods/<query_string>")
 def select_mods(query_string):
     query_params = query_string.split('&')
-    query_dict = dict()
+    query_dict = {'action': None, 'modpack': None, 'maps': [], 'event_mods': []}
     for query_param in query_params:
         param_split = query_param.split('=')
         key = param_split[0]
-        value = param_split[1]
-        query_dict[key] = value
+        value = param_split[1].replace('%40', '@')
+        if key == 'maps' or key == 'event_mods':
+            query_dict[key].append(value)
+        else:
+            query_dict[key] = value
 
     return str(query_dict), 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
