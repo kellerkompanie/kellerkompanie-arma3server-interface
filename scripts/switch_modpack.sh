@@ -1,4 +1,6 @@
 #!/bin/bash
+cd /home/arma3server
+
 echo "pwd switch_modpack #1: $(pwd)"
 
 mod_folder=$1

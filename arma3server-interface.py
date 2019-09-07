@@ -23,6 +23,7 @@ GET_ARMA_PROCESS = 'sudo -u arma3server /home/arma3server/get_arma_process.sh 2>
 INFO_SCRIPT = 'sudo -u arma3server /home/arma3server/modpack_info.sh 2>&1'
 DELETE_MISSION_SCRIPT = 'sudo -u arma3server /home/arma3server/deletemissions.sh'
 FIXPERMISSIONS_SCRIPT = 'sudo -u root /home/arma3server/fixpermissions.sh 2>&1'
+SWITCH_MODPACK = 'sudo -u arma3server /home/arma3server/switch_modpack.sh'
 
 LOGSHOW_SCRIPT_SERVER = 'tail -n 300 /home/arma3server/log/console/arma3server-console.log'
 LOGSHOW_SCRIPT_HC1 = 'tail -n 300 /home/arma3server/log/console/arma3hc1-console.log'
@@ -80,68 +81,38 @@ def select_mods(query_string):
         else:
             query_dict[key] = value
 
-    return str(query_dict), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    base_file_path = ''
+    if query_dict['modpack'] == 'main':
+        base_file_path = '/home/arma3server/serverfiles/mods.main/'
+    elif query_dict['modpack'] == 'ironfront':
+        base_file_path = '/home/arma3server/serverfiles/mods.ironfront/'
+    elif query_dict['modpack'] == 'vietnam':
+        base_file_path = '/home/arma3server/serverfiles/mods.vietnam/'
+    elif query_dict['modpack'] == 'scifi':
+        base_file_path = '/home/arma3server/serverfiles/mods.scifi/'
+    elif query_dict['modpack'] == 'special':
+        base_file_path = '/home/arma3server/serverfiles/mods.special/'
+    elif query_dict['modpack'] == 'vanilla':
+        base_file_path = ''
 
-    '''
-    $aQuery = explode("&", $_SERVER['QUERY_STRING']);
-                    $params = array();
-                    foreach ($aQuery as $param) {
-                        if(!empty($param)){
-                            $aTemp = explode('=', $param, 2);
-                                if(isset($aTemp[1]) && $aTemp[1] !== "") {
-                                    list($name, $value) = explode('=', $param, 2);
-                                    $params[ strtolower(urldecode($name)) ][] = str_replace("%40", "@", $value);
-                                }
-                            }
-                    }
+    stdout, stderr = run_shell_command(SWITCH_MODPACK + ' ' + base_file_path)
 
-                    $base_file_path = "";
-                    switch ($params['modpack'][0]) {
-                        case "main":
-                            $base_file_path = "/home/arma3server/serverfiles/mods.main/";
-                                break;
-                        case "ironfront":
-                            $base_file_path = "/home/arma3server/serverfiles/mods.ironfront/";
-                            break;
-                        case "scifi":
-                            $base_file_path = "/home/arma3server/serverfiles/mods.scifi/";
-                            break;
-                        case "vietnam":
-                            $base_file_path = "/home/arma3server/serverfiles/mods.vietnam/";
-                            break;
-                        case "special":
-                            $base_file_path = "/home/arma3server/serverfiles/mods.special/";
-                            break;
-                        case "vanilla":
-                            $base_file_path = "";
-                            break;
-                    }
+    mods_file_path = "/home/arma3server/arma3server.mods"
+    with open(mods_file_path, "a+") as f:
+        if 'event_mods' in query_dict:
+            for event_mod in query_dict['event_mods']:
+                f.write("mods=\"${mods}mods.event/\\%s\\;\"\n" % event_mod)
 
-                    echo "<pre>";
-                    passthru(SWITCH_MODPACK . ' ' . $base_file_path);
+        if 'maps' in query_dict:
+            for map_mod in query_dict['maps']:
+                f.write("mods=\"${mods}mods.maps/\\%s\\;\"\n" % map_mod)
 
-                    $mods_file_path = "/home/arma3server/arma3server.mods";
-                    $mods_file = fopen($mods_file_path, "a+") or die("Unable to open file!");
+        if 'gm' in query_dict:
+            f.write("mods=\"gm\\;${mods}\"\n")
 
-                    if(array_key_exists('event_mods', $params)) {
-                        foreach ($params['event_mods'] as $event_mod) {
-                            fwrite($mods_file, "mods=\"\${mods}mods.event/\\{$event_mod}\\;\"\n");
-                        }
-                    }
+        f.close()
 
-                    if(array_key_exists('maps', $params)) {
-                        foreach ($params['maps'] as $map) {
-                            fwrite($mods_file, "mods=\"\${mods}mods.maps/\\{$map}\\;\"\n");
-                        }
-                    }
-
-                    if( array_key_exists('gm', $params) ) {
-                        fwrite($mods_file, "mods=\"gm\\;\${mods}\"\n");
-                    }
-
-                    fclose($mods_file);
-
-    '''
+    return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/stop")
