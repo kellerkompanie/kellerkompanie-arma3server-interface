@@ -1,5 +1,5 @@
 #!/bin/bash
-
+cd /home/arma3server
 json_file="modpack_info.json"
 
 source /home/arma3server/arma3server.mods
