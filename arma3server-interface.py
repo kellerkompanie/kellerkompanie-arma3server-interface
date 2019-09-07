@@ -67,6 +67,76 @@ def start():
         return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
+@app.route("/select_mods/<query_string>")
+def select_mods(query_string):
+    query_params = query_string.split('&')
+    for query_param in query_params:
+        print("query_param:", query_param)
+
+    return "ok", 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+    '''
+    $aQuery = explode("&", $_SERVER['QUERY_STRING']);
+                    $params = array();
+                    foreach ($aQuery as $param) {
+                        if(!empty($param)){
+                            $aTemp = explode('=', $param, 2);
+                                if(isset($aTemp[1]) && $aTemp[1] !== "") {
+                                    list($name, $value) = explode('=', $param, 2);
+                                    $params[ strtolower(urldecode($name)) ][] = str_replace("%40", "@", $value);
+                                }
+                            }
+                    }
+
+                    $base_file_path = "";
+                    switch ($params['modpack'][0]) {
+                        case "main":
+                            $base_file_path = "/home/arma3server/serverfiles/mods.main/";
+                                break;
+                        case "ironfront":
+                            $base_file_path = "/home/arma3server/serverfiles/mods.ironfront/";
+                            break;
+                        case "scifi":
+                            $base_file_path = "/home/arma3server/serverfiles/mods.scifi/";
+                            break;
+                        case "vietnam":
+                            $base_file_path = "/home/arma3server/serverfiles/mods.vietnam/";
+                            break;
+                        case "special":
+                            $base_file_path = "/home/arma3server/serverfiles/mods.special/";
+                            break;
+                        case "vanilla":
+                            $base_file_path = "";
+                            break;
+                    }
+
+                    echo "<pre>";
+                    passthru(SWITCH_MODPACK . ' ' . $base_file_path);
+
+                    $mods_file_path = "/home/arma3server/arma3server.mods";
+                    $mods_file = fopen($mods_file_path, "a+") or die("Unable to open file!");
+
+                    if(array_key_exists('event_mods', $params)) {
+                        foreach ($params['event_mods'] as $event_mod) {
+                            fwrite($mods_file, "mods=\"\${mods}mods.event/\\{$event_mod}\\;\"\n");
+                        }
+                    }
+
+                    if(array_key_exists('maps', $params)) {
+                        foreach ($params['maps'] as $map) {
+                            fwrite($mods_file, "mods=\"\${mods}mods.maps/\\{$map}\\;\"\n");
+                        }
+                    }
+
+                    if( array_key_exists('gm', $params) ) {
+                        fwrite($mods_file, "mods=\"gm\\;\${mods}\"\n");
+                    }
+
+                    fclose($mods_file);
+
+    '''
+
+
 @app.route("/stop")
 def stop():
     if arma3server_running():
