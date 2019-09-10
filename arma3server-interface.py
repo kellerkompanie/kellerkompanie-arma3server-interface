@@ -11,6 +11,7 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 settings = None
+database = None
 
 CONFIG_FILEPATH = 'config.json'
 MISSIONS_DIR = '/home/arma3server/serverfiles/mpmissions'
@@ -232,6 +233,40 @@ def ls(directory):
     return output, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
+@app.route("/stammspieler/<steam_id>")
+def stammspieler(steam_id):
+    response = "<h2>Eigene Aktivität</h2>"
+    response += database.ausgabe_spieler(steam_id)
+    response += "<pre>$output</pre>"
+
+    response += "<h2>Kann ich Stammspieler haben?</h2>"
+    response += database.ausgabe_stammspieler(steam_id)
+    response += "<pre>$output</pre><hr>"
+
+    return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+
+@app.route("/stammspieler")
+def stammspieler_all():
+    response = "<h2>Aktivität aller Spieler</h2>"
+    response += database.ausgabe_aktivitaet()
+    response += "<pre>$output</pre>"
+
+    response += "<h2>Karten</h2>"
+    response += database.ausgabe_karten()
+    response += "<pre>$output</pre>"
+
+    response += "<h2>Liste der Stammspieler</h2>"
+    response += database.ausgabe_stammspieler_admin()
+    response += "<pre>$output</pre>"
+
+    response += "<h2>Teilnehmer</h2>"
+    response += database.ausgabe_teilnehmer()
+    response += "<pre>$output</pre>"
+
+    return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+
 def load_config():
     global settings
 
@@ -239,7 +274,8 @@ def load_config():
         with open(CONFIG_FILEPATH) as json_file:
             settings = json.load(json_file)
     else:
-        settings = {'host': '0.0.0.0', 'port': 5000,
+        settings = {'host': '0.0.0.0',
+                    'port': 5000,
                     'ssl_context_fullchain': '/etc/letsencrypt/live/server.kellerkompanie.com/fullchain.pem',
                     'ssl_context_privkey': '/etc/letsencrypt/live/server.kellerkompanie.com/privkey.pem'}
 
@@ -249,5 +285,6 @@ def load_config():
 
 if __name__ == "__main__":
     load_config()
+    database = stammspieler.Stammspieler()
     app.run(host=settings['host'], port=settings['port'],
             ssl_context=(settings['ssl_context_fullchain'], settings['ssl_context_privkey']))
