@@ -232,7 +232,8 @@ class Stammspieler:
             output += "Ja! Du bist Stammspieler. \nMelde dich bei einem Admin deines Vertrauens."
         else:
             output += "Nein, frag doch einfach später nochmal.\n"
-        output += "\nDu hast mitgespielt: " + str(zaehler2) + " / " + str(zaehler_mission2) + " - " + str(zaehler1) + " / " + str(zaehler_mission1) + "  -  " + str(zaehler) + " / " + str(zaehler_mission) + '\n'
+        output += "\nDu hast mitgespielt: " + str(zaehler2) + " / " + str(zaehler_mission2) + " - " + str(
+            zaehler1) + " / " + str(zaehler_mission1) + "  -  " + str(zaehler) + " / " + str(zaehler_mission) + '\n'
         return output
 
     def ausgabe_stammspieler_admin(self):
@@ -496,26 +497,29 @@ class Stammspieler:
         output += "\nAnzahl Mitgespielt: " + str(zaehler) + "\n\n"
         return output
 
-    def ausgabe_teilnehmer(self):
+    def ausgabe_teilnehmer_steam_id(self, steam_id):
         mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
         mission = ""
         output = ''
-        if sys.argv[2].isdigit():
-            for x in mitgespielt:
+        for x in mitgespielt:
+            if mission != x[0]:
+                mission = x[0]
+                output += "\nMission: " + mission + '\n'
+                output += "-" * (len(mission) + 10) + '\n'
+            output += str(x[1]) + '\n'
+        return output
+
+    def ausgabe_teilnehmer_mission(self, mission_param):
+        mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
+        mission = ""
+        output = ''
+        for x in mitgespielt:
+            if mission_param in (x[0]):
                 if mission != x[0]:
                     mission = x[0]
-                    output += "\nMission: " + mission + '\n'
-                    output += "-" * (len(mission) + 10) + '\n'
-                output += x[1] + '\n'
-        else:
-            mission_input = sys.argv[2]
-            for x in mitgespielt:
-                if mission_input in (x[0]):
-                    if mission != x[0]:
-                        mission = x[0]
-                        output += "\nMission: " + mission + " | " + x[2].strftime("%d.%m.%Y") + '\n'
-                        output += "-" * (len(mission) + 23) + '\n'
-                    output += x[1] + '\n'
+                    output += "\nMission: " + str(mission) + " | " + x[2].strftime("%d.%m.%Y") + '\n'
+                    output += "-" * (len(mission) + 23) + '\n'
+                output += str(x[1]) + '\n'
         return output
 
 
@@ -538,7 +542,7 @@ if __name__ == "__main__":
         print(stammspieler.ausgabe_karten())
 
     elif sys.argv[1] == "teilnehmer":
-        print(stammspieler.ausgabe_teilnehmer())
+        print(stammspieler.ausgabe_teilnehmer_steam_id())
 
     elif sys.argv[1] == "spieler":
         print(stammspieler.ausgabe_mitgespielt(steam_id=sys.argv[2]))
