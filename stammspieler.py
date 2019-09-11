@@ -260,54 +260,39 @@ class Stammspieler:
             elif date_30days_ago < mission_date <= date_today:
                 total_missions_0to30days_ago += 1
 
-        participation = sorted(participation, key=lambda k: k[3])
-
-        print("total_missions_0to30days_ago", total_missions_0to30days_ago)
-        print("total_missions_30to60days_ago", total_missions_30to60days_ago)
-        print("total_missions_60to90days_ago", total_missions_60to90days_ago)
-
-        spieler_input = ""
-        regular_players = dict()
+        player_participations = dict()
+        player_names = dict()
         for mission_name, player_name, mission_date, steam_id in participation:
-            total_player_participation_0to30days_ago = 0
-            total_player_participation_30to60days_ago = 0
-            total_player_participation_60to90days_ago = 0
+            player_names[steam_id] = player_name
+            if steam_id not in player_participations:
+                player_participations[steam_id] = (0, 0, 0)
 
-            if spieler_input != steam_id:
-                spieler_input = steam_id
-                total_player_participation_0to30days_ago = 0
-                total_player_participation_30to60days_ago = 0
-                total_player_participation_60to90days_ago = 0
-
-            if date_90days_ago < mission_date <= date_60days_ago:
-                total_player_participation_60to90days_ago += 1
+            if date_30days_ago < mission_date <= date_today:
+                player_participations[steam_id][0] += 1
             elif date_60days_ago < mission_date <= date_30days_ago:
-                total_player_participation_30to60days_ago += 1
-            elif date_30days_ago < mission_date <= date_today:
-                total_player_participation_0to30days_ago += 1
+                player_participations[steam_id][1] += 1
+            elif date_90days_ago < mission_date <= date_60days_ago:
+                player_participations[steam_id][2] += 1
 
-            print("player", player_name)
-            print("total_player_participation_0to30days_ago", total_player_participation_0to30days_ago)
-            print("total_player_participation_30to60days_ago", total_player_participation_30to60days_ago)
-            print("total_player_participation_60to90days_ago", total_player_participation_60to90days_ago)
-
-            if total_player_participation_60to90days_ago >= int(
-                    total_missions_60to90days_ago / 3) and total_player_participation_30to60days_ago >= int(
-                    total_missions_30to60days_ago / 3) and total_player_participation_0to30days_ago >= int(
+        regular_players = dict()
+        for steam_id in player_participations:
+            if player_participations[steam_id][2] >= int(
+                    total_missions_60to90days_ago / 3) and player_participations[steam_id][1] >= int(
+                    total_missions_30to60days_ago / 3) and player_participations[steam_id][0] >= int(
                     total_missions_0to30days_ago / 3):
-                regular_players[steam_id] = player_name
-            elif total_player_participation_60to90days_ago >= (
-                    total_missions_60to90days_ago / 2) and total_player_participation_30to60days_ago >= (
+                regular_players[steam_id] = player_names[steam_id]
+            elif player_participations[steam_id][2] >= (
+                    total_missions_60to90days_ago / 2) and player_participations[steam_id][1] >= (
                     total_missions_30to60days_ago / 2):
-                regular_players[steam_id] = player_name
-            elif total_player_participation_60to90days_ago >= (
-                    total_missions_60to90days_ago / 2) and total_player_participation_0to30days_ago >= (
+                regular_players[steam_id] = player_names[steam_id]
+            elif player_participations[steam_id][2] >= (
+                    total_missions_60to90days_ago / 2) and player_participations[steam_id][0] >= (
                     total_missions_0to30days_ago / 2):
-                regular_players[steam_id] = player_name
-            elif total_player_participation_30to60days_ago >= (
-                    total_missions_30to60days_ago / 3) and total_player_participation_0to30days_ago >= (
+                regular_players[steam_id] = player_names[steam_id]
+            elif player_participations[steam_id][2] >= (
+                    total_missions_30to60days_ago / 3) and player_participations[steam_id][0] >= (
                     total_missions_0to30days_ago / 3):
-                regular_players[steam_id] = player_name
+                regular_players[steam_id] = player_names[steam_id]
 
         header = "Stammspieler:"
         output = header + '\n'
