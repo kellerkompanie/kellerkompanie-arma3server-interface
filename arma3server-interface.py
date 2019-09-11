@@ -238,11 +238,11 @@ def ls(directory):
 @app.route("/stammspieler/<steam_id>")
 def stammspieler(steam_id):
     response = "<h2>Eigene Aktivität</h2>"
-    response += database.ausgabe_spieler(steam_id)
+    response += database.ausgabe_mitgespielt(steam_id)
     response += "<pre>$output</pre>"
 
     response += "<h2>Kann ich Stammspieler haben?</h2>"
-    response += database.ausgabe_mitgespielt(steam_id)
+    response += database.ausgabe_stammspieler(steam_id)
     response += "<pre>$output</pre><hr>"
 
     return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
