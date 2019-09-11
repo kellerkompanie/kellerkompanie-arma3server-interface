@@ -9,6 +9,8 @@ import subprocess
 from flask import Flask, request
 from werkzeug.utils import secure_filename
 
+from stammspieler import Stammspieler
+
 app = Flask(__name__)
 settings = None
 database = None
@@ -285,6 +287,6 @@ def load_config():
 
 if __name__ == "__main__":
     load_config()
-    database = stammspieler.Stammspieler()
+    database = Stammspieler()
     app.run(host=settings['host'], port=settings['port'],
             ssl_context=(settings['ssl_context_fullchain'], settings['ssl_context_privkey']))
