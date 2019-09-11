@@ -380,6 +380,8 @@ class Stammspieler:
 
     @staticmethod
     def replace_map_name(mapname):
+        mapname = mapname.lower()
+
         if mapname == "pulau":
             return "Pulau"
         elif mapname == "chernarus_summer":
@@ -390,11 +392,11 @@ class Stammspieler:
             return "Takistan"
         elif mapname == "utes":
             return "Utes"
-        elif mapname == "Chernarus_winter":
+        elif mapname == "chernarus_winter":
             return "Chernarus Winter"
-        elif mapname == "MCN_HazarKot":
+        elif mapname == "mcn_hazarkot":
             return "Hazar Kot Valley"
-        elif mapname == "Rura_Penthe":
+        elif mapname == "rura_penthe":
             return "Rura Penthe"
         elif mapname == "abramia":
             return "Isla Abramia"
@@ -406,19 +408,19 @@ class Stammspieler:
             return "Ihantala Winter"
         elif mapname == "zargabad":
             return "Zargabad"
-        elif mapname == "WL_Route191":
+        elif mapname == "wl_route191":
             return "Schwemlitz"
-        elif mapname == "CUP_Kunduz":
+        elif mapname == "cup_kunduz":
             return "Kunduz"
         elif mapname == "pabst_yellowstone":
             return "Yellowstone"
         elif mapname == "tem_anizay":
             return "Anizay"
-        elif mapname == "WL_Rosche":
+        elif mapname == "wl_rosche":
             return "Rosche"
         elif mapname == "prei_khmaoch_luong":
             return "Prei Khmaoch Luong"
-        elif mapname == "Bootcamp_ACR":
+        elif mapname == "bootcamp_acr":
             return "Bootcamp"
         elif mapname == "fallujah":
             return "Fallujah"
@@ -430,8 +432,20 @@ class Stammspieler:
             return "Ruha"
         elif mapname == "dingor":
             return "Dingor"
-        elif mapname == "iron_excelsior_Tobruk":
+        elif mapname == "iron_excelsior_tobruk":
             return "Libyen 1944"
+        elif mapname == "tem_kujari":
+            return "Kujari"
+        elif mapname == "tem_summa":
+            return "Summa"
+        elif mapname == "isladuala3":
+            return "Isla Duala"
+        elif mapname == "porto":
+            return "Porto"
+        elif mapname == "swu_kokoda_map":
+            return "Kokoda Trail"
+        elif mapname == "enoch":
+            return "Livonia"
         else:
             return mapname
 
