@@ -237,88 +237,77 @@ class Stammspieler:
         return output
 
     def ausgabe_stammspieler_admin(self):
-        mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
+        participation = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
 
-        print("ausgabe_stammspieler_admin: mitgespielt:", mitgespielt)
-
-        stammi = []
-        date = datetime.datetime.now()
-        date_from2 = date - timedelta(days=90)
-        date_from1 = date - timedelta(days=60)
-        date_from = date - timedelta(days=30)
+        regular_players = dict()
+        date_today = datetime.datetime.now()
+        date_90days_ago = (date_today - timedelta(days=90)).date()
+        date_60days_ago = (date_today - timedelta(days=60)).date()
+        date_30days_ago = (date_today - timedelta(days=30)).date()
 
         spieler_input = ""
-        mission = ""
 
-        zaehler_mission = 0
-        zaehler_mission1 = 0
-        zaehler_mission2 = 0
+        total_missions_0to30days_ago = 0
+        total_missions_30to60days_ago = 0
+        total_missions_60to90days_ago = 0
 
-        for x in mitgespielt:
-            print("ausgabe_stammspieler_admin: x:", x)
-            if date_from2.date() < x[2] <= date_from1.date():
-                if mission != x[0]:
-                    mission = x[0]
-                    zaehler_mission2 += 1
-            elif date_from1.date() < x[2] <= date_from.date():
-                if mission != x[0]:
-                    mission = x[0]
-                    zaehler_mission1 += 1
-            elif date_from.date() < x[2] <= date.date():
-                if mission != x[0]:
-                    mission = x[0]
-                    zaehler_mission += 1
+        unique_missions = set()
+        for mission_name, player_name, mission_date, steam_id in participation:
+            unique_missions.add((mission_name, mission_date))
 
-        mitgespielt = sorted(mitgespielt, key=lambda k: k[3])
+        print("unique_missions", unique_missions)
 
-        for x in mitgespielt:
+        for mission_name, mission_date in unique_missions:
+            if date_90days_ago < mission_date <= date_60days_ago:
+                total_missions_60to90days_ago += 1
+            elif date_60days_ago < mission_date <= date_30days_ago:
+                total_missions_30to60days_ago += 1
+            elif date_30days_ago < mission_date <= date_today:
+                total_missions_0to30days_ago += 1
+
+        participation = sorted(participation, key=lambda k: k[3])
+
+        print("total_missions_0to30days_ago", total_missions_0to30days_ago)
+        print("total_missions_30to60days_ago", total_missions_30to60days_ago)
+        print("total_missions_60to90days_ago", total_missions_60to90days_ago)
+
+        for mission_name, player_name, mission_date, steam_id in participation:
             zaehler = 0
             zaehler1 = 0
             zaehler2 = 0
 
-            if spieler_input != x[3]:
-                spieler_input = x[3]
+            if spieler_input != steam_id:
+                spieler_input = steam_id
                 zaehler = 0
                 zaehler1 = 0
                 zaehler2 = 0
 
-            if date_from2.date() < x[2] <= date_from1.date():
+            if date_90days_ago < mission_date <= date_60days_ago:
                 zaehler2 += 1
-            elif date_from1.date() < x[2] <= date_from.date():
+            elif date_60days_ago < mission_date <= date_30days_ago:
                 zaehler1 += 1
-            elif date_from.date() < x[2] <= date.date():
+            elif date_30days_ago < mission_date <= date_today:
                 zaehler += 1
 
-            if zaehler2 >= int(zaehler_mission2 / 3) and zaehler1 >= int(zaehler_mission1 / 3) and zaehler >= int(
-                    zaehler_mission / 3):
-                if x[3] not in stammi:
-                    stammi.append(x[1])
-                    stammi.append(x[3])
-            elif zaehler2 >= (zaehler_mission2 / 2) and zaehler1 >= (zaehler_mission1 / 2):
-                if x[3] not in stammi:
-                    stammi.append(x[1])
-                    stammi.append(x[3])
-            elif zaehler2 >= (zaehler_mission2 / 2) and zaehler >= (zaehler_mission / 2):
-                if x[3] not in stammi:
-                    stammi.append(x[1])
-                    stammi.append(x[3])
-            elif zaehler1 >= (zaehler_mission1 / 3) and zaehler >= (zaehler_mission / 3):
-                if x[3] not in stammi:
-                    stammi.append(x[1])
-                    stammi.append(x[3])
+            if zaehler2 >= int(total_missions_60to90days_ago / 3) and zaehler1 >= int(total_missions_30to60days_ago / 3) and zaehler >= int(
+                    total_missions_0to30days_ago / 3):
+                if steam_id not in regular_players:
+                    regular_players[steam_id] = player_name
+            elif zaehler2 >= (total_missions_60to90days_ago / 2) and zaehler1 >= (total_missions_30to60days_ago / 2):
+                if steam_id not in regular_players:
+                    regular_players[steam_id] = player_name
+            elif zaehler2 >= (total_missions_60to90days_ago / 2) and zaehler >= (total_missions_0to30days_ago / 2):
+                if steam_id not in regular_players:
+                    regular_players[steam_id] = player_name
+            elif zaehler1 >= (total_missions_30to60days_ago / 3) and zaehler >= (total_missions_0to30days_ago / 3):
+                if steam_id not in regular_players:
+                    regular_players[steam_id] = player_name
 
         header = "Stammspieler:"
         output = header + '\n'
         output += "-" * (len(header) + 14)
-
-        stammi = sorted(stammi)
-        n = len(stammi) / 2
-        del stammi[:int(n)]
-
-        for x in stammi:
-            output += x + '\n'
-
-        output += "\nAnzahl Stammspieler: " + str(len(stammi)) + '\n'
+        output += '\n'.join(sorted(regular_players.values()))
+        output += "\nAnzahl Stammspieler: " + str(len(regular_players)) + '\n'
         return output
 
     @staticmethod
