@@ -290,8 +290,8 @@ class Stammspieler:
         for steam_id in player_participations:
             if player_participations[steam_id][2] >= int(
                     total_missions_60to90days_ago / 3) and player_participations[steam_id][1] >= int(
-                    total_missions_30to60days_ago / 3) and player_participations[steam_id][0] >= int(
-                    total_missions_0to30days_ago / 3):
+                total_missions_30to60days_ago / 3) and player_participations[steam_id][0] >= int(
+                total_missions_0to30days_ago / 3):
                 regular_players[steam_id] = player_names[steam_id]
             elif player_participations[steam_id][2] >= (
                     total_missions_60to90days_ago / 2) and player_participations[steam_id][1] >= (
@@ -375,179 +375,117 @@ class Stammspieler:
 
     @staticmethod
     def replace_map_name(mapname):
-        mapname = mapname.lower()
+        map_translations = {
+            "pulau": "Pulau", "chernarus_summer": "Chernarus Summer", "sara": "Sahrani", "takistan": "Takistan",
+            "utes": "Utes", "chernarus_winter": "Chernarus Winter", "mcn_hazarkot": "Hazar Kot Valley",
+            "rura_penthe": "Rura Penthe", "abramia": "Isla Abramia", "chernarusredux": "Chernarus Redux",
+            "lythium": "Lythium", "tem_ihantalaw": "Ihantala Winter", "zargabad": "Zargabad",
+            "wl_route191": "Schwemlitz", "cup_kunduz": "Kunduz", "pabst_yellowstone": "Yellowstone",
+            "tem_anizay": "Anizay", "wl_rosche": "Rosche", "prei_khmaoch_luong": "Prei Khmaoch Luong",
+            "bootcamp_acr": "Bootcamp", "fallujah": "Fallujah", "chernarus": "Chernarus", "lingor3": "Lingor",
+            "ruha": "Ruha", "dingor": "Dingor", "iron_excelsior_tobruk": "Libyen (IFA3)",
+            "tem_kujari": "Kujari", "tem_summa": "Summa", "isladuala3": "Isla Duala", "porto": "Porto",
+            "swu_kokoda_map": "Kokoda Trail (IFA3)", "enoch": "Livonia", "thirsk": "Thirsk", "tembelan": "Tembelan",
+            "woodland_acr": "Bystrica", "i44_merderet_v2": "Merderet (IFA3)", "mcn_neaville": "Neaville (IFA3)"}
 
-        if mapname == "pulau":
-            return "Pulau"
-        elif mapname == "chernarus_summer":
-            return "Chernarus Summer"
-        elif mapname == "sara":
-            return "Sahrani"
-        elif mapname == "takistan":
-            return "Takistan"
-        elif mapname == "utes":
-            return "Utes"
-        elif mapname == "chernarus_winter":
-            return "Chernarus Winter"
-        elif mapname == "mcn_hazarkot":
-            return "Hazar Kot Valley"
-        elif mapname == "rura_penthe":
-            return "Rura Penthe"
-        elif mapname == "abramia":
-            return "Isla Abramia"
-        elif mapname == "chernarusredux":
-            return "Chernarus Redux"
-        elif mapname == "lythium":
-            return "Lythium"
-        elif mapname == "tem_ihantalaw":
-            return "Ihantala Winter"
-        elif mapname == "zargabad":
-            return "Zargabad"
-        elif mapname == "wl_route191":
-            return "Schwemlitz"
-        elif mapname == "cup_kunduz":
-            return "Kunduz"
-        elif mapname == "pabst_yellowstone":
-            return "Yellowstone"
-        elif mapname == "tem_anizay":
-            return "Anizay"
-        elif mapname == "wl_rosche":
-            return "Rosche"
-        elif mapname == "prei_khmaoch_luong":
-            return "Prei Khmaoch Luong"
-        elif mapname == "bootcamp_acr":
-            return "Bootcamp"
-        elif mapname == "fallujah":
-            return "Fallujah"
-        elif mapname == "chernarus":
-            return "Chernarus"
-        elif mapname == "lingor3":
-            return "Lingor"
-        elif mapname == "ruha":
-            return "Ruha"
-        elif mapname == "dingor":
-            return "Dingor"
-        elif mapname == "iron_excelsior_tobruk":
-            return "Libyen (IFA3)"
-        elif mapname == "tem_kujari":
-            return "Kujari"
-        elif mapname == "tem_summa":
-            return "Summa"
-        elif mapname == "isladuala3":
-            return "Isla Duala"
-        elif mapname == "porto":
-            return "Porto"
-        elif mapname == "swu_kokoda_map":
-            return "Kokoda Trail (IFA3)"
-        elif mapname == "enoch":
-            return "Livonia"
-        elif mapname == "malden":
-            return "Malden"
-        elif mapname == "altis":
-            return "Altis"
-        elif mapname == "tanoa":
-            return "Tanoa"
-        elif mapname == "thirsk":
-            return "Thirsk"
-        elif mapname == "tembelan":
-            return "Tembelan"
-        elif mapname == "woodland_acr":
-            return "Bystrica"
-        elif mapname == "i44_merderet_v2":
-            return "Merderet (IFA3)"
-        elif mapname == "mcn_neaville":
-            return "Neaville (IFA3)"
+        if mapname.lower() in map_translations:
+            return map_translations[mapname.lower()]
         else:
             return mapname
 
-    def ausgabe_karten(self):
-        karten = Stammspieler.get_karten(self.get_missionen())
-        maxlen = 0
-        for x in karten:
-            mlen = len(x[0])
-            if mlen > maxlen:
-                maxlen = mlen
 
-        header = ("Karte:".ljust(maxlen + 2) + "Gespielt:")
-        output = header + '\n'
-        output += "-" * (len(header) + 5) + '\n'
+def ausgabe_karten(self):
+    karten = Stammspieler.get_karten(self.get_missionen())
+    maxlen = 0
+    for x in karten:
+        mlen = len(x[0])
+        if mlen > maxlen:
+            maxlen = mlen
 
-        for x in karten:
-            mapname = Stammspieler.replace_map_name(x[0])
-            mlen = len(mapname)
-            output += mapname + " | ".rjust(maxlen + 1 - mlen) + str(x[1]) + '\n'
+    header = ("Karte:".ljust(maxlen + 2) + "Gespielt:")
+    output = header + '\n'
+    output += "-" * (len(header) + 5) + '\n'
 
-        output += "\nAnzahl Karten: " + str(len(karten)) + '\n'
-        return output
+    for x in karten:
+        mapname = Stammspieler.replace_map_name(x[0])
+        mlen = len(mapname)
+        output += mapname + " | ".rjust(maxlen + 1 - mlen) + str(x[1]) + '\n'
 
-    def ausgabe_aktivitaet(self):
-        spieler_anzahl = Stammspieler.aktivitaet(self.get_missionen(), self.get_spieler())
-        maxlen = 0
-        for x in spieler_anzahl:
-            mlen = len(x[0][1])
-            if mlen > maxlen:
-                maxlen = mlen
+    output += "\nAnzahl Karten: " + str(len(karten)) + '\n'
+    return output
 
-        header = ("Spieler:".ljust(maxlen + 2) + "Teilnahmen: ")
-        output = header + '\n'
-        output += "-" * (len(header) + 5) + '\n'
 
-        for x in spieler_anzahl:
-            mlen = len(x[0][1])
-            output += str(x[0][1]) + " | ".rjust(maxlen + 1 - mlen) + str(x[1]) + '\n'
+def ausgabe_aktivitaet(self):
+    spieler_anzahl = Stammspieler.aktivitaet(self.get_missionen(), self.get_spieler())
+    maxlen = 0
+    for x in spieler_anzahl:
+        mlen = len(x[0][1])
+        if mlen > maxlen:
+            maxlen = mlen
 
-        output += "\nVerschiedene Teilnehmer: " + str(len(spieler_anzahl)) + "\n"
-        return output
+    header = ("Spieler:".ljust(maxlen + 2) + "Teilnahmen: ")
+    output = header + '\n'
+    output += "-" * (len(header) + 5) + '\n'
 
-    def ausgabe_mitgespielt(self, steam_id):
-        mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
-        date = datetime.datetime.now()
-        date_from1 = date - timedelta(days=60)
-        date_from = date - timedelta(days=30)
+    for x in spieler_anzahl:
+        mlen = len(x[0][1])
+        output += str(x[0][1]) + " | ".rjust(maxlen + 1 - mlen) + str(x[1]) + '\n'
 
-        zaehler = 0
-        check = 0
-        spieler = ""
-        output = ''
+    output += "\nVerschiedene Teilnehmer: " + str(len(spieler_anzahl)) + "\n"
+    return output
 
-        for x in mitgespielt:
-            if steam_id in (x[3]):
-                if spieler != x[3]:
-                    spieler = x[3]
-                    output += "\nDatum: ".ljust(13) + "Mission: \n"
-                    output += "-" * 40 + '\n'
-                if x[2] > date_from1.date() and check == 0 or x[2] > date_from.date() and check == 1:
-                    output += "-" * 40 + '\n'
-                    check += 1
-                output += x[2].strftime("%d.%m.%Y") + " | " + x[0] + '\n'
-                zaehler += 1
-        output += "\nAnzahl Mitgespielt: " + str(zaehler) + "\n\n"
-        return output
 
-    def ausgabe_teilnehmer(self):
-        mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
-        mission = ""
-        output = ''
-        for x in mitgespielt:
+def ausgabe_mitgespielt(self, steam_id):
+    mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
+    date = datetime.datetime.now()
+    date_from1 = date - timedelta(days=60)
+    date_from = date - timedelta(days=30)
+
+    zaehler = 0
+    check = 0
+    spieler = ""
+    output = ''
+
+    for x in mitgespielt:
+        if steam_id in (x[3]):
+            if spieler != x[3]:
+                spieler = x[3]
+                output += "\nDatum: ".ljust(13) + "Mission: \n"
+                output += "-" * 40 + '\n'
+            if x[2] > date_from1.date() and check == 0 or x[2] > date_from.date() and check == 1:
+                output += "-" * 40 + '\n'
+                check += 1
+            output += x[2].strftime("%d.%m.%Y") + " | " + x[0] + '\n'
+            zaehler += 1
+    output += "\nAnzahl Mitgespielt: " + str(zaehler) + "\n\n"
+    return output
+
+
+def ausgabe_teilnehmer(self):
+    mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
+    mission = ""
+    output = ''
+    for x in mitgespielt:
+        if mission != x[0]:
+            mission = x[0]
+            output += "\nMission: " + mission + '\n'
+            output += "-" * (len(mission) + 10) + '\n'
+        output += str(x[1]) + '\n'
+    return output
+
+
+def ausgabe_teilnehmer_mission(self, mission_param):
+    mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
+    mission = ""
+    output = ''
+    for x in mitgespielt:
+        if mission_param in (x[0]):
             if mission != x[0]:
                 mission = x[0]
-                output += "\nMission: " + mission + '\n'
-                output += "-" * (len(mission) + 10) + '\n'
+                output += "\nMission: " + str(mission) + " | " + x[2].strftime("%d.%m.%Y") + '\n'
+                output += "-" * (len(mission) + 23) + '\n'
             output += str(x[1]) + '\n'
-        return output
-
-    def ausgabe_teilnehmer_mission(self, mission_param):
-        mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
-        mission = ""
-        output = ''
-        for x in mitgespielt:
-            if mission_param in (x[0]):
-                if mission != x[0]:
-                    mission = x[0]
-                    output += "\nMission: " + str(mission) + " | " + x[2].strftime("%d.%m.%Y") + '\n'
-                    output += "-" * (len(mission) + 23) + '\n'
-                output += str(x[1]) + '\n'
-        return output
+    return output
 
 
 if __name__ == "__main__":
