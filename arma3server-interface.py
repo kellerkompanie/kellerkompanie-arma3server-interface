@@ -237,30 +237,30 @@ def ls(directory):
 
 @app.route("/stammspieler/<steam_id>")
 def stammspieler(steam_id):
-    response = "<h2>Eigene Aktivität</h2>"
+    response = "<h2>Eigene Aktivität</h2><pre>"
     response += database.ausgabe_mitgespielt(steam_id)
-    response += "<pre>$output</pre>"
+    response += "</pre>"
 
-    response += "<h2>Kann ich Stammspieler haben?</h2>"
+    response += "<h2>Kann ich Stammspieler haben?</h2><pre>"
     response += database.ausgabe_stammspieler(steam_id)
-    response += "<pre>$output</pre><hr>"
+    response += "</pre><hr>"
 
     return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/stammspieler")
 def stammspieler_all():
-    response = "<h2>Aktivität aller Spieler</h2>"
+    response = "<h2>Aktivität aller Spieler</h2><pre>"
     response += database.ausgabe_aktivitaet()
-    response += "<pre>$output</pre>"
+    response += "</pre>"
 
-    response += "<h2>Karten</h2>"
+    response += "<h2>Karten</h2><pre>"
     response += database.ausgabe_karten()
-    response += "<pre>$output</pre>"
+    response += "</pre>"
 
-    response += "<h2>Liste der Stammspieler</h2>"
+    response += "<h2>Liste der Stammspieler</h2><pre>"
     response += database.ausgabe_stammspieler_admin()
-    response += "<pre>$output</pre>"
+    response += "</pre>"
 
     return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
