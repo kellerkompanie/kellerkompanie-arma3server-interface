@@ -433,7 +433,7 @@ class Stammspieler:
         elif mapname == "dingor":
             return "Dingor"
         elif mapname == "iron_excelsior_tobruk":
-            return "Libyen (Ironfront)"
+            return "Libyen (IFA3)"
         elif mapname == "tem_kujari":
             return "Kujari"
         elif mapname == "tem_summa":
@@ -443,7 +443,7 @@ class Stammspieler:
         elif mapname == "porto":
             return "Porto"
         elif mapname == "swu_kokoda_map":
-            return "Kokoda Trail (Ironfront)"
+            return "Kokoda Trail (IFA3)"
         elif mapname == "enoch":
             return "Livonia"
         elif mapname == "malden":
@@ -459,9 +459,9 @@ class Stammspieler:
         elif mapname == "woodland_acr":
             return "Bystrica"
         elif mapname == "i44_merderet_v2":
-            return "Merderet (Ironfront)"
+            return "Merderet (IFA3)"
         elif mapname == "mcn_neaville":
-            return "Neaville (Ironfront)"
+            return "Neaville (IFA3)"
         else:
             return mapname
 
