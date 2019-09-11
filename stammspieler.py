@@ -430,6 +430,8 @@ class Stammspieler:
             return "Ruha"
         elif mapname == "dingor":
             return "Dingor"
+        elif mapname == "iron_excelsior_Tobruk":
+            return "Libyen 1944"
         else:
             return mapname
 
