@@ -221,32 +221,19 @@ class Stammspieler:
             else:
                 continue
 
-        if zaehler2 >= int(zaehler_mission2 / 3) and zaehler1 >= int(zaehler_mission1 / 3) and zaehler >= int(
-                zaehler_mission / 3):
-            print("Ja! Du bist Stammspieler. \nMelde dich bei einem Admin deines Vertrauens.")
-            print("\nDu hast mitgespielt:", zaehler2, "/", zaehler_mission2, " - ", zaehler1, "/", zaehler_mission1,
-                  " - ",
-                  zaehler, "/", zaehler_mission)
-        elif zaehler2 >= (zaehler_mission2 / 2) and zaehler1 >= (zaehler_mission1 / 2):
-            print("Ja! Du bist Stammspieler. \nMelde dich bei einem Admin deines Vertrauens.")
-            print("\nDu hast mitgespielt:", zaehler2, "/", zaehler_mission2, " - ", zaehler1, "/", zaehler_mission1,
-                  " - ",
-                  zaehler, "/", zaehler_mission)
-        elif zaehler2 >= (zaehler_mission2 / 2) and zaehler >= (zaehler_mission / 2):
-            print("Ja! Du bist Stammspieler. \nMelde dich bei einem Admin deines Vertrauens.")
-            print("\nDu hast mitgespielt:", zaehler2, "/", zaehler_mission2, " - ", zaehler1, "/", zaehler_mission1,
-                  " - ",
-                  zaehler, "/", zaehler_mission)
-        elif zaehler1 >= (zaehler_mission1 / 2) and zaehler >= (zaehler_mission / 2):
-            print("Ja! Du bist Stammspieler. \nMelde dich bei einem Admin deines Vertrauens.")
-            print("\nDu hast mitgespielt:", zaehler2, "/", zaehler_mission2, " - ", zaehler1, "/", zaehler_mission1,
-                  " - ",
-                  zaehler, "/", zaehler_mission)
+        condition1 = zaehler2 >= int(zaehler_mission2 / 3) and zaehler1 >= int(zaehler_mission1 / 3) and zaehler >= int(
+            zaehler_mission / 3)
+        condition2 = zaehler2 >= (zaehler_mission2 / 2) and zaehler1 >= (zaehler_mission1 / 2)
+        condition3 = zaehler2 >= (zaehler_mission2 / 2) and zaehler >= (zaehler_mission / 2)
+        condition4 = zaehler1 >= (zaehler_mission1 / 2) and zaehler >= (zaehler_mission / 2)
+
+        output = ''
+        if condition1 or condition2 or condition3 or condition4:
+            output += "Ja! Du bist Stammspieler. \nMelde dich bei einem Admin deines Vertrauens."
         else:
-            print("Nein, frag doch einfach später nochmal.")
-            print("\nDu hast mitgespielt:", zaehler2, "/", zaehler_mission2, " - ", zaehler1, "/", zaehler_mission1,
-                  " - ",
-                  zaehler, "/", zaehler_mission)
+            output += "Nein, frag doch einfach später nochmal.\n"
+        output += "\nDu hast mitgespielt: " + str(zaehler2) + " / " + str(zaehler_mission2) + " - " + str(zaehler1) + " / " + str(zaehler_mission1) + "  -  " + str(zaehler) + " / " + str(zaehler_mission) + '\n'
+        return output
 
     def ausgabe_stammspieler_admin(self):
         mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
@@ -316,18 +303,19 @@ class Stammspieler:
                     stammi.append(x[1])
                     stammi.append(x[3])
 
-        header = "Stammspieler: "
-        print(header)
-        print("-" * (len(header) + 14))
+        header = "Stammspieler:"
+        output = header + '\n'
+        output += "-" * (len(header) + 14)
 
         stammi = sorted(stammi)
         n = len(stammi) / 2
         del stammi[:int(n)]
 
         for x in stammi:
-            print(x)
+            output += x + '\n'
 
-        print("\nAnzahl Stammspieler:", len(stammi))
+        output += "\nAnzahl Stammspieler: " + str(len(stammi)) + '\n'
+        return output
 
     @staticmethod
     def get_karten(missionen):
@@ -373,19 +361,21 @@ class Stammspieler:
                 maxlen = mlen
 
         header = ("Datum:".ljust(13) + "Von:".ljust(11) + "Bis:".ljust(11) + "Mission:".ljust(maxlen + 2) + "Map:")
-        print(header)
-        print("-" * (len(header) + 14))
+        output = header + '\n'
+        output += "-" * (len(header) + 14) + '\n'
 
         for x in range(len(missionen)):
             mlen = len(missionen[x][3].rsplit(".", 3)[0])
             if missionen[x][0] > date_from1.date() and check == 0 or missionen[x][0] > date_from.date() and check == 1:
-                print("-" * (len(header) + 14))
+                output += "-" * (len(header) + 14) + '\n'
                 check += 1
-            print(missionen[x][0].strftime("%d.%m.%Y"), "|", missionen[x][1], "|", missionen[x][2], "|",
-                  missionen[x][3].rsplit(".", 3)[0], "|".rjust(maxlen + 1 - mlen),
-                  Stammspieler.replace_map_name(missionen[x][4]))
+            output += missionen[x][0].strftime("%d.%m.%Y") + " | "
+            output += missionen[x][1] + " | " + missionen[x][2] + " | "
+            output += missionen[x][3].rsplit(".", 3)[0] + " | ".rjust(maxlen + 1 - mlen)
+            output += Stammspieler.replace_map_name(missionen[x][4]) + '\n'
 
-        print("\nAnzahl Missionen: ", len(missionen), "\n")
+        output += "\nAnzahl Missionen: " + str(len(missionen)) + "\n\n"
+        return output
 
     @staticmethod
     def replace_map_name(mapname):
@@ -451,15 +441,16 @@ class Stammspieler:
                 maxlen = mlen
 
         header = ("Karte:".ljust(maxlen + 2) + "Gespielt: ")
-        print(header)
-        print("-" * (len(header) + 5))
+        output = header + '\n'
+        output += "-" * (len(header) + 5)
 
         for x in karten:
             mapname = Stammspieler.replace_map_name(x[0])
             mlen = len(mapname)
-            print(mapname, "|".rjust(maxlen + 1 - mlen), x[1])
+            output += mapname + " | ".rjust(maxlen + 1 - mlen) + x[1] + '\n'
 
-        print("\nAnzahl Karten:", len(karten))
+        output += "\nAnzahl Karten: " + str(len(karten)) + '\n'
+        return output
 
     def ausgabe_aktivitaet(self):
         spieler_anzahl = Stammspieler.aktivitaet(self.get_missionen(), self.get_spieler())
@@ -470,14 +461,15 @@ class Stammspieler:
                 maxlen = mlen
 
         header = ("Spieler:".ljust(maxlen + 2) + "Teilnahmen: ")
-        print(header)
-        print("-" * (len(header) + 5))
+        output = header + '\n'
+        output += "-" * (len(header) + 5) + '\n'
 
         for x in spieler_anzahl:
             mlen = len(x[0][1])
-            print(x[0][1], "|".rjust(maxlen + 1 - mlen), x[1])
+            output += x[0][1] + " | ".rjust(maxlen + 1 - mlen) + x[1] + '\n'
 
-        print("\nVerschiedene Teilnehmer: ", len(spieler_anzahl), "\n")
+        output += "\nVerschiedene Teilnehmer: " + str(len(spieler_anzahl)) + "\n"
+        return output
 
     def ausgabe_mitgespielt(self, steam_id):
         mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
@@ -488,63 +480,67 @@ class Stammspieler:
         zaehler = 0
         check = 0
         spieler = ""
+        output = ''
 
         for x in mitgespielt:
             if steam_id in (x[3]):
                 if spieler != x[3]:
                     spieler = x[3]
-                    print("\nDatum: ".ljust(13) + "Mission: ")
-                    print("-" * 40)
+                    output += "\nDatum: ".ljust(13) + "Mission: \n"
+                    output += "-" * 40 + '\n'
                 if x[2] > date_from1.date() and check == 0 or x[2] > date_from.date() and check == 1:
-                    print("-" * 40)
+                    output += "-" * 40 + '\n'
                     check += 1
-                print(x[2].strftime("%d.%m.%Y"), "|", x[0])
+                output += x[2].strftime("%d.%m.%Y") + " | " + x[0] + '\n'
                 zaehler += 1
-        print("\nAnzahl Mitgespielt: ", zaehler, "\n")
+        output += "\nAnzahl Mitgespielt: " + str(zaehler) + "\n\n"
+        return output
 
     def ausgabe_teilnehmer(self):
         mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
         mission = ""
+        output = ''
         if sys.argv[2].isdigit():
             for x in mitgespielt:
                 if mission != x[0]:
                     mission = x[0]
-                    print("\nMission: ", mission)
-                    print("-" * (len(mission) + 10))
-                print(x[1])
+                    output += "\nMission: " + mission + '\n'
+                    output += "-" * (len(mission) + 10) + '\n'
+                output += x[1] + '\n'
         else:
             mission_input = sys.argv[2]
             for x in mitgespielt:
                 if mission_input in (x[0]):
                     if mission != x[0]:
                         mission = x[0]
-                        print("\nMission: ", mission, "|", x[2].strftime("%d.%m.%Y"))
-                        print("-" * (len(mission) + 23))
-                    print(x[1])
+                        output += "\nMission: " + mission + " | " + x[2].strftime("%d.%m.%Y") + '\n'
+                        output += "-" * (len(mission) + 23) + '\n'
+                    output += x[1] + '\n'
+        return output
 
 
 if __name__ == "__main__":
     stammspieler = Stammspieler()
 
     if sys.argv[1] == "missionen":
-        stammspieler.ausgabe_mission()
+        print(stammspieler.ausgabe_mission())
 
     elif sys.argv[1] == "aktivitaet":
-        stammspieler.ausgabe_aktivitaet()
+        print(stammspieler.ausgabe_aktivitaet())
 
     elif sys.argv[1] == "stammspieler":
-        stammspieler.ausgabe_stammspieler(steam_id=sys.argv[2])
+        print(stammspieler.ausgabe_stammspieler(steam_id=sys.argv[2]))
 
     elif sys.argv[1] == "stammspielerAdmin":
-        stammspieler.ausgabe_stammspieler_admin()
+        print(stammspieler.ausgabe_stammspieler_admin())
 
     elif sys.argv[1] == "karten":
-        stammspieler.ausgabe_karten()
+        print(stammspieler.ausgabe_karten())
 
     elif sys.argv[1] == "teilnehmer":
-        stammspieler.ausgabe_teilnehmer()
+        print(stammspieler.ausgabe_teilnehmer())
 
     elif sys.argv[1] == "spieler":
-        stammspieler.ausgabe_mitgespielt(steam_id=sys.argv[2])
+        print(stammspieler.ausgabe_mitgespielt(steam_id=sys.argv[2]))
 
     stammspieler.close()
