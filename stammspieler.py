@@ -239,6 +239,8 @@ class Stammspieler:
     def ausgabe_stammspieler_admin(self):
         mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
 
+        print("ausgabe_stammspieler_admin: mitgespielt:", mitgespielt)
+
         stammi = []
         date = datetime.datetime.now()
         date_from2 = date - timedelta(days=90)
@@ -253,6 +255,7 @@ class Stammspieler:
         zaehler_mission2 = 0
 
         for x in mitgespielt:
+            print("ausgabe_stammspieler_admin: x:", x)
             if date_from2.date() < x[2] <= date_from1.date():
                 if mission != x[0]:
                     mission = x[0]
@@ -266,7 +269,7 @@ class Stammspieler:
                     mission = x[0]
                     zaehler_mission += 1
 
-        mitgespielt = sorted(mitgespielt, key=lambda x: x[3])
+        mitgespielt = sorted(mitgespielt, key=lambda k: k[3])
 
         for x in mitgespielt:
             zaehler = 0
