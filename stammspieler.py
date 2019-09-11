@@ -265,7 +265,7 @@ class Stammspieler:
         for mission_name, player_name, mission_date, steam_id in participation:
             player_names[steam_id] = player_name
             if steam_id not in player_participations:
-                player_participations[steam_id] = (0, 0, 0)
+                player_participations[steam_id] = [0, 0, 0]
 
             if date_30days_ago < mission_date <= date_today:
                 player_participations[steam_id][0] += 1
