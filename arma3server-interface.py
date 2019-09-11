@@ -262,10 +262,6 @@ def stammspieler_all():
     response += database.ausgabe_stammspieler_admin()
     response += "<pre>$output</pre>"
 
-    response += "<h2>Teilnehmer</h2>"
-    response += database.ausgabe_teilnehmer_steam_id()
-    response += "<pre>$output</pre>"
-
     return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
