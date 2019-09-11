@@ -446,6 +446,20 @@ class Stammspieler:
             return "Kokoda Trail"
         elif mapname == "enoch":
             return "Livonia"
+        elif mapname == "malden":
+            return "Malden"
+        elif mapname == "altis":
+            return "Altis"
+        elif mapname == "tanoa":
+            return "Tanoa"
+        elif mapname == "thirsk":
+            return "Thirsk"
+        elif mapname == "tembelan":
+            return "Tembelan"
+        elif mapname == "woodland_acr":
+            return "Bystrica"
+        elif mapname == "i44_merderet_v2":
+            return "Merderet 1944"
         else:
             return mapname
 
