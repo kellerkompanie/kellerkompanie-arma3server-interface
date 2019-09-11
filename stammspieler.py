@@ -447,7 +447,7 @@ class Stammspieler:
         for x in karten:
             mapname = Stammspieler.replace_map_name(x[0])
             mlen = len(mapname)
-            output += mapname + " | ".rjust(maxlen + 1 - mlen) + x[1] + '\n'
+            output += mapname + " | ".rjust(maxlen + 1 - mlen) + str(x[1]) + '\n'
 
         output += "\nAnzahl Karten: " + str(len(karten)) + '\n'
         return output
@@ -466,7 +466,7 @@ class Stammspieler:
 
         for x in spieler_anzahl:
             mlen = len(x[0][1])
-            output += x[0][1] + " | ".rjust(maxlen + 1 - mlen) + x[1] + '\n'
+            output += str(x[0][1]) + " | ".rjust(maxlen + 1 - mlen) + str(x[1]) + '\n'
 
         output += "\nVerschiedene Teilnehmer: " + str(len(spieler_anzahl)) + "\n"
         return output
