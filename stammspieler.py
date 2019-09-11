@@ -497,7 +497,7 @@ class Stammspieler:
         output += "\nAnzahl Mitgespielt: " + str(zaehler) + "\n\n"
         return output
 
-    def ausgabe_teilnehmer_steam_id(self, steam_id):
+    def ausgabe_teilnehmer(self):
         mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
         mission = ""
         output = ''
@@ -542,7 +542,7 @@ if __name__ == "__main__":
         print(stammspieler.ausgabe_karten())
 
     elif sys.argv[1] == "teilnehmer":
-        print(stammspieler.ausgabe_teilnehmer_steam_id())
+        print(stammspieler.ausgabe_teilnehmer())
 
     elif sys.argv[1] == "spieler":
         print(stammspieler.ausgabe_mitgespielt(steam_id=sys.argv[2]))
