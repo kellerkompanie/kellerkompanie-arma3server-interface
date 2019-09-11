@@ -237,21 +237,28 @@ class Stammspieler:
         return output
 
     def ausgabe_stammspieler_admin(self):
+        # Get raw SQL data as list of tuples (mission_name, player_name, mission_date, steam_id).
         participation = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
 
+        # Calculate the dates to determine the 3 intervals: last 30 days, 30-60 days ago and 60-90 days ago.
         date_today = datetime.datetime.now().date()
         date_90days_ago = (date_today - timedelta(days=90))
         date_60days_ago = (date_today - timedelta(days=60))
         date_30days_ago = (date_today - timedelta(days=30))
 
+        # Counters for how many mission have been played in total during that interval.
         total_missions_0to30days_ago = 0
         total_missions_30to60days_ago = 0
         total_missions_60to90days_ago = 0
 
+        # Since the raw SQL data contains each mission a number of times (for every player that participated) we need
+        # to limit the amount, so that each mission at a specific date only appears once in our set.
         unique_missions = set()
         for mission_name, player_name, mission_date, steam_id in participation:
             unique_missions.add((mission_name, mission_date))
 
+        # For each of the mission determine in which of the intervals it took place and increase the mission counter
+        # for that interval.
         for mission_name, mission_date in unique_missions:
             if date_90days_ago < mission_date <= date_60days_ago:
                 total_missions_60to90days_ago += 1
@@ -260,6 +267,9 @@ class Stammspieler:
             elif date_30days_ago < mission_date <= date_today:
                 total_missions_0to30days_ago += 1
 
+        # Similar to the missions we iterate over the raw SQL data from the viewpoint of the players, counting how many
+        # times they participated in each of the intervals. For human readable output we also memorize the names of the
+        # corresponding SteamIDs, since they are unique, but player's names may repeat.
         player_participations = dict()
         player_names = dict()
         for mission_name, player_name, mission_date, steam_id in participation:
@@ -274,6 +284,8 @@ class Stammspieler:
             elif date_90days_ago < mission_date <= date_60days_ago:
                 player_participations[steam_id][2] += 1
 
+        # Regular players are players that participated a certain percentage of the maximum possible missions in each
+        # interval. We iterate over the participations and check if the players fulfill these constraints.
         regular_players = dict()
         for steam_id in player_participations:
             if player_participations[steam_id][2] >= int(
@@ -296,9 +308,9 @@ class Stammspieler:
 
         header = "Stammspieler:"
         output = header + '\n'
-        output += "-" * (len(header) + 14)
+        output += "-" * (len(header) + 14) + '\n'
         output += '\n'.join(sorted(regular_players.values()))
-        output += "\nAnzahl Stammspieler: " + str(len(regular_players)) + '\n'
+        output += "\n\nAnzahl Stammspieler: " + str(len(regular_players)) + '\n'
         return output
 
     @staticmethod
