@@ -241,9 +241,9 @@ class Stammspieler:
 
         regular_players = dict()
         date_today = datetime.datetime.now().date()
-        date_90days_ago = (date_today - timedelta(days=90)).date()
-        date_60days_ago = (date_today - timedelta(days=60)).date()
-        date_30days_ago = (date_today - timedelta(days=30)).date()
+        date_90days_ago = (date_today - timedelta(days=90))
+        date_60days_ago = (date_today - timedelta(days=60))
+        date_30days_ago = (date_today - timedelta(days=30))
 
         spieler_input = ""
 
