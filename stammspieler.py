@@ -240,7 +240,7 @@ class Stammspieler:
         participation = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
 
         regular_players = dict()
-        date_today = datetime.datetime.now()
+        date_today = datetime.datetime.now().date()
         date_90days_ago = (date_today - timedelta(days=90)).date()
         date_60days_ago = (date_today - timedelta(days=60)).date()
         date_30days_ago = (date_today - timedelta(days=30)).date()
