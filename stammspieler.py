@@ -393,99 +393,94 @@ class Stammspieler:
         else:
             return mapname
 
+    def ausgabe_karten(self):
+        karten = Stammspieler.get_karten(self.get_missionen())
+        maxlen = 0
+        for x in karten:
+            mlen = len(x[0])
+            if mlen > maxlen:
+                maxlen = mlen
 
-def ausgabe_karten(self):
-    karten = Stammspieler.get_karten(self.get_missionen())
-    maxlen = 0
-    for x in karten:
-        mlen = len(x[0])
-        if mlen > maxlen:
-            maxlen = mlen
+        header = ("Karte:".ljust(maxlen + 2) + "Gespielt:")
+        output = header + '\n'
+        output += "-" * (len(header) + 5) + '\n'
 
-    header = ("Karte:".ljust(maxlen + 2) + "Gespielt:")
-    output = header + '\n'
-    output += "-" * (len(header) + 5) + '\n'
+        for x in karten:
+            mapname = Stammspieler.replace_map_name(x[0])
+            mlen = len(mapname)
+            output += mapname + " | ".rjust(maxlen + 1 - mlen) + str(x[1]) + '\n'
 
-    for x in karten:
-        mapname = Stammspieler.replace_map_name(x[0])
-        mlen = len(mapname)
-        output += mapname + " | ".rjust(maxlen + 1 - mlen) + str(x[1]) + '\n'
+        output += "\nAnzahl Karten: " + str(len(karten)) + '\n'
+        return output
 
-    output += "\nAnzahl Karten: " + str(len(karten)) + '\n'
-    return output
+    def ausgabe_aktivitaet(self):
+        spieler_anzahl = Stammspieler.aktivitaet(self.get_missionen(), self.get_spieler())
+        maxlen = 0
+        for x in spieler_anzahl:
+            mlen = len(x[0][1])
+            if mlen > maxlen:
+                maxlen = mlen
 
+        header = ("Spieler:".ljust(maxlen + 2) + "Teilnahmen: ")
+        output = header + '\n'
+        output += "-" * (len(header) + 5) + '\n'
 
-def ausgabe_aktivitaet(self):
-    spieler_anzahl = Stammspieler.aktivitaet(self.get_missionen(), self.get_spieler())
-    maxlen = 0
-    for x in spieler_anzahl:
-        mlen = len(x[0][1])
-        if mlen > maxlen:
-            maxlen = mlen
+        for x in spieler_anzahl:
+            mlen = len(x[0][1])
+            output += str(x[0][1]) + " | ".rjust(maxlen + 1 - mlen) + str(x[1]) + '\n'
 
-    header = ("Spieler:".ljust(maxlen + 2) + "Teilnahmen: ")
-    output = header + '\n'
-    output += "-" * (len(header) + 5) + '\n'
+        output += "\nVerschiedene Teilnehmer: " + str(len(spieler_anzahl)) + "\n"
+        return output
 
-    for x in spieler_anzahl:
-        mlen = len(x[0][1])
-        output += str(x[0][1]) + " | ".rjust(maxlen + 1 - mlen) + str(x[1]) + '\n'
+    def ausgabe_mitgespielt(self, steam_id):
+        mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
+        date = datetime.datetime.now()
+        date_from1 = date - timedelta(days=60)
+        date_from = date - timedelta(days=30)
 
-    output += "\nVerschiedene Teilnehmer: " + str(len(spieler_anzahl)) + "\n"
-    return output
+        zaehler = 0
+        check = 0
+        spieler = ""
+        output = ''
 
+        for x in mitgespielt:
+            if steam_id in (x[3]):
+                if spieler != x[3]:
+                    spieler = x[3]
+                    output += "\nDatum: ".ljust(13) + "Mission: \n"
+                    output += "-" * 40 + '\n'
+                if x[2] > date_from1.date() and check == 0 or x[2] > date_from.date() and check == 1:
+                    output += "-" * 40 + '\n'
+                    check += 1
+                output += x[2].strftime("%d.%m.%Y") + " | " + x[0] + '\n'
+                zaehler += 1
+        output += "\nAnzahl Mitgespielt: " + str(zaehler) + "\n\n"
+        return output
 
-def ausgabe_mitgespielt(self, steam_id):
-    mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
-    date = datetime.datetime.now()
-    date_from1 = date - timedelta(days=60)
-    date_from = date - timedelta(days=30)
-
-    zaehler = 0
-    check = 0
-    spieler = ""
-    output = ''
-
-    for x in mitgespielt:
-        if steam_id in (x[3]):
-            if spieler != x[3]:
-                spieler = x[3]
-                output += "\nDatum: ".ljust(13) + "Mission: \n"
-                output += "-" * 40 + '\n'
-            if x[2] > date_from1.date() and check == 0 or x[2] > date_from.date() and check == 1:
-                output += "-" * 40 + '\n'
-                check += 1
-            output += x[2].strftime("%d.%m.%Y") + " | " + x[0] + '\n'
-            zaehler += 1
-    output += "\nAnzahl Mitgespielt: " + str(zaehler) + "\n\n"
-    return output
-
-
-def ausgabe_teilnehmer(self):
-    mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
-    mission = ""
-    output = ''
-    for x in mitgespielt:
-        if mission != x[0]:
-            mission = x[0]
-            output += "\nMission: " + mission + '\n'
-            output += "-" * (len(mission) + 10) + '\n'
-        output += str(x[1]) + '\n'
-    return output
-
-
-def ausgabe_teilnehmer_mission(self, mission_param):
-    mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
-    mission = ""
-    output = ''
-    for x in mitgespielt:
-        if mission_param in (x[0]):
+    def ausgabe_teilnehmer(self):
+        mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
+        mission = ""
+        output = ''
+        for x in mitgespielt:
             if mission != x[0]:
                 mission = x[0]
-                output += "\nMission: " + str(mission) + " | " + x[2].strftime("%d.%m.%Y") + '\n'
-                output += "-" * (len(mission) + 23) + '\n'
+                output += "\nMission: " + mission + '\n'
+                output += "-" * (len(mission) + 10) + '\n'
             output += str(x[1]) + '\n'
-    return output
+        return output
+
+    def ausgabe_teilnehmer_mission(self, mission_param):
+        mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
+        mission = ""
+        output = ''
+        for x in mitgespielt:
+            if mission_param in (x[0]):
+                if mission != x[0]:
+                    mission = x[0]
+                    output += "\nMission: " + str(mission) + " | " + x[2].strftime("%d.%m.%Y") + '\n'
+                    output += "-" * (len(mission) + 23) + '\n'
+                output += str(x[1]) + '\n'
+        return output
 
 
 if __name__ == "__main__":
