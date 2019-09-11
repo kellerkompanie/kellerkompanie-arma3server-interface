@@ -250,16 +250,16 @@ def stammspieler(steam_id):
 
 @app.route("/stammspieler")
 def stammspieler_all():
-    response = "<h2>Aktivität aller Spieler</h2><pre>"
+    response = "<h2>Liste der Stammspieler</h2><pre>"
+    response += database.ausgabe_stammspieler_admin()
+    response += "</pre>"
+
+    response += "<h2>Aktivität aller Spieler</h2><pre>"
     response += database.ausgabe_aktivitaet()
     response += "</pre>"
 
     response += "<h2>Karten</h2><pre>"
     response += database.ausgabe_karten()
-    response += "</pre>"
-
-    response += "<h2>Liste der Stammspieler</h2><pre>"
-    response += database.ausgabe_stammspieler_admin()
     response += "</pre>"
 
     return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
