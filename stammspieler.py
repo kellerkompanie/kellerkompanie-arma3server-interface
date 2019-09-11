@@ -443,9 +443,9 @@ class Stammspieler:
             if mlen > maxlen:
                 maxlen = mlen
 
-        header = ("Karte:".ljust(maxlen + 2) + "Gespielt: ")
+        header = ("Karte:".ljust(maxlen + 2) + "Gespielt:")
         output = header + '\n'
-        output += "-" * (len(header) + 5)
+        output += "-" * (len(header) + 5) + '\n'
 
         for x in karten:
             mapname = Stammspieler.replace_map_name(x[0])
