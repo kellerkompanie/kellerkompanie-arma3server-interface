@@ -166,7 +166,7 @@ class Stammspieler:
                 continue
 
         spieler_anzahl = Counter(teilnehmer)
-        spieler_anzahl = sorted(spieler_anzahl.items(), key=lambda x: (-x[1], x[0]))
+        spieler_anzahl = sorted(spieler_anzahl.items(), key=lambda k: (-k[1], k[0]))
 
         for x in range(len(spieler_anzahl)):
             spieler_anzahl[x] = list(spieler_anzahl[x])
@@ -179,7 +179,7 @@ class Stammspieler:
                 else:
                     continue
 
-        spieler_anzahl = sorted(spieler_anzahl, key=lambda x: (-x[1], x[0][1]))
+        spieler_anzahl = sorted(spieler_anzahl, key=lambda k: (-k[1], k[0][1]))
 
         return spieler_anzahl
 
@@ -290,8 +290,8 @@ class Stammspieler:
         for steam_id in player_participations:
             if player_participations[steam_id][2] >= int(
                     total_missions_60to90days_ago / 3) and player_participations[steam_id][1] >= int(
-                total_missions_30to60days_ago / 3) and player_participations[steam_id][0] >= int(
-                total_missions_0to30days_ago / 3):
+                    total_missions_30to60days_ago / 3) and player_participations[steam_id][0] >= int(
+                    total_missions_0to30days_ago / 3):
                 regular_players[steam_id] = player_names[steam_id]
             elif player_participations[steam_id][2] >= (
                     total_missions_60to90days_ago / 2) and player_participations[steam_id][1] >= (
@@ -321,7 +321,7 @@ class Stammspieler:
             karten_liste.append(x[4])
 
         karte_anzahl = Counter(karten_liste)
-        karte_anzahl = sorted(karte_anzahl.items(), key=lambda x: (-x[1], x[0]))
+        karte_anzahl = sorted(karte_anzahl.items(), key=lambda k: (-k[1], k[0]))
         return karte_anzahl
 
     @staticmethod
