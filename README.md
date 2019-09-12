@@ -145,10 +145,28 @@ After=network.target
 User=arma3server-interface
 ExecStart=/home/arma3server-interface/start_interface.sh
 WorkingDirectory=/home/arma3server-interface
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=arma3server-interface
 Restart=always
 
 [Install]
 WantedBy=multi-user.target
+```
+To assure that the logfiles are created we will add our service to rsyslog:
+```
+nano /etc/rsyslog.d/arma3server-interface.conf
+```
+With the following content:
+```
+if $programname == 'arma3server-interface' then /var/log/arma3server-interface.log
+& stop
+```
+Now we create the logfile and make it readable for syslog:
+```
+touch /var/log/arma3server-interface.log
+chown syslog:adm /var/log/arma3server-interface.log
+sudo systemctl restart rsyslog
 ```
 Finally we enable the service and register it to run on boot:
 ```
