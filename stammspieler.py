@@ -22,7 +22,6 @@ class Stammspieler:
                                            database=self._settings['db_name'],
                                            user=self._settings['db_username'],
                                            password=self._settings['db_password'])
-        self._cursor = self._connection.cursor()
 
     def close(self):
         self._connection.close()
@@ -54,6 +53,8 @@ class Stammspieler:
         else:
             arg = "alles"
 
+        cursor = self._connection.cursor()
+
         if arg == "von":
             date_from = sys.argv[2]
             query = "SELECT CAST(StartTime as date) AS Datum, " \
@@ -65,8 +66,9 @@ class Stammspieler:
                     "WHERE EventType = 'END') as sub USING (MissionName) WHERE EventType = 'START' AND Time > " \
                     + date_from + " GROUP BY StartID) as zw WHERE EndID - StartID = 1 AND " \
                                   "CAST(StartTime as time) > 183000;"
-            self._cursor.execute(query)
-            row = self._cursor.fetchall()
+            cursor.execute(query)
+            row = cursor.fetchall()
+            cursor.close()
             return row
 
         elif arg == "vonBis":
@@ -81,8 +83,9 @@ class Stammspieler:
                     "WHERE EventType = 'END') as sub USING (MissionName) WHERE EventType = 'START' AND Time BETWEEN " \
                     + date_from + " AND " + date_to + " GROUP BY StartID) as zw WHERE EndID - StartID = 1 AND " \
                                                       "CAST(StartTime as time) > 183000;"
-            self._cursor.execute(query)
-            row = self._cursor.fetchall()
+            cursor.execute(query)
+            row = cursor.fetchall()
+            cursor.close()
             return row
 
         elif arg == "alles":
@@ -98,8 +101,9 @@ class Stammspieler:
                     "FROM mission WHERE EventType = 'END') as sub USING (MissionName) WHERE EventType = 'START' AND " \
                     "Time BETWEEN " + date_from + " AND " + date_to \
                     + " GROUP BY StartID) as zw WHERE EndID - StartID = 1 AND CAST(StartTime as time) > 183000;"
-            self._cursor.execute(query)
-            row = self._cursor.fetchall()
+            cursor.execute(query)
+            row = cursor.fetchall()
+            cursor.close()
             return row
 
     def get_spieler(self):
@@ -116,14 +120,17 @@ class Stammspieler:
         else:
             arg = "alles"
 
+        cursor = self._connection.cursor()
+
         if arg == "von":
             date_from = sys.argv[2]
             query = "SELECT PlayerName, PlayerUID, CAST(Time as date) as Datum FROM session " \
                     "WHERE EventType = 'CONNECTED' AND Time > " + date_from \
                     + " AND CAST(Time as time) BETWEEN 190000 AND 203000 AND PlayerName " \
                       "NOT LIKE 'headlessclient%' GROUP BY PlayerName, CAST(Time as date) ORDER BY PlayerUID;"
-            self._cursor.execute(query)
-            row = self._cursor.fetchall()
+            cursor.execute(query)
+            row = cursor.fetchall()
+            cursor.close()
             return row
 
         elif arg == "vonBis":
@@ -134,8 +141,9 @@ class Stammspieler:
                     + " AND " + date_to \
                     + " AND CAST(Time as time) BETWEEN 190000 AND 203000 AND PlayerName " \
                       "NOT LIKE 'headlessclient%' GROUP BY PlayerName, CAST(Time as date) ORDER BY PlayerUID;"
-            self._cursor.execute(query)
-            row = self._cursor.fetchall()
+            cursor.execute(query)
+            row = cursor.fetchall()
+            cursor.close()
             return row
 
         elif arg == "alles":
@@ -147,8 +155,9 @@ class Stammspieler:
                     "WHERE EventType = 'CONNECTED' AND Time BETWEEN " + date_from + " AND " + date_to \
                     + " AND CAST(Time as time) BETWEEN 190000 AND 203000 AND PlayerName " \
                       "NOT LIKE 'headlessclient%' GROUP BY PlayerName, CAST(Time as date) ORDER BY PlayerUID;"
-            self._cursor.execute(query)
-            row = self._cursor.fetchall()
+            cursor.execute(query)
+            row = cursor.fetchall()
+            cursor.close()
             return row
 
     @staticmethod
