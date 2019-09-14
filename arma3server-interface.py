@@ -6,7 +6,7 @@ import os.path
 import re
 import subprocess
 
-from flask import Flask, request
+from flask import Flask, request, abort
 from werkzeug.utils import secure_filename
 
 from stammspieler import Stammspieler
@@ -56,7 +56,7 @@ def is_whitelisted(ip):
 @app.route("/")
 def hello():
     if not is_whitelisted(request.remote_addr):
-        return 403
+        abort(403)
 
     return "Hello World!"
 
@@ -64,7 +64,7 @@ def hello():
 @app.route("/running")
 def running():
     if not is_whitelisted(request.remote_addr):
-        return 403
+        abort(403)
 
     if arma3server_running():
         return "server is running", 200, {'Content-Type': 'text/plain; charset=utf-8'}
@@ -75,7 +75,7 @@ def running():
 @app.route("/start")
 def start():
     if not is_whitelisted(request.remote_addr):
-        return 403
+        abort(403)
 
     if arma3server_running():
         return "server is already running", 200, {'Content-Type': 'text/plain; charset=utf-8'}
@@ -87,7 +87,7 @@ def start():
 @app.route("/select_mods/<query_string>")
 def select_mods(query_string):
     if not is_whitelisted(request.remote_addr):
-        return 403
+        abort(403)
 
     query_params = query_string.split('&')
     query_dict = {'action': None, 'modpack': None, 'maps': [], 'event_mods': []}
@@ -137,7 +137,7 @@ def select_mods(query_string):
 @app.route("/stop")
 def stop():
     if not is_whitelisted(request.remote_addr):
-        return 403
+        abort(403)
 
     if arma3server_running():
         stdout, stderr = run_shell_command(STOP_SCRIPT)
@@ -149,7 +149,7 @@ def stop():
 @app.route("/update")
 def update():
     if not is_whitelisted(request.remote_addr):
-        return 403
+        abort(403)
 
     if arma3server_running():
         return "you have to stop the server first", 200, {'Content-Type': 'text/plain; charset=utf-8'}
@@ -161,7 +161,7 @@ def update():
 @app.route("/run_arma3sync")
 def run_arma3sync():
     if not is_whitelisted(request.remote_addr):
-        return 403
+        abort(403)
 
     stdout, stderr = run_shell_command(RUN_ARMA3SYNC)
     return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
@@ -170,7 +170,7 @@ def run_arma3sync():
 @app.route("/info")
 def info():
     if not is_whitelisted(request.remote_addr):
-        return 403
+        abort(403)
 
     if arma3server_running():
         stdout, stderr = run_shell_command(INFO_SCRIPT)
@@ -182,7 +182,7 @@ def info():
 @app.route("/missions")
 def missions():
     if not is_whitelisted(request.remote_addr):
-        return 403
+        abort(403)
 
     missions_list = glob.glob(MISSIONS_DIR + "/*.pbo")
     missions_list.sort(key=str.lower)
@@ -193,7 +193,7 @@ def missions():
 @app.route("/missions/delete/<mission>")
 def missions_delete(mission):
     if not is_whitelisted(request.remote_addr):
-        return 403
+        abort(403)
 
     script = DELETE_MISSION_SCRIPT + ' ' + mission + ' 2>&1'
     stdout, stderr = run_shell_command(script)
@@ -206,7 +206,7 @@ def missions_delete(mission):
 @app.route("/missions/upload", methods=['POST'])
 def missions_upload():
     if not is_whitelisted(request.remote_addr):
-        return 403
+        abort(403)
 
     uploader = request.form.get('uploader').lower()
     file = request.files.get('mission_file')
@@ -238,7 +238,7 @@ def missions_upload():
 @app.route("/logs/<name>")
 def logs(name):
     if not is_whitelisted(request.remote_addr):
-        return 403
+        abort(403)
 
     if name == "arma3server":
         script = LOGSHOW_SCRIPT_SERVER
@@ -259,7 +259,7 @@ def logs(name):
 @app.route("/ls/<directory>")
 def ls(directory):
     if not is_whitelisted(request.remote_addr):
-        return 403
+        abort(403)
 
     if directory == "mods.maps":
         filepath = "/home/arma3server/serverfiles/mods.maps/"
@@ -278,7 +278,7 @@ def ls(directory):
 @app.route("/stammspieler/<steam_id>")
 def stammspieler(steam_id):
     if not is_whitelisted(request.remote_addr):
-        return 403
+        abort(403)
 
     response = "<h2>Eigene Aktivität</h2><pre>"
     response += database.ausgabe_mitgespielt(steam_id)
@@ -294,7 +294,7 @@ def stammspieler(steam_id):
 @app.route("/stammspieler")
 def stammspieler_all():
     if not is_whitelisted(request.remote_addr):
-        return 403
+        abort(403)
 
     response = "<h2>Liste der Stammspieler</h2><pre>"
     response += database.ausgabe_stammspieler_admin()
