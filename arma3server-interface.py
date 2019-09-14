@@ -49,13 +49,23 @@ def arma3server_running():
         return True
 
 
+def is_whitelisted(ip):
+    return ip in settings['ip_whitelist']
+
+
 @app.route("/")
 def hello():
+    if not is_whitelisted(request.remote_addr):
+        return 403
+
     return "Hello World!"
 
 
 @app.route("/running")
 def running():
+    if not is_whitelisted(request.remote_addr):
+        return 403
+
     if arma3server_running():
         return "server is running", 200, {'Content-Type': 'text/plain; charset=utf-8'}
     else:
@@ -64,6 +74,9 @@ def running():
 
 @app.route("/start")
 def start():
+    if not is_whitelisted(request.remote_addr):
+        return 403
+
     if arma3server_running():
         return "server is already running", 200, {'Content-Type': 'text/plain; charset=utf-8'}
     else:
@@ -73,6 +86,9 @@ def start():
 
 @app.route("/select_mods/<query_string>")
 def select_mods(query_string):
+    if not is_whitelisted(request.remote_addr):
+        return 403
+
     query_params = query_string.split('&')
     query_dict = {'action': None, 'modpack': None, 'maps': [], 'event_mods': []}
     for query_param in query_params:
@@ -120,6 +136,9 @@ def select_mods(query_string):
 
 @app.route("/stop")
 def stop():
+    if not is_whitelisted(request.remote_addr):
+        return 403
+
     if arma3server_running():
         stdout, stderr = run_shell_command(STOP_SCRIPT)
         return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
@@ -129,6 +148,9 @@ def stop():
 
 @app.route("/update")
 def update():
+    if not is_whitelisted(request.remote_addr):
+        return 403
+
     if arma3server_running():
         return "you have to stop the server first", 200, {'Content-Type': 'text/plain; charset=utf-8'}
     else:
@@ -138,12 +160,18 @@ def update():
 
 @app.route("/run_arma3sync")
 def run_arma3sync():
+    if not is_whitelisted(request.remote_addr):
+        return 403
+
     stdout, stderr = run_shell_command(RUN_ARMA3SYNC)
     return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/info")
 def info():
+    if not is_whitelisted(request.remote_addr):
+        return 403
+
     if arma3server_running():
         stdout, stderr = run_shell_command(INFO_SCRIPT)
         return "Aktuell laufende Mods:\n\n" + stdout.decode("utf-8"), 200, {'Content-Type': 'text/plain; charset=utf-8'}
@@ -153,6 +181,9 @@ def info():
 
 @app.route("/missions")
 def missions():
+    if not is_whitelisted(request.remote_addr):
+        return 403
+
     missions_list = glob.glob(MISSIONS_DIR + "/*.pbo")
     missions_list.sort(key=str.lower)
     missions_list = [os.path.basename(f) for f in missions_list]
@@ -161,6 +192,9 @@ def missions():
 
 @app.route("/missions/delete/<mission>")
 def missions_delete(mission):
+    if not is_whitelisted(request.remote_addr):
+        return 403
+
     script = DELETE_MISSION_SCRIPT + ' ' + mission + ' 2>&1'
     stdout, stderr = run_shell_command(script)
     if not stdout:
@@ -171,6 +205,9 @@ def missions_delete(mission):
 
 @app.route("/missions/upload", methods=['POST'])
 def missions_upload():
+    if not is_whitelisted(request.remote_addr):
+        return 403
+
     uploader = request.form.get('uploader').lower()
     file = request.files.get('mission_file')
 
@@ -200,6 +237,9 @@ def missions_upload():
 
 @app.route("/logs/<name>")
 def logs(name):
+    if not is_whitelisted(request.remote_addr):
+        return 403
+
     if name == "arma3server":
         script = LOGSHOW_SCRIPT_SERVER
     elif name == "hc1":
@@ -212,15 +252,15 @@ def logs(name):
         return "Fehler! log file von unbekannter Quelle angefragt: " + name, 200, {
             'Content-Type': 'text/plain; charset=utf-8'}
 
-    out = subprocess.Popen(script.split(" "),
-                           stdout=subprocess.PIPE,
-                           stderr=subprocess.STDOUT)
-    stdout, stderr = out.communicate()
+    stdout, stderr = run_shell_command(script.split(" "))
     return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/ls/<directory>")
 def ls(directory):
+    if not is_whitelisted(request.remote_addr):
+        return 403
+
     if directory == "mods.maps":
         filepath = "/home/arma3server/serverfiles/mods.maps/"
     elif directory == "mods.event":
@@ -237,6 +277,9 @@ def ls(directory):
 
 @app.route("/stammspieler/<steam_id>")
 def stammspieler(steam_id):
+    if not is_whitelisted(request.remote_addr):
+        return 403
+
     response = "<h2>Eigene Aktivität</h2><pre>"
     response += database.ausgabe_mitgespielt(steam_id)
     response += "</pre>"
@@ -250,6 +293,9 @@ def stammspieler(steam_id):
 
 @app.route("/stammspieler")
 def stammspieler_all():
+    if not is_whitelisted(request.remote_addr):
+        return 403
+
     response = "<h2>Liste der Stammspieler</h2><pre>"
     response += database.ausgabe_stammspieler_admin()
     response += "</pre>"
@@ -275,7 +321,8 @@ def load_config():
         settings = {'host': '0.0.0.0',
                     'port': 5000,
                     'ssl_context_fullchain': '/etc/letsencrypt/live/server.kellerkompanie.com/fullchain.pem',
-                    'ssl_context_privkey': '/etc/letsencrypt/live/server.kellerkompanie.com/privkey.pem'}
+                    'ssl_context_privkey': '/etc/letsencrypt/live/server.kellerkompanie.com/privkey.pem',
+                    'ip_whitelist': ['0.0.0.0']}
 
         with open(CONFIG_FILEPATH, 'w') as outfile:
             json.dump(settings, outfile, sort_keys=True, indent=4)
