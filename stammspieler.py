@@ -18,13 +18,12 @@ CONFIG_FILEPATH = 'stammspieler_config.json'
 class Stammspieler:
     def __init__(self):
         self._load_config()
-        self._connection = pymysql.connect(host=self._settings['db_host'],
-                                           database=self._settings['db_name'],
-                                           user=self._settings['db_username'],
-                                           password=self._settings['db_password'])
 
-    def close(self):
-        self._connection.close()
+    def create_connection(self):
+        return pymysql.connect(host=self._settings['db_host'],
+                               database=self._settings['db_name'],
+                               user=self._settings['db_username'],
+                               password=self._settings['db_password'])
 
     def _load_config(self):
         if os.path.exists(CONFIG_FILEPATH):
@@ -53,7 +52,8 @@ class Stammspieler:
         else:
             arg = "alles"
 
-        cursor = self._connection.cursor()
+        connection = self.create_connection()
+        cursor = connection.cursor()
 
         if arg == "von":
             date_from = sys.argv[2]
@@ -69,6 +69,7 @@ class Stammspieler:
             cursor.execute(query)
             row = cursor.fetchall()
             cursor.close()
+            connection.close()
             return row
 
         elif arg == "vonBis":
@@ -86,6 +87,7 @@ class Stammspieler:
             cursor.execute(query)
             row = cursor.fetchall()
             cursor.close()
+            connection.close()
             return row
 
         elif arg == "alles":
@@ -104,6 +106,7 @@ class Stammspieler:
             cursor.execute(query)
             row = cursor.fetchall()
             cursor.close()
+            connection.close()
             return row
 
     def get_spieler(self):
@@ -120,7 +123,8 @@ class Stammspieler:
         else:
             arg = "alles"
 
-        cursor = self._connection.cursor()
+        connection = self.create_connection()
+        cursor = connection.cursor()
 
         if arg == "von":
             date_from = sys.argv[2]
@@ -131,6 +135,7 @@ class Stammspieler:
             cursor.execute(query)
             row = cursor.fetchall()
             cursor.close()
+            connection.close()
             return row
 
         elif arg == "vonBis":
@@ -144,6 +149,7 @@ class Stammspieler:
             cursor.execute(query)
             row = cursor.fetchall()
             cursor.close()
+            connection.close()
             return row
 
         elif arg == "alles":
@@ -158,6 +164,7 @@ class Stammspieler:
             cursor.execute(query)
             row = cursor.fetchall()
             cursor.close()
+            connection.close()
             return row
 
     @staticmethod
@@ -299,8 +306,8 @@ class Stammspieler:
         for steam_id in player_participations:
             if player_participations[steam_id][2] >= int(
                     total_missions_60to90days_ago / 3) and player_participations[steam_id][1] >= int(
-                    total_missions_30to60days_ago / 3) and player_participations[steam_id][0] >= int(
-                    total_missions_0to30days_ago / 3):
+                total_missions_30to60days_ago / 3) and player_participations[steam_id][0] >= int(
+                total_missions_0to30days_ago / 3):
                 regular_players[steam_id] = player_names[steam_id]
             elif player_participations[steam_id][2] >= (
                     total_missions_60to90days_ago / 2) and player_participations[steam_id][1] >= (
@@ -515,5 +522,3 @@ if __name__ == "__main__":
 
     elif sys.argv[1] == "spieler":
         print(stammspieler.ausgabe_mitgespielt(steam_id=sys.argv[2]))
-
-    stammspieler.close()
