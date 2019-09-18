@@ -252,7 +252,7 @@ def logs(name):
         return "Fehler! log file von unbekannter Quelle angefragt: " + name, 200, {
             'Content-Type': 'text/plain; charset=utf-8'}
 
-    stdout, stderr = run_shell_command(script.split(" "))
+    stdout, stderr = run_shell_command(script)
     return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
