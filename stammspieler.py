@@ -304,10 +304,9 @@ class Stammspieler:
         # interval. We iterate over the participations and check if the players fulfill these constraints.
         regular_players = dict()
         for steam_id in player_participations:
-            if player_participations[steam_id][2] >= int(
-                    total_missions_60to90days_ago / 3) and player_participations[steam_id][1] >= int(
-                total_missions_30to60days_ago / 3) and player_participations[steam_id][0] >= int(
-                total_missions_0to30days_ago / 3):
+            if player_participations[steam_id][2] >= int(total_missions_60to90days_ago / 3) and \
+                    player_participations[steam_id][1] >= int(total_missions_30to60days_ago / 3) and \
+                    player_participations[steam_id][0] >= int(total_missions_0to30days_ago / 3):
                 regular_players[steam_id] = player_names[steam_id]
             elif player_participations[steam_id][2] >= (
                     total_missions_60to90days_ago / 2) and player_participations[steam_id][1] >= (
