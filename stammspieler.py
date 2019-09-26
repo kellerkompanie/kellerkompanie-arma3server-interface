@@ -401,7 +401,8 @@ class Stammspieler:
             "ruha": "Ruha", "dingor": "Dingor", "iron_excelsior_tobruk": "Libyen (IFA3)",
             "tem_kujari": "Kujari", "tem_summa": "Summa", "isladuala3": "Isla Duala", "porto": "Porto",
             "swu_kokoda_map": "Kokoda Trail (IFA3)", "enoch": "Livonia", "thirsk": "Thirsk", "tembelan": "Tembelan",
-            "woodland_acr": "Bystrica", "i44_merderet_v2": "Merderet (IFA3)", "mcn_neaville": "Neaville (IFA3)"}
+            "woodland_acr": "Bystrica", "i44_merderet_v2": "Merderet (IFA3)", "mcn_neaville": "Neaville (IFA3)",
+            "swu_greece_pella_region": "Greece (IFA3)", "clafghan": "CLA Afghan", "fdf_isle1_a": "Podagorsk"}
 
         if mapname.lower() in map_translations:
             return map_translations[mapname.lower()]
