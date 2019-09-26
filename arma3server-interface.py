@@ -300,6 +300,10 @@ def stammspieler_all():
     response += database.ausgabe_stammspieler_admin()
     response += "</pre>"
 
+    response += "<h2>Missionen</h2><pre>"
+    response += database.ausgabe_mission()
+    response += "</pre>"
+
     response += "<h2>Aktivität aller Spieler</h2><pre>"
     response += database.ausgabe_aktivitaet()
     response += "</pre>"
@@ -310,10 +314,6 @@ def stammspieler_all():
 
     response += "<h2>Teilnehmer</h2><pre>"
     response += database.ausgabe_teilnehmer()
-    response += "</pre>"
-
-    response += "<h2>Missionen</h2><pre>"
-    response += database.ausgabe_mission()
     response += "</pre>"
 
     return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
