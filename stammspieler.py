@@ -381,7 +381,7 @@ class Stammspieler:
                 output += "-" * (len(header) + 14) + '\n'
                 check += 1
             output += missionen[x][0].strftime("%d.%m.%Y") + " | "
-            output += missionen[x][1] + " | " + missionen[x][2] + " | "
+            output += str(missionen[x][1]) + " | " + str(missionen[x][2]) + " | "
             output += missionen[x][3].rsplit(".", 3)[0] + " | ".rjust(maxlen + 1 - mlen)
             output += Stammspieler.replace_map_name(missionen[x][4]) + '\n'
 
