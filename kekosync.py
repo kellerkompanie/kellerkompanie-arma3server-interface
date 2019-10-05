@@ -75,9 +75,10 @@ class KeKoSync:
         query = "DELETE FROM addon_group WHERE addon_group_id = %s;"
         cursor.execute(query, (addon_group_id,))
 
+        connection.commit()
         cursor.close()
         connection.close()
-        pass
+        return "OK"
 
     def get_all_addons(self):
         connection = self.create_connection()
