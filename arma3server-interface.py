@@ -327,9 +327,10 @@ def addon_groups():
         abort(403)
 
     if request.method == 'POST':
-        uploader = request.form.get('uploader').lower()
-        file = request.files.get('mission_file')
-        return jsonify("OK"), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+        addon_group_uuid = request.form.get('uuid')
+        addon_group_name = request.form.get('name')
+        addon_group_author = request.form.get('author')
+        return jsonify([addon_group_uuid, addon_group_name, addon_group_author]), 200, {'Content-Type': 'text/plain; charset=utf-8'}
     else:
         response = kekosync.get_addon_groups()
         return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
