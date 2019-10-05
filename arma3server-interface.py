@@ -321,6 +321,15 @@ def stammspieler_all():
     return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
+@app.route("/addon_group/<uuid>")
+def addon_group(uuid):
+    if not is_whitelisted(request.remote_addr):
+        abort(403)
+
+    response = kekosync.get_addon_group(uuid)
+    return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+
 @app.route("/addon_groups", methods=['GET', 'POST'])
 def addon_groups():
     if not is_whitelisted(request.remote_addr):
@@ -348,7 +357,7 @@ def addons():
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
-    response = kekosync.get_addons()
+    response = kekosync.get_all_addons()
     return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 

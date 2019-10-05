@@ -47,12 +47,40 @@ class KeKoSync:
         connection.close()
         return row
 
-    def get_addons(self):
+    def get_addon_group(self, uuid):
+        connection = self.create_connection()
+        cursor = connection.cursor()
+
+        sql = "SELECT * FROM addon_group WHERE addon_group_uuid=%s;"
+        cursor.execute(sql, (uuid,))
+        row = cursor.fetchone()
+        cursor.close()
+        connection.close()
+
+        addon_group_id = row['addon_group_id']
+        group_addons = self.get_group_addons(addon_group_id)
+
+        row['addons'] = group_addons
+        return row
+
+    def get_all_addons(self):
         connection = self.create_connection()
         cursor = connection.cursor()
 
         query = "SELECT * FROM addon;"
         cursor.execute(query)
+        row = cursor.fetchall()
+        cursor.close()
+        connection.close()
+        return row
+
+    def get_group_addons(self, addon_group_id):
+        connection = self.create_connection()
+        cursor = connection.cursor()
+
+        query = "SELECT * FROM addon_group_member LEFT JOIN addon ON addon_group_member.addon_id=addon.addon_id " \
+                "WHERE addon_group_member.addon_group_id=%s;"
+        cursor.execute(query, (addon_group_id,))
         row = cursor.fetchall()
         cursor.close()
         connection.close()
@@ -100,7 +128,7 @@ class KeKoSync:
     def _update_addons(self, connection, addon_group_id, addon_list):
         vals = []
         addon_dict = dict()
-        addons = self.get_addons()
+        addons = self.get_all_addons()
         for addon in addons:
             addon_uuid = addon['addon_uuid']
             addon_id = addon['addon_id']
