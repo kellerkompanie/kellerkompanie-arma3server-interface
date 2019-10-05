@@ -101,12 +101,14 @@ class KeKoSync:
         vals = []
         addon_dict = dict()
         addons = self.get_addons()
-        print("addons:", addons)
         for addon in addons:
-            addon_dict[addon['addon_uuid']] = addon['addon_id']
+            addon_uuid = addon['addon_uuid']
+            addon_id = addon['addon_id']
+            addon_dict[addon_uuid] = addon_id
+            print("adding:", addon_uuid, addon_id)
 
-        print("addon_dict:", addon_dict)
         for addon in addon_list:
+            print("looking up:", addon)
             addon_id = addon_dict[addon]
             vals.append([addon_group_id, addon_id])
 
