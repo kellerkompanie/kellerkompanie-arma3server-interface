@@ -107,7 +107,7 @@ class KeKoSync:
             addon_uuid = addon['addon_uuid']
             addon_id = addon['addon_id']
             addon_dict[addon_uuid] = addon_id
-            return_val += "adding: " + str(addon_uuid) + ' ' + str(addon_id) + '\n'
+            # return_val += "adding: " + str(addon_uuid) + ' ' + str(addon_id) + '\n'
 
         for addon in addon_list:
             return_val += "looking up: " + str(addon) + '\n'
