@@ -109,10 +109,10 @@ class KeKoSync:
 
         for addon in addon_list:
             print("looking up:", addon)
-            addon_id = addon_dict[addon]
+            #addon_id = addon_dict[addon]
             vals.append([addon_group_id, addon_id])
 
-        with connection.cursor() as cursor:
-            cursor.execute("DELETE FROM addon_group_member WHERE addon_group_id=%s;", (addon_group_id,))
-            cursor.executemany("INSERT INTO addon_group_member(addon_group_id, addon_id) values (%s, %s);", vals)
-            connection.commit()
+        # with connection.cursor() as cursor:
+        #     cursor.execute("DELETE FROM addon_group_member WHERE addon_group_id=%s;", (addon_group_id,))
+        #     cursor.executemany("INSERT INTO addon_group_member(addon_group_id, addon_id) values (%s, %s);", vals)
+        #     connection.commit()
