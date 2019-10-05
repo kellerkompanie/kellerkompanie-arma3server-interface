@@ -321,13 +321,19 @@ def stammspieler_all():
     return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
-@app.route("/addon_group/<uuid>")
+@app.route("/addon_group/<uuid>", methods=['GET', 'DELETE'])
 def addon_group(uuid):
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
-    response = kekosync.get_addon_group(uuid)
-    return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    if request.method == 'GET':
+        response = kekosync.get_addon_group(uuid)
+        return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    elif request.method == 'DELETE':
+        response = kekosync.delete_addon_group(uuid)
+        return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    else:
+        return jsonify("unknown method"), 403, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/addon_groups", methods=['GET', 'POST'])

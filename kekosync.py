@@ -63,6 +63,22 @@ class KeKoSync:
         row['addons'] = group_addons
         return row
 
+    def delete_addon_group(self, uuid):
+        addon_group_id = self.get_addon_group_id_from_uuid(uuid)
+
+        connection = self.create_connection()
+        cursor = connection.cursor()
+
+        query = "DELETE FROM addon_group_member WHERE addon_group_id = %s;"
+        cursor.execute(query, (addon_group_id,))
+
+        query = "DELETE FROM addon_group WHERE addon_group_id = %s;"
+        cursor.execute(query, (addon_group_id,))
+
+        cursor.close()
+        connection.close()
+        pass
+
     def get_all_addons(self):
         connection = self.create_connection()
         cursor = connection.cursor()
@@ -98,7 +114,7 @@ class KeKoSync:
         return row['addon_group_id']
 
     def update_addon_group(self, existing_uuid, name, author, addon_list):
-        sql = "UPDATE addon_group SET name = %s, author = %s WHERE addon_group_uuid=%s;"
+        sql = "UPDATE addon_group SET addon_group_name = %s, addon_group_author = %s WHERE addon_group_uuid=%s;"
         connection = self.create_connection()
         cursor = connection.cursor()
         cursor.execute(sql, (name, author, existing_uuid))
