@@ -6,7 +6,7 @@ import os.path
 import re
 import subprocess
 
-from flask import Flask, request, abort
+from flask import Flask, request, abort, jsonify
 from werkzeug.utils import secure_filename
 
 from kekosync import KeKoSync
@@ -327,7 +327,7 @@ def addon_groups():
         abort(403)
 
     response = kekosync.get_addon_groups()
-    return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/addons")
@@ -336,7 +336,7 @@ def addons():
         abort(403)
 
     response = kekosync.get_addons()
-    return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 def load_config():
