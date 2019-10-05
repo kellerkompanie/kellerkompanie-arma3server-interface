@@ -9,11 +9,13 @@ import subprocess
 from flask import Flask, request, abort
 from werkzeug.utils import secure_filename
 
+from kekosync import KeKoSync
 from stammspieler import Stammspieler
 
 app = Flask(__name__)
 settings = None
 database = None
+kekosync = None
 
 CONFIG_FILEPATH = 'config.json'
 MISSIONS_DIR = '/home/arma3server/serverfiles/mpmissions'
@@ -319,6 +321,24 @@ def stammspieler_all():
     return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
+@app.route("/addon_groups", methods=['GET', 'POST'])
+def addon_groups():
+    if not is_whitelisted(request.remote_addr):
+        abort(403)
+
+    response = kekosync.get_addon_groups()
+    return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+
+@app.route("/addons")
+def addons():
+    if not is_whitelisted(request.remote_addr):
+        abort(403)
+
+    response = kekosync.get_addons()
+    return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+
 def load_config():
     global settings
 
@@ -339,5 +359,6 @@ def load_config():
 if __name__ == "__main__":
     load_config()
     database = Stammspieler()
+    kekosync = KeKoSync()
     app.run(host=settings['host'], port=settings['port'],
             ssl_context=(settings['ssl_context_fullchain'], settings['ssl_context_privkey']))
