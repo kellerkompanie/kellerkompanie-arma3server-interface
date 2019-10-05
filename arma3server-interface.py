@@ -330,7 +330,7 @@ def addon_groups():
         uuid = request.form.get('uuid')
         name = request.form.get('name')
         author = request.form.get('author')
-        addon_list = request.form.get('addons')
+        addon_list = json.loads(request.form.get('addons'))
 
         if uuid is not None:
             response = kekosync.update_addon_group(uuid, name, author, addon_list)
