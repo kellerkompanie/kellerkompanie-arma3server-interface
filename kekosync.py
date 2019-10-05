@@ -88,7 +88,7 @@ class KeKoSync:
 
         connection = self.create_connection()
         cursor = connection.cursor()
-        new_uuid = uuid.uuid4()
+        new_uuid = str(uuid.uuid4())
         version = datetime.now().strftime("%Y%m%d-%H%M%S")
         cursor.execute(sql, (new_uuid, version, name, author))
         addon_group_id = cursor.lastrowid
