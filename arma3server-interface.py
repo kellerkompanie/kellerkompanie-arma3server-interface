@@ -326,8 +326,13 @@ def addon_groups():
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
-    response = kekosync.get_addon_groups()
-    return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    if request.method == 'POST':
+        uploader = request.form.get('uploader').lower()
+        file = request.files.get('mission_file')
+        return jsonify("OK"), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    else:
+        response = kekosync.get_addon_groups()
+        return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/addons")

@@ -5,6 +5,7 @@ import json
 import os
 
 import pymysql
+import pymysql.cursors
 
 CONFIG_FILEPATH = 'kekosync_config.json'
 
@@ -17,7 +18,8 @@ class KeKoSync:
         return pymysql.connect(host=self._settings['db_host'],
                                database=self._settings['db_name'],
                                user=self._settings['db_username'],
-                               password=self._settings['db_password'])
+                               password=self._settings['db_password'],
+                               cursorclass=pymysql.cursors.DictCursor)
 
     def _load_config(self):
         if os.path.exists(CONFIG_FILEPATH):
