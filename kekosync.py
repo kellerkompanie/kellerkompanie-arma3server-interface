@@ -5,7 +5,6 @@ import json
 import os
 import uuid
 from datetime import datetime
-import sys
 
 import pymysql
 import pymysql.cursors
@@ -78,10 +77,10 @@ class KeKoSync:
         cursor.close()
 
         addon_group_id = self.get_addon_group_id_from_uuid(existing_uuid)
-        return_val = self._update_addons(connection, addon_group_id, addon_list)
+        self._update_addons(connection, addon_group_id, addon_list)
 
         connection.close()
-        return return_val
+        return "OK"
 
     def create_addon_group(self, name, author, addon_list):
         sql = "INSERT INTO addon_group (addon_group_uuid, addon_group_version, addon_group_name, addon_group_author) " \
@@ -94,12 +93,11 @@ class KeKoSync:
         cursor.execute(sql, (new_uuid, version, name, author))
         addon_group_id = cursor.lastrowid
         cursor.close()
-        return_val = self._update_addons(connection, addon_group_id, addon_list)
+        self._update_addons(connection, addon_group_id, addon_list)
         connection.close()
-        return return_val
+        return "OK"
 
     def _update_addons(self, connection, addon_group_id, addon_list):
-        return_val = ''
         vals = []
         addon_dict = dict()
         addons = self.get_addons()
@@ -107,16 +105,12 @@ class KeKoSync:
             addon_uuid = addon['addon_uuid']
             addon_id = addon['addon_id']
             addon_dict[addon_uuid] = addon_id
-            # return_val += "adding: " + str(addon_uuid) + ' ' + str(addon_id) + '\n'
 
         for addon in addon_list:
-            return_val += "looking up: " + str(addon) + '\n'
-            #addon_id = addon_dict[addon]
+            addon_id = addon_dict[addon]
             vals.append([addon_group_id, addon_id])
 
-        return return_val
-
-        # with connection.cursor() as cursor:
-        #     cursor.execute("DELETE FROM addon_group_member WHERE addon_group_id=%s;", (addon_group_id,))
-        #     cursor.executemany("INSERT INTO addon_group_member(addon_group_id, addon_id) values (%s, %s);", vals)
-        #     connection.commit()
+        with connection.cursor() as cursor:
+            cursor.execute("DELETE FROM addon_group_member WHERE addon_group_id=%s;", (addon_group_id,))
+            cursor.executemany("INSERT INTO addon_group_member(addon_group_id, addon_id) values (%s, %s);", vals)
+            connection.commit()
