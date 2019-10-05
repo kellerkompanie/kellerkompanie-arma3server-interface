@@ -5,6 +5,7 @@ import json
 import os
 import uuid
 from datetime import datetime
+import sys
 
 import pymysql
 import pymysql.cursors
@@ -105,10 +106,10 @@ class KeKoSync:
             addon_uuid = addon['addon_uuid']
             addon_id = addon['addon_id']
             addon_dict[addon_uuid] = addon_id
-            print("adding:", addon_uuid, addon_id)
+            print("adding:", addon_uuid, addon_id, file=sys.stdout)
 
         for addon in addon_list:
-            print("looking up:", addon)
+            print("looking up:", addon, file=sys.stdout)
             #addon_id = addon_dict[addon]
             vals.append([addon_group_id, addon_id])
 
