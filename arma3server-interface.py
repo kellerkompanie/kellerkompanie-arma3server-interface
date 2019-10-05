@@ -327,10 +327,17 @@ def addon_groups():
         abort(403)
 
     if request.method == 'POST':
-        addon_group_uuid = request.form.get('uuid')
-        addon_group_name = request.form.get('name')
-        addon_group_author = request.form.get('author')
-        return jsonify([addon_group_uuid, addon_group_name, addon_group_author]), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+        uuid = request.form.get('uuid')
+        name = request.form.get('name')
+        author = request.form.get('author')
+        addon_list = request.form.get('addons')
+
+        if uuid is not None:
+            response = kekosync.update_addon_group(uuid, name, author, addon_list)
+        else:
+            response = kekosync.create_addon_group(name, author, addon_list)
+
+        return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
     else:
         response = kekosync.get_addon_groups()
         return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
