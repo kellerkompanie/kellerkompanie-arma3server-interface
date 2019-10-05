@@ -78,10 +78,10 @@ class KeKoSync:
         cursor.close()
 
         addon_group_id = self.get_addon_group_id_from_uuid(existing_uuid)
-        self._update_addons(connection, addon_group_id, addon_list)
+        return_val = self._update_addons(connection, addon_group_id, addon_list)
 
         connection.close()
-        return "OK"
+        return return_val
 
     def create_addon_group(self, name, author, addon_list):
         sql = "INSERT INTO addon_group (addon_group_uuid, addon_group_version, addon_group_name, addon_group_author) " \
@@ -94,11 +94,12 @@ class KeKoSync:
         cursor.execute(sql, (new_uuid, version, name, author))
         addon_group_id = cursor.lastrowid
         cursor.close()
-        self._update_addons(connection, addon_group_id, addon_list)
+        return_val = self._update_addons(connection, addon_group_id, addon_list)
         connection.close()
-        return "OK"
+        return return_val
 
     def _update_addons(self, connection, addon_group_id, addon_list):
+        return_val = ''
         vals = []
         addon_dict = dict()
         addons = self.get_addons()
@@ -106,12 +107,14 @@ class KeKoSync:
             addon_uuid = addon['addon_uuid']
             addon_id = addon['addon_id']
             addon_dict[addon_uuid] = addon_id
-            print("adding:", addon_uuid, addon_id, file=sys.stdout)
+            return_val += "adding: " + str(addon_uuid) + ' ' + str(addon_id) + '\n'
 
         for addon in addon_list:
-            print("looking up:", addon, file=sys.stdout)
+            return_val += "looking up: " + str(addon) + '\n'
             #addon_id = addon_dict[addon]
             vals.append([addon_group_id, addon_id])
+
+        return return_val
 
         # with connection.cursor() as cursor:
         #     cursor.execute("DELETE FROM addon_group_member WHERE addon_group_id=%s;", (addon_group_id,))
