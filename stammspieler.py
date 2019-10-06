@@ -218,29 +218,32 @@ class Stammspieler:
         participated_missions_30to60days_ago = 0
         participated_missions_60to90days_ago = 0
 
-        current_mission = ""
+        # Since the raw SQL data contains each mission a number of times (for every player that participated) we need
+        # to limit the amount, so that each mission at a specific date only appears once in our set.
+        unique_missions = set()
+        for mission_name, player_name, mission_date, steam_id in participation:
+            unique_missions.add((mission_name, mission_date))
+
+        # For each of the mission determine in which of the intervals it took place and increase the mission counter
+        # for that interval.
+        for mission_name, mission_date in unique_missions:
+            if date_90days_ago < mission_date <= date_60days_ago:
+                total_missions_60to90days_ago += 1
+            elif date_60days_ago < mission_date <= date_30days_ago:
+                total_missions_30to60days_ago += 1
+            elif date_30days_ago < mission_date <= date_today:
+                total_missions_0to30days_ago += 1
 
         for mission_name, player_name, mission_date, participants_steam_id in participation:
             if date_90days_ago < mission_date <= date_60days_ago:
-                if current_mission != mission_name:
-                    current_mission = mission_name
-                    total_missions_60to90days_ago += 1
                 if steam_id in participants_steam_id:
                     participated_missions_60to90days_ago += 1
             elif date_60days_ago < mission_date <= date_30days_ago:
-                if current_mission != mission_name:
-                    current_mission = mission_name
-                    total_missions_30to60days_ago += 1
                 if steam_id in participants_steam_id:
                     participated_missions_30to60days_ago += 1
             elif date_30days_ago < mission_date <= date_today:
-                if current_mission != mission_name:
-                    current_mission = mission_name
-                    total_missions_0to30days_ago += 1
                 if steam_id in participants_steam_id:
                     participated_missions_0to30days_ago += 1
-            else:
-                continue
 
         condition1 = participated_missions_60to90days_ago >= int(total_missions_60to90days_ago / 3) \
                      and participated_missions_30to60days_ago >= int(total_missions_30to60days_ago / 3) \
