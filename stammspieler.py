@@ -200,56 +200,68 @@ class Stammspieler:
         return spieler_anzahl
 
     def ausgabe_stammspieler(self, steam_id):
-        mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
+        # Get raw SQL data as list of tuples (mission_name, player_name, mission_date, steam_id).
+        participation = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
 
-        date = datetime.datetime.now()
-        date_from2 = date - timedelta(days=90)
-        date_from1 = date - timedelta(days=60)
-        date_from = date - timedelta(days=30)
+        # Calculate the dates to determine the 3 intervals: last 30 days, 30-60 days ago and 60-90 days ago.
+        date_today = datetime.datetime.now()
+        date_90days_ago = (date_today - timedelta(days=90))
+        date_60days_ago = (date_today - timedelta(days=60))
+        date_30days_ago = (date_today - timedelta(days=30))
 
-        zaehler = 0
-        zaehler1 = 0
-        zaehler2 = 0
-        zaehler_mission = 0
-        zaehler_mission1 = 0
-        zaehler_mission2 = 0
-        mission = ""
+        # Counters for how many mission have been played in total during that interval.
+        total_missions_0to30days_ago = 0
+        total_missions_30to60days_ago = 0
+        total_missions_60to90days_ago = 0
 
-        for x in mitgespielt:
-            if date_from2.date() < x[2] <= date_from1.date():
-                if mission != x[0]:
-                    mission = x[0]
-                    zaehler_mission2 += 1
-                if steam_id in (x[3]):
-                    zaehler2 += 1
-            elif date_from1.date() < x[2] <= date_from.date():
-                if mission != x[0]:
-                    mission = x[0]
-                    zaehler_mission1 += 1
-                if steam_id in (x[3]):
-                    zaehler1 += 1
-            elif date_from.date() < x[2] <= date.date():
-                if mission != x[0]:
-                    mission = x[0]
-                    zaehler_mission += 1
-                if steam_id in (x[3]):
-                    zaehler += 1
+        participated_missions_0to30days_ago = 0
+        participated_missions_30to60days_ago = 0
+        participated_missions_60to90days_ago = 0
+
+        current_mission = ""
+
+        for mission_name, player_name, mission_date, participants_steam_id in participation:
+            if date_90days_ago.date() < mission_date <= date_60days_ago.date():
+                if current_mission != mission_name:
+                    current_mission = mission_name
+                    total_missions_60to90days_ago += 1
+                if steam_id in participants_steam_id:
+                    participated_missions_60to90days_ago += 1
+            elif date_60days_ago.date() < mission_date <= date_30days_ago.date():
+                if current_mission != mission_name:
+                    current_mission = mission_name
+                    total_missions_30to60days_ago += 1
+                if steam_id in participants_steam_id:
+                    participated_missions_30to60days_ago += 1
+            elif date_30days_ago.date() < mission_date <= date_today.date():
+                if current_mission != mission_name:
+                    current_mission = mission_name
+                    total_missions_0to30days_ago += 1
+                if steam_id in participants_steam_id:
+                    participated_missions_0to30days_ago += 1
             else:
                 continue
 
-        condition1 = zaehler2 >= int(zaehler_mission2 / 3) and zaehler1 >= int(zaehler_mission1 / 3) and zaehler >= int(
-            zaehler_mission / 3)
-        condition2 = zaehler2 >= (zaehler_mission2 / 2) and zaehler1 >= (zaehler_mission1 / 2)
-        condition3 = zaehler2 >= (zaehler_mission2 / 2) and zaehler >= (zaehler_mission / 2)
-        condition4 = zaehler1 >= (zaehler_mission1 / 2) and zaehler >= (zaehler_mission / 2)
+        condition1 = participated_missions_60to90days_ago >= int(total_missions_60to90days_ago / 3) \
+                     and participated_missions_30to60days_ago >= int(total_missions_30to60days_ago / 3) \
+                     and participated_missions_0to30days_ago >= int(total_missions_0to30days_ago / 3)
+        condition2 = participated_missions_60to90days_ago >= (total_missions_60to90days_ago / 2) \
+                     and participated_missions_30to60days_ago >= (total_missions_30to60days_ago / 2)
+        condition3 = participated_missions_60to90days_ago >= (total_missions_60to90days_ago / 2) \
+                     and participated_missions_0to30days_ago >= (total_missions_0to30days_ago / 2)
+        condition4 = participated_missions_30to60days_ago >= (total_missions_30to60days_ago / 2) \
+                     and participated_missions_0to30days_ago >= (total_missions_0to30days_ago / 2)
 
         output = ''
         if condition1 or condition2 or condition3 or condition4:
             output += "Ja! Du bist Stammspieler. \nMelde dich bei einem Admin deines Vertrauens."
         else:
             output += "Nein, frag doch einfach später nochmal.\n"
-        output += "\nDu hast mitgespielt: " + str(zaehler2) + " / " + str(zaehler_mission2) + " - " + str(
-            zaehler1) + " / " + str(zaehler_mission1) + "  -  " + str(zaehler) + " / " + str(zaehler_mission) + '\n'
+
+        output += "\nDu hast mitgespielt: " + str(participated_missions_60to90days_ago) + " / " + str(
+            total_missions_60to90days_ago) + " - " + str(
+            participated_missions_30to60days_ago) + " / " + str(total_missions_30to60days_ago) + "  -  " + str(
+            participated_missions_0to30days_ago) + " / " + str(total_missions_0to30days_ago) + '\n'
         return output
 
     def ausgabe_stammspieler_admin(self):
@@ -302,29 +314,29 @@ class Stammspieler:
 
         # Regular players are players that participated a certain percentage of the maximum possible missions in each
         # interval. We iterate over the participations and check if the players fulfill these constraints.
-        regular_players = dict()
+        regular_players = set()
         for steam_id in player_participations:
             if player_participations[steam_id][2] >= int(total_missions_60to90days_ago / 3) and \
                     player_participations[steam_id][1] >= int(total_missions_30to60days_ago / 3) and \
                     player_participations[steam_id][0] >= int(total_missions_0to30days_ago / 3):
-                regular_players[steam_id] = player_names[steam_id]
+                regular_players.add(player_names[steam_id])
             elif player_participations[steam_id][2] >= (
                     total_missions_60to90days_ago / 2) and player_participations[steam_id][1] >= (
                     total_missions_30to60days_ago / 2):
-                regular_players[steam_id] = player_names[steam_id]
+                regular_players.add(player_names[steam_id])
             elif player_participations[steam_id][2] >= (
                     total_missions_60to90days_ago / 2) and player_participations[steam_id][0] >= (
                     total_missions_0to30days_ago / 2):
-                regular_players[steam_id] = player_names[steam_id]
+                regular_players.add(player_names[steam_id])
             elif player_participations[steam_id][2] >= (
                     total_missions_30to60days_ago / 3) and player_participations[steam_id][0] >= (
                     total_missions_0to30days_ago / 3):
-                regular_players[steam_id] = player_names[steam_id]
+                regular_players.add(player_names[steam_id])
 
         header = "Stammspieler:"
         output = header + '\n'
         output += "-" * (len(header) + 14) + '\n'
-        output += '\n'.join(sorted(regular_players.values()))
+        output += '\n'.join(sorted(regular_players))
         output += "\n\nAnzahl Stammspieler: " + str(len(regular_players)) + '\n'
         return output
 
