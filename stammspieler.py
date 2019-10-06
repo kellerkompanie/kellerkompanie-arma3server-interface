@@ -235,15 +235,15 @@ class Stammspieler:
                 total_missions_0to30days_ago += 1
 
         for mission_name, player_name, mission_date, participants_steam_id in participation:
+            if steam_id not in participants_steam_id:
+                continue
+
             if date_90days_ago < mission_date <= date_60days_ago:
-                if steam_id in participants_steam_id:
-                    participated_missions_60to90days_ago += 1
+                participated_missions_60to90days_ago += 1
             elif date_60days_ago < mission_date <= date_30days_ago:
-                if steam_id in participants_steam_id:
-                    participated_missions_30to60days_ago += 1
+                participated_missions_30to60days_ago += 1
             elif date_30days_ago < mission_date <= date_today:
-                if steam_id in participants_steam_id:
-                    participated_missions_0to30days_ago += 1
+                participated_missions_0to30days_ago += 1
 
         condition1 = participated_missions_60to90days_ago >= int(total_missions_60to90days_ago / 3) \
                      and participated_missions_30to60days_ago >= int(total_missions_30to60days_ago / 3) \
@@ -332,8 +332,8 @@ class Stammspieler:
                     total_missions_0to30days_ago / 2):
                 regular_players.add(steam_id)
             elif player_participations[steam_id][2] >= (
-                    total_missions_30to60days_ago / 3) and player_participations[steam_id][0] >= (
-                    total_missions_0to30days_ago / 3):
+                    total_missions_30to60days_ago / 2) and player_participations[steam_id][0] >= (
+                    total_missions_0to30days_ago / 2):
                 regular_players.add(steam_id)
 
         header = "Stammspieler:"
