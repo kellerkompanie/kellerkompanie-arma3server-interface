@@ -339,7 +339,7 @@ class Stammspieler:
         header = "Stammspieler:"
         output = header + '\n'
         output += "-" * (len(header) + 14) + '\n'
-        output += '\n'.join(sorted(regular_players))
+        output += '\n'.join(sorted(regular_players, key=str.casefold))
         output += "\n\nAnzahl Stammspieler: " + str(len(regular_players)) + '\n'
         return output
 
