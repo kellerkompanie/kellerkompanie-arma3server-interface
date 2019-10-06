@@ -340,9 +340,9 @@ class Stammspieler:
         for steam_id in regular_players:
             participations = player_participations[steam_id]
             output += player_names[steam_id] + ' '
-            output += str(participations[0]) + '/' + str(total_missions_0to30days_ago)
-            output += str(participations[1]) + '/' + str(total_missions_30to60days_ago)
-            output += str(participations[2]) + '/' + str(total_missions_60to90days_ago)
+            output += str(participations[0]) + '/' + str(total_missions_0to30days_ago) + ' '
+            output += str(participations[1]) + '/' + str(total_missions_30to60days_ago) + ' '
+            output += str(participations[2]) + '/' + str(total_missions_60to90days_ago) + ' '
             output += '\n'
         output += "\n\nAnzahl Stammspieler: " + str(len(regular_players)) + '\n'
         return output
