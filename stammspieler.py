@@ -199,24 +199,24 @@ class Stammspieler:
 
         return spieler_anzahl
 
-    def ausgabe_stammspieler(self, steam_id):
-        # Get raw SQL data as list of tuples (mission_name, player_name, mission_date, steam_id).
-        participation = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
-
+    @staticmethod
+    def _calculate_dates_per_interval():
         # Calculate the dates to determine the 3 intervals: last 30 days, 30-60 days ago and 60-90 days ago.
         date_today = datetime.datetime.now().date()
         date_90days_ago = (date_today - timedelta(days=90))
         date_60days_ago = (date_today - timedelta(days=60))
         date_30days_ago = (date_today - timedelta(days=30))
 
+        return date_today, date_30days_ago, date_60days_ago, date_90days_ago
+
+    def _calculate_total_missions_per_interval(self, participation):
+        # Calculate the interval border dates
+        date_today, date_30days_ago, date_60days_ago, date_90days_ago = self._calculate_dates_per_interval()
+
         # Counters for how many mission have been played in total during that interval.
         total_missions_0to30days_ago = 0
         total_missions_30to60days_ago = 0
         total_missions_60to90days_ago = 0
-
-        participated_missions_0to30days_ago = 0
-        participated_missions_30to60days_ago = 0
-        participated_missions_60to90days_ago = 0
 
         # Since the raw SQL data contains each mission a number of times (for every player that participated) we need
         # to limit the amount, so that each mission at a specific date only appears once in our set.
@@ -233,6 +233,23 @@ class Stammspieler:
                 total_missions_30to60days_ago += 1
             elif date_30days_ago < mission_date <= date_today:
                 total_missions_0to30days_ago += 1
+
+        return total_missions_0to30days_ago, total_missions_30to60days_ago, total_missions_60to90days_ago
+
+    def ausgabe_stammspieler(self, steam_id):
+        # Get raw SQL data as list of tuples (mission_name, player_name, mission_date, steam_id).
+        participation = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
+
+        # Calculate how many mission were played in each interval
+        total_missions = self._calculate_total_missions_per_interval(participation)
+        total_missions_0to30days_ago, total_missions_30to60days_ago, total_missions_60to90days_ago = total_missions
+
+        # Calculate the interval border dates
+        date_today, date_30days_ago, date_60days_ago, date_90days_ago = self._calculate_dates_per_interval()
+
+        participated_missions_0to30days_ago = 0
+        participated_missions_30to60days_ago = 0
+        participated_missions_60to90days_ago = 0
 
         for mission_name, player_name, mission_date, participants_steam_id in participation:
             if steam_id not in participants_steam_id:
@@ -271,32 +288,12 @@ class Stammspieler:
         # Get raw SQL data as list of tuples (mission_name, player_name, mission_date, steam_id).
         participation = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
 
-        # Calculate the dates to determine the 3 intervals: last 30 days, 30-60 days ago and 60-90 days ago.
-        date_today = datetime.datetime.now().date()
-        date_90days_ago = (date_today - timedelta(days=90))
-        date_60days_ago = (date_today - timedelta(days=60))
-        date_30days_ago = (date_today - timedelta(days=30))
+        # Calculate how many mission were played in each interval
+        total_missions = self._calculate_total_missions_per_interval(participation)
+        total_missions_0to30days_ago, total_missions_30to60days_ago, total_missions_60to90days_ago = total_missions
 
-        # Counters for how many mission have been played in total during that interval.
-        total_missions_0to30days_ago = 0
-        total_missions_30to60days_ago = 0
-        total_missions_60to90days_ago = 0
-
-        # Since the raw SQL data contains each mission a number of times (for every player that participated) we need
-        # to limit the amount, so that each mission at a specific date only appears once in our set.
-        unique_missions = set()
-        for mission_name, player_name, mission_date, steam_id in participation:
-            unique_missions.add((mission_name, mission_date))
-
-        # For each of the mission determine in which of the intervals it took place and increase the mission counter
-        # for that interval.
-        for mission_name, mission_date in unique_missions:
-            if date_90days_ago < mission_date <= date_60days_ago:
-                total_missions_60to90days_ago += 1
-            elif date_60days_ago < mission_date <= date_30days_ago:
-                total_missions_30to60days_ago += 1
-            elif date_30days_ago < mission_date <= date_today:
-                total_missions_0to30days_ago += 1
+        # Calculate the interval border dates
+        date_today, date_30days_ago, date_60days_ago, date_90days_ago = self._calculate_dates_per_interval()
 
         # Similar to the missions we iterate over the raw SQL data from the viewpoint of the players, counting how many
         # times they participated in each of the intervals. For human readable output we also memorize the names of the
