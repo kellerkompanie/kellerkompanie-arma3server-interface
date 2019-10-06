@@ -221,7 +221,7 @@ class Stammspieler:
         # Since the raw SQL data contains each mission a number of times (for every player that participated) we need
         # to limit the amount, so that each mission at a specific date only appears once in our set.
         unique_missions = set()
-        for mission_name, player_name, mission_date, steam_id in participation:
+        for mission_name, _, mission_date, _ in participation:
             unique_missions.add((mission_name, mission_date))
 
         # For each of the mission determine in which of the intervals it took place and increase the mission counter
