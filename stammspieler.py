@@ -204,7 +204,7 @@ class Stammspieler:
         participation = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
 
         # Calculate the dates to determine the 3 intervals: last 30 days, 30-60 days ago and 60-90 days ago.
-        date_today = datetime.datetime.now()
+        date_today = datetime.datetime.now().date()
         date_90days_ago = (date_today - timedelta(days=90))
         date_60days_ago = (date_today - timedelta(days=60))
         date_30days_ago = (date_today - timedelta(days=30))
@@ -221,19 +221,19 @@ class Stammspieler:
         current_mission = ""
 
         for mission_name, player_name, mission_date, participants_steam_id in participation:
-            if date_90days_ago.date() < mission_date <= date_60days_ago.date():
+            if date_90days_ago < mission_date <= date_60days_ago:
                 if current_mission != mission_name:
                     current_mission = mission_name
                     total_missions_60to90days_ago += 1
                 if steam_id in participants_steam_id:
                     participated_missions_60to90days_ago += 1
-            elif date_60days_ago.date() < mission_date <= date_30days_ago.date():
+            elif date_60days_ago < mission_date <= date_30days_ago:
                 if current_mission != mission_name:
                     current_mission = mission_name
                     total_missions_30to60days_ago += 1
                 if steam_id in participants_steam_id:
                     participated_missions_30to60days_ago += 1
-            elif date_30days_ago.date() < mission_date <= date_today.date():
+            elif date_30days_ago < mission_date <= date_today:
                 if current_mission != mission_name:
                     current_mission = mission_name
                     total_missions_0to30days_ago += 1
