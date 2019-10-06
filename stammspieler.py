@@ -322,31 +322,24 @@ class Stammspieler:
             if player_participations[steam_id][2] >= int(total_missions_60to90days_ago / 3) and \
                     player_participations[steam_id][1] >= int(total_missions_30to60days_ago / 3) and \
                     player_participations[steam_id][0] >= int(total_missions_0to30days_ago / 3):
-                regular_players.add(steam_id)
+                regular_players.add(player_names[steam_id])
             elif player_participations[steam_id][2] >= (
                     total_missions_60to90days_ago / 2) and player_participations[steam_id][1] >= (
                     total_missions_30to60days_ago / 2):
-                regular_players.add(steam_id)
+                regular_players.add(player_names[steam_id])
             elif player_participations[steam_id][2] >= (
                     total_missions_60to90days_ago / 2) and player_participations[steam_id][0] >= (
                     total_missions_0to30days_ago / 2):
-                regular_players.add(steam_id)
+                regular_players.add(player_names[steam_id])
             elif player_participations[steam_id][2] >= (
                     total_missions_30to60days_ago / 2) and player_participations[steam_id][0] >= (
                     total_missions_0to30days_ago / 2):
-                regular_players.add(steam_id)
+                regular_players.add(player_names[steam_id])
 
         header = "Stammspieler:"
         output = header + '\n'
         output += "-" * (len(header) + 14) + '\n'
-        # output += '\n'.join(sorted(regular_players))
-        for steam_id in regular_players:
-            participations = player_participations[steam_id]
-            output += player_names[steam_id] + ' '
-            output += str(participations[0]) + '/' + str(total_missions_0to30days_ago) + ' '
-            output += str(participations[1]) + '/' + str(total_missions_30to60days_ago) + ' '
-            output += str(participations[2]) + '/' + str(total_missions_60to90days_ago) + ' '
-            output += '\n'
+        output += '\n'.join(sorted(regular_players))
         output += "\n\nAnzahl Stammspieler: " + str(len(regular_players)) + '\n'
         return output
 
