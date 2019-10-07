@@ -205,8 +205,8 @@ class Stammspieler:
 
         output = ''
         for i in range(len(total_missions)):
-            output += str(player_missions[i]) + ' / ' + str(total_missions[i]) + '  ---  '
-        return output[:-3]
+            output += str(player_missions[i]) + ' / ' + str(total_missions[i]) + '  ~  '
+        return output[:-5]
 
     @staticmethod
     def deserves_stammspieler(player_missions, total_missions):
