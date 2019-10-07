@@ -200,7 +200,7 @@ class Stammspieler:
         return spieler_anzahl
 
     @staticmethod
-    def format_participation(player_missions, total_missions):
+    def _format_participation(player_missions, total_missions):
         assert len(player_missions) == len(total_missions)
 
         output = ''
@@ -209,12 +209,11 @@ class Stammspieler:
         return output[:-5]
 
     @staticmethod
-    def deserves_stammspieler(player_missions, total_missions):
+    def _deserves_stammspieler(player_missions, total_missions):
         assert len(player_missions) == len(total_missions)
 
-        condition1 = player_missions[0] >= total_missions[0] / 3 \
-                     and player_missions[1] >= total_missions[1] / 3 \
-                     and player_missions[2] >= total_missions[2] / 3
+        condition1 = player_missions[0] >= total_missions[0] / 3 and player_missions[1] >= total_missions[1] / 3 and \
+                     player_missions[2] >= total_missions[2] / 3
         condition2 = player_missions[2] >= total_missions[2] / 2 and player_missions[1] >= total_missions[1] / 2
         condition3 = player_missions[2] >= total_missions[2] / 2 and player_missions[0] >= total_missions[0] / 2
         condition4 = player_missions[1] >= total_missions[1] / 2 and player_missions[0] >= total_missions[0] / 2
@@ -265,23 +264,40 @@ class Stammspieler:
             # Finally count the mission for the player and corresponding interval.
             missions_per_player[player_steam_id][interval_idx].add((mission_name, mission_date))
 
+        # Adjust output depending on admin or individual Stammspieler output mode.
         if steam_id:
             output = "Darf ich Stammspieler haben? - "
         else:
             output = "Stammspieler:" + '\n' + '-' * 24 + '\n'
 
+        # Convert the tuples of missions into actual total numbers for each time interval. Index:
+        #       0 -> number of missions 0 - 30 days ago
+        #       1 -> number of missions 30 - 60 days ago
+        #       2 -> number of missions 60 - 90 days ago
         total_missions = [len(total_missions[0]), len(total_missions[1]), len(total_missions[2])]
+
+        # Iterate through all counted player participations and sort by player names if needed. In case steam_id was
+        # supplied as input to this method, this loop should be finished after the first iteration.
         for player_steam_id, player_missions in sorted(missions_per_player.items(), key=lambda x: x[1][3].lower()):
+            # Retrieve the name of the player that we audaciously stored into the tuple as well.
             player_name = player_missions[3]
+
+            # Similar to the calculation of total missions we counted player's participations per time interval and
+            # now convert these into actual numbers
             player_missions = [len(player_missions[0]), len(player_missions[1]), len(player_missions[2])]
 
-            deserves_stammspieler = self.deserves_stammspieler(player_missions, total_missions)
+            # To hopefully bring some order into the chaos, the actual logic of determining if someone is worthy of
+            # Stammspieler was extracted into an extra method that takes only player's participations and total missions
+            # per time interval into account.
+            deserves_stammspieler = self._deserves_stammspieler(player_missions, total_missions)
+
+            # Finally output formatting depending on admin or individual mode.
             if steam_id:
                 if deserves_stammspieler:
                     output += 'Ja! Du bist Stammspieler. \nMelde dich bei einem Admin deines Vertrauens.\n\n'
                 else:
                     output += 'Nein, frag doch einfach später nochmal.\n\n'
-                output += 'Du hast mitgespielt: ' + self.format_participation(player_missions, total_missions)
+                output += 'Du hast mitgespielt: ' + self._format_participation(player_missions, total_missions)
             elif deserves_stammspieler:
                 output += player_name + '\n'
 
