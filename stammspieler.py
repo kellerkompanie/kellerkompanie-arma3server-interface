@@ -245,7 +245,7 @@ class Stammspieler:
             output = "Stammspieler:" + '\n' + '-' * 24 + '\n'
 
         total_missions = [len(total_missions[0]), len(total_missions[1]), len(total_missions[2])]
-        for player_steam_id, player_missions in sorted(missions_per_player.items(), key=str.casefold):
+        for player_steam_id, player_missions in sorted(missions_per_player.items(), key=lambda x: x[1][3].lower()):
             player_name = player_missions[3]
             player_missions = [len(player_missions[0]), len(player_missions[1]), len(player_missions[2])]
 
