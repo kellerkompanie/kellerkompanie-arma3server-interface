@@ -199,6 +199,19 @@ class Stammspieler:
 
         return spieler_anzahl
 
+    @staticmethod
+    def deserves_stammspieler(player_missions, total_missions):
+        assert len(player_missions) == len(total_missions)
+
+        condition1 = player_missions[0] >= total_missions[0] / 3 \
+                     and player_missions[1] >= total_missions[1] / 3 \
+                     and player_missions[2] >= total_missions[2] / 3
+        condition2 = player_missions[2] >= total_missions[2] / 2 and player_missions[1] >= total_missions[1] / 2
+        condition3 = player_missions[2] >= total_missions[2] / 2 and player_missions[0] >= total_missions[0] / 2
+        condition4 = player_missions[1] >= total_missions[1] / 2 and player_missions[0] >= total_missions[0] / 2
+
+        return condition1 or condition2 or condition3 or condition4
+
     def ausgabe_stammspieler(self, steam_id=None):
         # Get raw SQL data as list of tuples (mission_name, player_name, mission_date, steam_id).
         participation = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
@@ -232,7 +245,9 @@ class Stammspieler:
         output = str(total_missions[0]) + ' ' + str(total_missions[1]) + ' ' + str(total_missions[2]) + '\n'
         for player_steam_id, missions in missions_per_player.items():
             player_name = player_names.get(player_steam_id)
-            output += player_name + ': ' + str(len(missions[0])) + ' ' + str(len(missions[1])) + ' ' + str(len(missions[2])) + '\n'
+            output += player_name + ': ' + str(len(missions[0])) + ' ' + str(len(missions[1])) + ' ' + str(
+                len(missions[2])) + '\n'
+            output += str(self.deserves_stammspieler(missions, total_missions)) + '\n'
         return output
 
     @staticmethod
