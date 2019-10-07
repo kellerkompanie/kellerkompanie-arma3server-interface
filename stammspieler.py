@@ -239,14 +239,25 @@ class Stammspieler:
 
             missions_per_player[player_steam_id][interval_idx].add((mission_name, mission_date))
 
-        total_missions = [len(total_missions[0]), len(total_missions[1]), len(total_missions[2])]
-        output = str(total_missions[0]) + ' ' + str(total_missions[1]) + ' ' + str(total_missions[2]) + '\n'
-        for player_steam_id, missions in missions_per_player.items():
-            player_name = missions[3]
-            missions = [len(missions[0]), len(missions[1]), len(missions[2])]
+        if steam_id:
+            output = "Darf ich Stammspieler haben? - "
+        else:
+            output = "List der Stammspieler:" + '\n' + '-' * 24 + '\n'
 
-            output += player_name + ': ' + str(missions[0]) + ' ' + str(missions[1]) + ' ' + str(missions[2]) + ' '
-            output += str(self.deserves_stammspieler(missions, total_missions)) + '\n'
+        total_missions = [len(total_missions[0]), len(total_missions[1]), len(total_missions[2])]
+        for player_steam_id, player_missions in missions_per_player.items():
+            player_name = player_missions[3]
+            player_missions = [len(player_missions[0]), len(player_missions[1]), len(player_missions[2])]
+
+            deserves_stammspieler = self.deserves_stammspieler(player_missions, total_missions)
+            if steam_id:
+                if deserves_stammspieler:
+                    output += 'Ja! Du bist Stammspieler. \nMelde dich bei einem Admin deines Vertrauens.'
+                else:
+                    output += 'Nein, frag doch einfach später nochmal.\n'
+            else:
+                output += player_name + '\n'
+
         return output
 
     @staticmethod
