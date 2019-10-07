@@ -222,11 +222,11 @@ class Stammspieler:
             if steam_id and steam_id != player_steam_id:
                 continue
 
-            if steam_id not in missions_per_player:
-                missions_per_player[steam_id] = [set(), set(), set()]
+            if player_steam_id not in missions_per_player:
+                missions_per_player[player_steam_id] = [set(), set(), set()]
 
-            missions_per_player[steam_id][interval_idx].add((mission_name, mission_date))
-            playernames[steam_id] = player_name
+            missions_per_player[player_steam_id][interval_idx].add((mission_name, mission_date))
+            playernames[player_steam_id] = player_name
 
         output = str(len(total_missions[0])) + ' ' + str(len(total_missions[1])) + ' ' + str(len(total_missions[2])) + '\n'
         for player_steam_id, missions in missions_per_player.items():
