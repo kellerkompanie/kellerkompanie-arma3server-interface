@@ -244,9 +244,10 @@ class Stammspieler:
         total_missions = [len(total_missions[0]), len(total_missions[1]), len(total_missions[2])]
         output = str(total_missions[0]) + ' ' + str(total_missions[1]) + ' ' + str(total_missions[2]) + '\n'
         for player_steam_id, missions in missions_per_player.items():
+            missions = [len(missions[0]), len(missions[1]), len(missions[2])]
             player_name = player_names.get(player_steam_id)
-            output += player_name + ': ' + str(len(missions[0])) + ' ' + str(len(missions[1])) + ' ' + str(
-                len(missions[2])) + '\n'
+            output += player_name + ': ' + str(missions[0]) + ' ' + str(missions[1]) + ' ' + str(
+                missions[2]) + '\n'
             output += str(self.deserves_stammspieler(missions, total_missions)) + '\n'
         return output
 
