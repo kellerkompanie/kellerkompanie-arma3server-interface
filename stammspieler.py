@@ -200,6 +200,15 @@ class Stammspieler:
         return spieler_anzahl
 
     @staticmethod
+    def format_participation(player_missions, total_missions):
+        assert len(player_missions) == len(total_missions)
+
+        output = '[ '
+        for i in range(len(total_missions)):
+            output += player_missions[i] + '/' + total_missions[i] + ' '
+        return output + ']'
+
+    @staticmethod
     def deserves_stammspieler(player_missions, total_missions):
         assert len(player_missions) == len(total_missions)
 
@@ -216,10 +225,21 @@ class Stammspieler:
         # Get raw SQL data as list of tuples (mission_name, player_name, mission_date, steam_id).
         participation = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
 
+        # Tuples of (mission, mission date) sorted into the 3 time intervals. Has to be sets because mission may appear
+        # more than once during iteration.
         total_missions = [set(), set(), set()]
+
+        # Similar to total_mission will contain [set(), set(), set(), playername] with tuples (mission, mission date)
+        # sorted per player. Key is player's steam_id
         missions_per_player = dict()
+
+        # Reference date of today to calculate the intervals.
         date_today = datetime.datetime.now().date()
         for mission_name, player_name, mission_date, player_steam_id in participation:
+            # Establish the interval index
+            #       0 -> 0 - 30 days ago
+            #       1 -> 30 - 60 days ago
+            #       2 -> 60 - 90 days ago
             if (date_today - timedelta(days=30)) <= mission_date <= date_today:
                 interval_idx = 0
             elif (date_today - timedelta(days=60)) <= mission_date <= (date_today - timedelta(days=30)):
@@ -227,16 +247,22 @@ class Stammspieler:
             elif (date_today - timedelta(days=90)) <= mission_date <= (date_today - timedelta(days=60)):
                 interval_idx = 2
             else:
+                # There might be mission outside of the intervals, ignore them.
                 continue
 
+            # Mission is counted for the according interval.
             total_missions[interval_idx].add((mission_name, mission_date))
 
+            # Optimization in order to use same method for both individual and admin interface output. If input steam_id
+            # was provided and current steam_id matches, then count, otherwise skip.
             if steam_id and steam_id != player_steam_id:
                 continue
 
+            # If this is the first occurence of a particular steam_id, then create the empty entry in the dict.
             if player_steam_id not in missions_per_player:
                 missions_per_player[player_steam_id] = [set(), set(), set(), player_name]
 
+            # Finally count the mission for the player and corresponding interval.
             missions_per_player[player_steam_id][interval_idx].add((mission_name, mission_date))
 
         if steam_id:
@@ -255,6 +281,7 @@ class Stammspieler:
                     output += 'Ja! Du bist Stammspieler. \nMelde dich bei einem Admin deines Vertrauens.\n'
                 else:
                     output += 'Nein, frag doch einfach später nochmal.\n'
+                output += 'Du hast mitgespielt: ' + self.format_participation(player_missions, total_missions)
             elif deserves_stammspieler:
                 output += player_name + '\n'
 
