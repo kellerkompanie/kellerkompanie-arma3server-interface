@@ -278,9 +278,9 @@ class Stammspieler:
             deserves_stammspieler = self.deserves_stammspieler(player_missions, total_missions)
             if steam_id:
                 if deserves_stammspieler:
-                    output += 'Ja! Du bist Stammspieler. \nMelde dich bei einem Admin deines Vertrauens.\n'
+                    output += 'Ja! Du bist Stammspieler. \nMelde dich bei einem Admin deines Vertrauens.\n\n'
                 else:
-                    output += 'Nein, frag doch einfach später nochmal.\n'
+                    output += 'Nein, frag doch einfach später nochmal.\n\n'
                 output += 'Du hast mitgespielt: ' + self.format_participation(player_missions, total_missions)
             elif deserves_stammspieler:
                 output += player_name + '\n'
