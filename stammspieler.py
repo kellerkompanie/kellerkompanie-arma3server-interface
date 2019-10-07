@@ -203,10 +203,10 @@ class Stammspieler:
     def format_participation(player_missions, total_missions):
         assert len(player_missions) == len(total_missions)
 
-        output = '[ '
+        output = ''
         for i in range(len(total_missions)):
-            output += str(player_missions[i]) + '/' + str(total_missions[i]) + ' '
-        return output + ']'
+            output += str(player_missions[i]) + ' / ' + str(total_missions[i]) + ' - '
+        return output[:-3]
 
     @staticmethod
     def deserves_stammspieler(player_missions, total_missions):
