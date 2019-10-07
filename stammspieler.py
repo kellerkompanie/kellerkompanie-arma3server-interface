@@ -218,7 +218,6 @@ class Stammspieler:
 
         total_missions = [set(), set(), set()]
         missions_per_player = dict()
-        player_names = dict()
         date_today = datetime.datetime.now().date()
         for mission_name, player_name, mission_date, player_steam_id in participation:
             if (date_today - timedelta(days=30)) <= mission_date <= date_today:
@@ -236,18 +235,17 @@ class Stammspieler:
                 continue
 
             if player_steam_id not in missions_per_player:
-                missions_per_player[player_steam_id] = [set(), set(), set()]
+                missions_per_player[player_steam_id] = [set(), set(), set(), player_name]
 
             missions_per_player[player_steam_id][interval_idx].add((mission_name, mission_date))
-            player_names[player_steam_id] = player_name
 
         total_missions = [len(total_missions[0]), len(total_missions[1]), len(total_missions[2])]
         output = str(total_missions[0]) + ' ' + str(total_missions[1]) + ' ' + str(total_missions[2]) + '\n'
         for player_steam_id, missions in missions_per_player.items():
+            player_name = missions[3]
             missions = [len(missions[0]), len(missions[1]), len(missions[2])]
-            player_name = player_names.get(player_steam_id)
-            output += player_name + ': ' + str(missions[0]) + ' ' + str(missions[1]) + ' ' + str(
-                missions[2]) + '\n'
+
+            output += player_name + ': ' + str(missions[0]) + ' ' + str(missions[1]) + ' ' + str(missions[2]) + ' '
             output += str(self.deserves_stammspieler(missions, total_missions)) + '\n'
         return output
 
