@@ -255,7 +255,7 @@ class Stammspieler:
                     output += 'Ja! Du bist Stammspieler. \nMelde dich bei einem Admin deines Vertrauens.'
                 else:
                     output += 'Nein, frag doch einfach später nochmal.\n'
-            else:
+            elif deserves_stammspieler:
                 output += player_name + '\n'
 
         return output
