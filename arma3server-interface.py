@@ -299,7 +299,7 @@ def stammspieler_all():
         abort(403)
 
     response = "<h2>Liste der Stammspieler</h2><pre>"
-    response += database.ausgabe_stammspieler_admin()
+    response += database.ausgabe_stammspieler()
     response += "</pre>"
 
     response += "<h2>Missionen</h2><pre>"

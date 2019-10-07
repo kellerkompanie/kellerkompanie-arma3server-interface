@@ -199,146 +199,34 @@ class Stammspieler:
 
         return spieler_anzahl
 
-    @staticmethod
-    def _calculate_dates_per_interval():
-        # Calculate the dates to determine the 3 intervals: last 30 days, 30-60 days ago and 60-90 days ago.
-        date_today = datetime.datetime.now().date()
-        date_90days_ago = (date_today - timedelta(days=90))
-        date_60days_ago = (date_today - timedelta(days=60))
-        date_30days_ago = (date_today - timedelta(days=30))
-
-        return date_today, date_30days_ago, date_60days_ago, date_90days_ago
-
-    def _calculate_total_missions_per_interval(self, participation):
-        # Calculate the interval border dates
-        date_today, date_30days_ago, date_60days_ago, date_90days_ago = self._calculate_dates_per_interval()
-
-        # Counters for how many mission have been played in total during that interval.
-        total_missions_0to30days_ago = 0
-        total_missions_30to60days_ago = 0
-        total_missions_60to90days_ago = 0
-
-        # Since the raw SQL data contains each mission a number of times (for every player that participated) we need
-        # to limit the amount, so that each mission at a specific date only appears once in our set.
-        unique_missions = set()
-        for mission_name, _, mission_date, _ in participation:
-            unique_missions.add((mission_name, mission_date))
-
-        # For each of the mission determine in which of the intervals it took place and increase the mission counter
-        # for that interval.
-        for mission_name, mission_date in unique_missions:
-            if date_90days_ago < mission_date <= date_60days_ago:
-                total_missions_60to90days_ago += 1
-            elif date_60days_ago < mission_date <= date_30days_ago:
-                total_missions_30to60days_ago += 1
-            elif date_30days_ago < mission_date <= date_today:
-                total_missions_0to30days_ago += 1
-
-        return total_missions_0to30days_ago, total_missions_30to60days_ago, total_missions_60to90days_ago
-
-    def ausgabe_stammspieler(self, steam_id):
+    def ausgabe_stammspieler(self, steam_id=None):
         # Get raw SQL data as list of tuples (mission_name, player_name, mission_date, steam_id).
         participation = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
 
-        # Calculate how many mission were played in each interval
-        total_missions = self._calculate_total_missions_per_interval(participation)
-        total_missions_0to30days_ago, total_missions_30to60days_ago, total_missions_60to90days_ago = total_missions
-
-        # Calculate the interval border dates
-        date_today, date_30days_ago, date_60days_ago, date_90days_ago = self._calculate_dates_per_interval()
-
-        participated_missions_0to30days_ago = 0
-        participated_missions_30to60days_ago = 0
-        participated_missions_60to90days_ago = 0
-
-        for mission_name, player_name, mission_date, participants_steam_id in participation:
-            if steam_id not in participants_steam_id:
+        total_missions = [set(), set(), set()]
+        missions_per_player = dict()
+        date_today = datetime.datetime.now().date()
+        for mission_name, player_name, mission_date, player_steam_id in participation:
+            if (date_today - timedelta(days=30)) <= mission_date <= date_today:
+                interval_idx = 0
+            elif (date_today - timedelta(days=60)) <= mission_date <= (date_today - timedelta(days=30)):
+                interval_idx = 1
+            elif (date_today - timedelta(days=90)) <= mission_date <= (date_today - timedelta(days=60)):
+                interval_idx = 2
+            else:
                 continue
 
-            if date_90days_ago < mission_date <= date_60days_ago:
-                participated_missions_60to90days_ago += 1
-            elif date_60days_ago < mission_date <= date_30days_ago:
-                participated_missions_30to60days_ago += 1
-            elif date_30days_ago < mission_date <= date_today:
-                participated_missions_0to30days_ago += 1
+            total_missions[interval_idx].add((mission_name, mission_date))
 
-        condition1 = participated_missions_60to90days_ago >= int(total_missions_60to90days_ago / 3) \
-                     and participated_missions_30to60days_ago >= int(total_missions_30to60days_ago / 3) \
-                     and participated_missions_0to30days_ago >= int(total_missions_0to30days_ago / 3)
-        condition2 = participated_missions_60to90days_ago >= (total_missions_60to90days_ago / 2) \
-                     and participated_missions_30to60days_ago >= (total_missions_30to60days_ago / 2)
-        condition3 = participated_missions_60to90days_ago >= (total_missions_60to90days_ago / 2) \
-                     and participated_missions_0to30days_ago >= (total_missions_0to30days_ago / 2)
-        condition4 = participated_missions_30to60days_ago >= (total_missions_30to60days_ago / 2) \
-                     and participated_missions_0to30days_ago >= (total_missions_0to30days_ago / 2)
+            if steam_id and steam_id != player_steam_id:
+                continue
 
-        output = ''
-        if condition1 or condition2 or condition3 or condition4:
-            output += "Ja! Du bist Stammspieler. \nMelde dich bei einem Admin deines Vertrauens."
-        else:
-            output += "Nein, frag doch einfach später nochmal.\n"
+            if steam_id not in missions_per_player:
+                missions_per_player[steam_id] = [set(), set(), set()]
 
-        output += "\nDu hast mitgespielt: " + str(participated_missions_60to90days_ago) + " / " + str(
-            total_missions_60to90days_ago) + " - " + str(
-            participated_missions_30to60days_ago) + " / " + str(total_missions_30to60days_ago) + "  -  " + str(
-            participated_missions_0to30days_ago) + " / " + str(total_missions_0to30days_ago) + '\n'
-        return output
+            missions_per_player[steam_id][interval_idx].add((mission_name, mission_date))
 
-    def ausgabe_stammspieler_admin(self):
-        # Get raw SQL data as list of tuples (mission_name, player_name, mission_date, steam_id).
-        participation = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
-
-        # Calculate how many mission were played in each interval
-        total_missions = self._calculate_total_missions_per_interval(participation)
-        total_missions_0to30days_ago, total_missions_30to60days_ago, total_missions_60to90days_ago = total_missions
-
-        # Calculate the interval border dates
-        date_today, date_30days_ago, date_60days_ago, date_90days_ago = self._calculate_dates_per_interval()
-
-        # Similar to the missions we iterate over the raw SQL data from the viewpoint of the players, counting how many
-        # times they participated in each of the intervals. For human readable output we also memorize the names of the
-        # corresponding SteamIDs, since they are unique, but player's names may repeat.
-        player_participations = dict()
-        player_names = dict()
-        for mission_name, player_name, mission_date, steam_id in participation:
-            player_names[steam_id] = player_name
-            if steam_id not in player_participations:
-                player_participations[steam_id] = [0, 0, 0]
-
-            if date_30days_ago < mission_date <= date_today:
-                player_participations[steam_id][0] += 1
-            elif date_60days_ago < mission_date <= date_30days_ago:
-                player_participations[steam_id][1] += 1
-            elif date_90days_ago < mission_date <= date_60days_ago:
-                player_participations[steam_id][2] += 1
-
-        # Regular players are players that participated a certain percentage of the maximum possible missions in each
-        # interval. We iterate over the participations and check if the players fulfill these constraints.
-        regular_players = set()
-        for steam_id in player_participations:
-            if player_participations[steam_id][2] >= int(total_missions_60to90days_ago / 3) and \
-                    player_participations[steam_id][1] >= int(total_missions_30to60days_ago / 3) and \
-                    player_participations[steam_id][0] >= int(total_missions_0to30days_ago / 3):
-                regular_players.add(player_names[steam_id])
-            elif player_participations[steam_id][2] >= (
-                    total_missions_60to90days_ago / 2) and player_participations[steam_id][1] >= (
-                    total_missions_30to60days_ago / 2):
-                regular_players.add(player_names[steam_id])
-            elif player_participations[steam_id][2] >= (
-                    total_missions_60to90days_ago / 2) and player_participations[steam_id][0] >= (
-                    total_missions_0to30days_ago / 2):
-                regular_players.add(player_names[steam_id])
-            elif player_participations[steam_id][2] >= (
-                    total_missions_30to60days_ago / 2) and player_participations[steam_id][0] >= (
-                    total_missions_0to30days_ago / 2):
-                regular_players.add(player_names[steam_id])
-
-        header = "Stammspieler:"
-        output = header + '\n'
-        output += "-" * (len(header) + 14) + '\n'
-        output += '\n'.join(sorted(regular_players, key=str.casefold))
-        output += "\n\nAnzahl Stammspieler: " + str(len(regular_players)) + '\n'
-        return output
+        return str(total_missions)
 
     @staticmethod
     def get_karten(missionen):
