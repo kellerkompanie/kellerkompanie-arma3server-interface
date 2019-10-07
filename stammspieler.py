@@ -205,6 +205,7 @@ class Stammspieler:
 
         total_missions = [set(), set(), set()]
         missions_per_player = dict()
+        playernames = dict()
         date_today = datetime.datetime.now().date()
         for mission_name, player_name, mission_date, player_steam_id in participation:
             if (date_today - timedelta(days=30)) <= mission_date <= date_today:
@@ -225,8 +226,13 @@ class Stammspieler:
                 missions_per_player[steam_id] = [set(), set(), set()]
 
             missions_per_player[steam_id][interval_idx].add((mission_name, mission_date))
+            playernames[steam_id] = player_name
 
-        return str(total_missions)
+        output = str(len(total_missions[0])) + ' ' + str(len(total_missions[1])) + ' ' + str(len(total_missions[2])) + '\n'
+        for player_steam_id, missions in missions_per_player.items():
+            player_name = playernames.get(player_steam_id)
+            output += player_name + ': ' + str(len(missions[0])) + ' ' + str(len(missions[1])) + ' ' + str(len(missions[2])) + '\n'
+        return output
 
     @staticmethod
     def get_karten(missionen):
