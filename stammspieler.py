@@ -205,7 +205,7 @@ class Stammspieler:
 
         output = ''
         for i in range(len(total_missions)):
-            output += str(player_missions[i]) + ' / ' + str(total_missions[i]) + ' - '
+            output += str(player_missions[i]) + ' / ' + str(total_missions[i]) + '  ---  '
         return output[:-3]
 
     @staticmethod
