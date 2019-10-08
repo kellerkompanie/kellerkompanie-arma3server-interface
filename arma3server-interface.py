@@ -314,9 +314,8 @@ def stammspieler_all():
     response += database.ausgabe_karten()
     response += "</pre>"
 
-    response += "<h2>Teilnehmer</h2><pre>"
+    response += "<h2>Teilnehmer</h2>"
     response += database.ausgabe_teilnehmer()
-    response += "</pre>"
 
     return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
