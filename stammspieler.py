@@ -454,13 +454,14 @@ class Stammspieler:
         output = '<div class="head">'
         for x in mitgespielt:
             if mission != x[0]:
+                if mission != "":
+                    output += '</div>'
+                    output += '</pre>'
                 mission = x[0]
                 output += "\nMission: " + mission + '\n'
                 output += '<pre class="body hide">'
                 output += "-" * (len(mission) + 10) + '\n'
             output += str(x[1]) + '\n'
-        output += '</pre>'
-        output += '</div>'
         return output
 
     def ausgabe_teilnehmer_mission(self, mission_param):
