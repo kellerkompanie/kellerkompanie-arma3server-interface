@@ -458,7 +458,7 @@ class Stammspieler:
                     output += '</div>'
                     output += '</pre>'
                 mission = x[0]
-                output = '<div class="head">'
+                output += '<div class="head">'
                 output += '\nMission: ' + mission + '\n'
                 output += '<pre class="body hide">'
                 output += '-' * (len(mission) + 10) + '\n'
