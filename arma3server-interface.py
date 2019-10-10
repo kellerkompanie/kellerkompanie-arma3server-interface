@@ -9,6 +9,7 @@ import subprocess
 from flask import Flask, request, abort, jsonify
 from werkzeug.utils import secure_filename
 
+import faction_config_generator
 from kekosync import KeKoSync
 from stammspieler import Stammspieler
 
@@ -364,6 +365,16 @@ def addons():
 
     response = kekosync.get_all_addons()
     return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+
+@app.route("/faction_generator", methods=['POST'])
+def faction_generator():
+    if not is_whitelisted(request.remote_addr):
+        abort(403)
+
+    request_content = request.form.get('clipboard_paste')
+    response = faction_config_generator.generate_config(request_content)
+    return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 def load_config():
