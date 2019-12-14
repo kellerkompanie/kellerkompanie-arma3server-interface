@@ -41,6 +41,7 @@ install the packages using pip:
 source venv/bin/activate
 pip install flask
 pip install werkzeug
+pip install pymysql
 ```
 
 Copy the shell scripts to the arma3server directory. You need to return to a user with sudo privileges using ```CTRL+D``` shortcut.
