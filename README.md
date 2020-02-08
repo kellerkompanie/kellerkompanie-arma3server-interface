@@ -41,6 +41,7 @@ install the packages using pip:
 source venv/bin/activate
 pip install flask
 pip install werkzeug
+pip install pymysql
 ```
 
 Copy the shell scripts to the arma3server directory. You need to return to a user with sudo privileges using ```CTRL+D``` shortcut.
@@ -128,6 +129,26 @@ Now you can run the interface using
 ```
 ./start_interface.sh
 ```
+
+### Configure
+On initial startup the config file will be created, adjust it so that the webpage server IP is whitelisted:
+```
+nano /home/arma3server-interface/kellerkompanie-arma3server-interface/config.json
+```
+Default config:
+```
+{
+    "host": "0.0.0.0",
+    "ip_whitelist": [
+        "<add webserver IPv4 here>",
+        "<optionally add additional IPs, e.g., for debug computer>"
+    ],
+    "port": 5000,
+    "ssl_context_fullchain": "/etc/letsencrypt/live/server.kellerkompanie.com/fullchain.pem",
+    "ssl_context_privkey": "/etc/letsencrypt/live/server.kellerkompanie.com/privkey.pem"
+}
+```
+
 
 ### Declaring as service
 To have automatic start on machine boot, we add the script as systemd 
