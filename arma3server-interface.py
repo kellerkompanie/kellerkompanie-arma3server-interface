@@ -224,8 +224,10 @@ def missions_upload():
     filename = secure_filename(file.filename)
     p = re.compile(r"^([A-Za-z0-9]|_|-)+\.([A-Za-z0-9]|_|-)+\.pbo$")
     if not p.match(filename):
-        return 'Fehler! Erlaubte Zeichen im Dateinamen A-Z a-z 0-9 - und _ sowie Endung .pbo!', 200, {
-            'Content-Type': 'text/plain; charset=utf-8'}
+        return """Fehler! Erlaubte Zeichen im Dateinamen A-Z a-z 0-9 - und _ sowie Endung .pbo!
+            Außerdem muss der Dateiname die Form <Missionsname>.<Mapname>.pbo einhalten,
+            mehr Informationen im <a href="https://wiki.kellerkompanie.com/index.php?title=FAQ#Wie_benenne_ich_meine_Missionsdatei.3F">FAQ</a>.""",
+            200, {'Content-Type': 'text/plain; charset=utf-8'}
 
     filename_parts = filename.split('.')
     mission_name = '.'.join(filename_parts[:-2])
