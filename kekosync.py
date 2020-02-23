@@ -181,14 +181,13 @@ class KeKoSync:
 
     def update_addons(self, updated_addons_json):
         updated_addons = json.loads(updated_addons_json)
-        sql = "UPDATE addon" \
+        sql = "UPDATE addon " \
               "SET addon_version = %s " \
               "WHERE addon_uuid = %s;"
         connection = self.create_connection()
         for addon_uuid, addon_version in updated_addons.items():
-
             with connection.cursor() as cursor:
-                cursor.execute(sql, (addon_version, addon_version))
+                cursor.execute(sql, (addon_version, addon_uuid))
 
         connection.commit()
         connection.close()
