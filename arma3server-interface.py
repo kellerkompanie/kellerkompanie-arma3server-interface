@@ -384,6 +384,16 @@ def addon_name(name):
         return jsonify("unknown method"), 403, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
+@app.route("/update_addons", methods=['POST'])
+def update_addons():
+    if not is_whitelisted(request.remote_addr):
+        abort(403)
+
+    updated_addons = request.form.get('updated_addons')
+    response = kekosync.update_addons(updated_addons)
+    return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+
 @app.route("/faction_generator", methods=['POST'])
 def faction_generator():
     if not is_whitelisted(request.remote_addr):
