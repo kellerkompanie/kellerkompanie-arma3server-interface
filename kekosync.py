@@ -158,8 +158,10 @@ class KeKoSync:
         for addon in self.get_all_addons():
             other_addon_name = addon["addon_name"]
             if self._is_name_similar(addon_name, other_addon_name):
+                print("found", other_addon_name, "for", addon_name)
                 return addon["addon_uuid"]
 
+        print("did not find any match for", addon_name)
         return self.insert_addon(addon_name)
 
     def insert_addon(self, addon_name):
