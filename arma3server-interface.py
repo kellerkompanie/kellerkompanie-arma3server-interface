@@ -364,9 +364,6 @@ def addon_groups():
 
 @app.route("/addons")
 def addons():
-    if not is_whitelisted(request.remote_addr):
-        abort(403)
-
     response = kekosync.get_all_addons()
     return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
