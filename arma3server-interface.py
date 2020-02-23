@@ -5,6 +5,7 @@ import json
 import os.path
 import re
 import subprocess
+import sys
 
 from flask import Flask, request, abort, jsonify
 from werkzeug.utils import secure_filename
@@ -53,7 +54,10 @@ def arma3server_running():
 
 
 def is_whitelisted(ip):
-    return ip in settings['ip_whitelist']
+    whitelisted = ip in settings['ip_whitelist']
+    if not whitelisted:
+        print(ip, "is not whitelisted", file=sys.stderr)
+    return whitelisted
 
 
 @app.route("/")
