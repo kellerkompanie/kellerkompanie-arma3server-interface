@@ -133,7 +133,7 @@ class KeKoSync:
 
         connection = self.create_connection()
         cursor = connection.cursor()
-        new_uuid = str(uuid.uuid4())
+        new_uuid = self._generate_uuid()
         version = datetime.now().strftime("%Y%m%d-%H%M%S")
         cursor.execute(sql, (new_uuid, version, name, author))
         addon_group_id = cursor.lastrowid
@@ -141,6 +141,42 @@ class KeKoSync:
         self._update_addons(connection, addon_group_id, addon_list)
         connection.close()
         return "OK"
+
+    @staticmethod
+    def _generate_uuid():
+        return str(uuid.uuid4())
+
+    @staticmethod
+    def _generate_version():
+        return datetime.now().strftime("%Y%m%d-%H%M%S")
+
+    @staticmethod
+    def _is_name_similar(addon_name1, addon_name2):
+        return addon_name1 == addon_name2
+
+    def match_addon_name(self, addon_name) -> str:
+        for addon in self.get_all_addons():
+            other_addon_name = addon["addon_name"]
+            if self._is_name_similar(addon_name, other_addon_name):
+                return addon["addon_uuid"]
+
+        return self.insert_addon(addon_name)
+
+    def insert_addon(self, addon_name):
+        sql = "INSERT INTO addon (addon_uuid, addon_version, addon_foldername, addon_name) " \
+              "VALUES (%s, %s, %s, %s);"
+
+        addon_uuid = self._generate_uuid()
+        addon_foldername = addon_name
+        addon_version = self._generate_version()
+
+        connection = self.create_connection()
+        cursor = connection.cursor()
+        cursor.execute(sql, (addon_uuid, addon_version, addon_foldername, addon_name))
+        # addon_id = cursor.lastrowid
+        cursor.close()
+        connection.close()
+        return addon_uuid
 
     def _update_addons(self, connection, addon_group_id, addon_list):
         vals = []

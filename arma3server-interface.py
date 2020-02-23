@@ -368,6 +368,18 @@ def addons():
     return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
+@app.route("/addon/<name>", methods=['GET'])
+def addon_name(name):
+    if not is_whitelisted(request.remote_addr):
+        abort(403)
+
+    if request.method == 'GET':
+        response = {'uuid': kekosync.match_addon_name(name)}
+        return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    else:
+        return jsonify("unknown method"), 403, {'Content-Type': 'text/plain; charset=utf-8'}
+
+
 @app.route("/faction_generator", methods=['POST'])
 def faction_generator():
     if not is_whitelisted(request.remote_addr):
