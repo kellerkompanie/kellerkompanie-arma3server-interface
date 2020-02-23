@@ -3,7 +3,6 @@
 
 import json
 import os
-import sys
 import uuid
 from datetime import datetime
 
@@ -159,10 +158,8 @@ class KeKoSync:
         for addon in self.get_all_addons():
             other_addon_name = addon["addon_name"]
             if self._is_name_similar(addon_name, other_addon_name):
-                print("found", other_addon_name, "for", addon_name, file=sys.stderr)
                 return addon["addon_uuid"]
 
-        print("did not find any match for", addon_name, file=sys.stderr)
         return self.insert_addon(addon_name)
 
     def insert_addon(self, addon_name):
@@ -174,11 +171,11 @@ class KeKoSync:
         addon_version = self._generate_version()
 
         connection = self.create_connection()
-        cursor = connection.cursor()
-        cursor.execute(sql, (addon_uuid, addon_version, addon_foldername, addon_name))
-        addon_id = cursor.lastrowid
-        print("added", addon_name, "as id", addon_id, "into table", file=sys.stderr)
-        cursor.close()
+        with connection.cursor() as cursor:
+            cursor.execute(sql, (addon_uuid, addon_version, addon_foldername, addon_name))
+            # addon_id = cursor.lastrowid
+
+        connection.commit()
         connection.close()
         return addon_uuid
 
