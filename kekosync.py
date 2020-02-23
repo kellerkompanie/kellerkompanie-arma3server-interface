@@ -152,7 +152,7 @@ class KeKoSync:
 
     @staticmethod
     def _is_name_similar(addon_name1, addon_name2):
-        return addon_name1 == addon_name2
+        return addon_name1.lower() == addon_name2.lower()
 
     def match_addon_name(self, addon_name) -> str:
         for addon in self.get_all_addons():
