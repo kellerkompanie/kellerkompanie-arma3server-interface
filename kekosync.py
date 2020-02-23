@@ -176,7 +176,8 @@ class KeKoSync:
         connection = self.create_connection()
         cursor = connection.cursor()
         cursor.execute(sql, (addon_uuid, addon_version, addon_foldername, addon_name))
-        # addon_id = cursor.lastrowid
+        addon_id = cursor.lastrowid
+        print("added", addon_name, "as id", addon_id, "into table", file=sys.stderr)
         cursor.close()
         connection.close()
         return addon_uuid
