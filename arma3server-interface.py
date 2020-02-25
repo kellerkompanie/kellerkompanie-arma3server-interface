@@ -122,6 +122,8 @@ def select_mods(query_string):
         base_file_path = ''
     elif query_dict['modpack'] == 'vindicta':
         base_file_path = '/home/arma3server/serverfiles/mods.vindicta/'
+    elif query_dict['modpack'] == 'antistasi':
+        base_file_path = '/home/arma3server/serverfiles/mods.antistasi/'
 
     stdout, stderr = run_shell_command(SWITCH_MODPACK + ' ' + base_file_path)
 
