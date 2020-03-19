@@ -333,13 +333,13 @@ def stammspieler_all():
 
 @app.route("/addon_group/<uuid>", methods=['GET', 'DELETE'])
 def addon_group(uuid):
-    if not is_whitelisted(request.remote_addr):
-        abort(403)
-
     if request.method == 'GET':
         response = kekosync.get_addon_group(uuid)
         return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
     elif request.method == 'DELETE':
+        if not is_whitelisted(request.remote_addr):
+            abort(403)
+
         response = kekosync.delete_addon_group(uuid)
         return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
     else:
@@ -348,10 +348,10 @@ def addon_group(uuid):
 
 @app.route("/addon_groups", methods=['GET', 'POST'])
 def addon_groups():
-    if not is_whitelisted(request.remote_addr):
-        abort(403)
-
     if request.method == 'POST':
+        if not is_whitelisted(request.remote_addr):
+            abort(403)
+
         uuid = request.form.get('uuid')
         name = request.form.get('name')
         author = request.form.get('author')
