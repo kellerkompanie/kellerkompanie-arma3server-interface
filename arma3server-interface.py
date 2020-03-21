@@ -335,15 +335,15 @@ def stammspieler_all():
 def addon_group(uuid):
     if request.method == 'GET':
         response = kekosync.get_addon_group(uuid)
-        return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+        return jsonify(response), 200, {'Content-Type': 'application/json; charset=utf-8'}
     elif request.method == 'DELETE':
         if not is_whitelisted(request.remote_addr):
             abort(403)
 
         response = kekosync.delete_addon_group(uuid)
-        return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+        return jsonify(response), 200, {'Content-Type': 'application/json; charset=utf-8'}
     else:
-        return jsonify("unknown method"), 403, {'Content-Type': 'text/plain; charset=utf-8'}
+        return jsonify("unknown method"), 403, {'Content-Type': 'application/json; charset=utf-8'}
 
 
 @app.route("/addon_groups", methods=['GET', 'POST'])
@@ -362,16 +362,16 @@ def addon_groups():
         else:
             response = kekosync.create_addon_group(name, author, addon_list)
 
-        return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+        return jsonify(response), 200, {'Content-Type': 'application/json; charset=utf-8'}
     else:
         response = kekosync.get_addon_groups()
-        return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+        return jsonify(response), 200, {'Content-Type': 'application/json; charset=utf-8'}
 
 
 @app.route("/addons")
 def addons():
     response = kekosync.get_all_addons()
-    return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    return jsonify(response), 200, {'Content-Type': 'application/json; charset=utf-8'}
 
 
 @app.route("/addon/<name>", methods=['GET'])
@@ -381,9 +381,9 @@ def addon_name(name):
 
     if request.method == 'GET':
         response = {'uuid': kekosync.match_addon_name(name)}
-        return jsonify(response), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+        return jsonify(response), 200, {'Content-Type': 'application/json; charset=utf-8'}
     else:
-        return jsonify("unknown method"), 403, {'Content-Type': 'text/plain; charset=utf-8'}
+        return jsonify("unknown method"), 403, {'Content-Type': 'application/json; charset=utf-8'}
 
 
 @app.route("/update_addons", methods=['POST'])
