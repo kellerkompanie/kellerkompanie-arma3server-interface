@@ -124,6 +124,7 @@ class KeKoSync:
         addon_group_id = self.get_addon_group_id_from_uuid(existing_uuid)
         self._update_addons(connection, addon_group_id, addon_list)
 
+        connection.commit()
         connection.close()
         return "OK"
 
@@ -137,6 +138,7 @@ class KeKoSync:
         version = datetime.now().strftime("%Y%m%d-%H%M%S")
         cursor.execute(sql, (new_uuid, version, name, author))
         addon_group_id = cursor.lastrowid
+        connection.commit()
         cursor.close()
         self._update_addons(connection, addon_group_id, addon_list)
         connection.close()
