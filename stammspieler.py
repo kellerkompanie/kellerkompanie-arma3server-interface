@@ -352,7 +352,7 @@ class Stammspieler:
         #       2 -> number of missions 60 - 90 days ago
         total_missions = [len(total_missions[0]), len(total_missions[1]), len(total_missions[2])]
 
-        output = {}
+        output = {'interval_participations': []}
 
         # Iterate through all counted player participations and sort by player names if needed. In case steam_id was
         # supplied as input to this method, this loop should be finished after the first iteration.
