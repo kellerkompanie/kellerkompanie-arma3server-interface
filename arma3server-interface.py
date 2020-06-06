@@ -302,15 +302,10 @@ def stammspieler(steam_id):
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
-    response = "<h2>Eigene Aktivität</h2><pre>"
-    response += database.ausgabe_mitgespielt(steam_id)
-    response += "</pre>"
+    response_dict = database.dict_mitgespielt(steam_id)
+    response_dict.update(database.dict_stammspieler(steam_id))
 
-    response += "<h2>Kann ich Stammspieler haben?</h2><pre>"
-    response += database.ausgabe_stammspieler(steam_id)
-    response += "</pre><hr>"
-
-    return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    return json.dumps(response_dict), 200, {'Content-Type': 'application/json; charset=utf-8'}
 
 
 @app.route("/stammspieler")
