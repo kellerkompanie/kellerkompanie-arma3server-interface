@@ -547,7 +547,7 @@ class Stammspieler:
                     check += 1
                 date_str = x[2].strftime("%d.%m.%Y")
                 mission_name = x[0]
-                output['missions'].append({'mission_date': date_str, 'mission_name': mission_name})
+                output['missions'].append({'date': date_str, 'name': mission_name})
                 zaehler += 1
 
         output['total'] = zaehler
