@@ -36,9 +36,6 @@ LOGSHOW_SCRIPT_SERVER = 'tail -n 300 /home/arma3server/log/console/arma3server-c
 LOGSHOW_SCRIPT_HC1 = 'tail -n 300 /home/arma3server/log/console/arma3hc1-console.log'
 LOGSHOW_SCRIPT_HC2 = 'tail -n 300 /home/arma3server/log/console/arma3hc2-console.log'
 LOGSHOW_SCRIPT_HC3 = 'tail -n 300 /home/arma3server/log/console/arma3hc3-console.log'
-LOGSHOW_SCRIPT_HC4 = 'tail -n 300 /home/arma3server/log/console/arma3hc4-console.log'
-LOGSHOW_SCRIPT_HC5 = 'tail -n 300 /home/arma3server/log/console/arma3hc5-console.log'
-LOGSHOW_SCRIPT_HC6 = 'tail -n 300 /home/arma3server/log/console/arma3hc6-console.log'
 
 
 def run_shell_command(command):
@@ -264,12 +261,6 @@ def logs(name):
         script = LOGSHOW_SCRIPT_HC2
     elif name == "hc3":
         script = LOGSHOW_SCRIPT_HC3
-    elif name == "hc4":
-        script = LOGSHOW_SCRIPT_HC4
-    elif name == "hc5":
-        script = LOGSHOW_SCRIPT_HC5
-    elif name == "hc6":
-        script = LOGSHOW_SCRIPT_HC6
     else:
         return "Fehler! log file von unbekannter Quelle angefragt: " + name, 200, {
             'Content-Type': 'text/plain; charset=utf-8'}
