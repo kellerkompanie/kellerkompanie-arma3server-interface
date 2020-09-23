@@ -583,6 +583,20 @@ class Stammspieler:
                 output += str(x[1]) + '\n'
         return output
 
+    def get_username(self, steam_id: str):
+        connection = self.create_connection()
+        cursor = connection.cursor()
+        query = "SELECT PlayerName FROM session WHERE PlayerUID = %s ORDER BY Time DESC LIMIT 1;"
+        cursor.execute(query, (steam_id,))
+        row = cursor.fetchone()
+        cursor.close()
+        connection.close()
+
+        if row is not None:
+            return row['PlayerName']
+        else:
+            return None
+
 
 if __name__ == "__main__":
     stammspieler = Stammspieler()

@@ -6,7 +6,6 @@ import os.path
 import re
 import subprocess
 import sys
-
 from flask import Flask, request, abort, jsonify
 from werkzeug.utils import secure_filename
 
@@ -398,6 +397,19 @@ def faction_generator():
 
     request_content = request.form.get('clipboard_paste')
     response = faction_config_generator.generate_config(request_content)
+    return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+
+@app.route("/username/<steam_id>")
+def username(steam_id):
+    if not is_whitelisted(request.remote_addr):
+        abort(403)
+
+    _username = database.get_username(steam_id)
+    if _username is None:
+        response = ''
+    else:
+        response = _username
     return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
