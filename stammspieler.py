@@ -593,7 +593,7 @@ class Stammspieler:
         connection.close()
 
         if row is not None:
-            return row['PlayerName']
+            return row[0]
         else:
             return None
 
