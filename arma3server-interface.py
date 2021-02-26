@@ -2,6 +2,7 @@
 import datetime
 import glob
 import json
+import os
 import os.path
 import re
 import subprocess
@@ -132,8 +133,9 @@ def select_mods(query_string):
     with open(mods_file_path, "a+") as f:
         if query_dict['modpack'] == 'main-bundeswehr':
             for subdir, dirs, files in os.walk('/home/arma3server/serverfiles/mods.bundeswehr/'):
-                if subdir.startswith('@'):
-                    f.write("mods=\"${mods}mods.bundeswehr/\\%s\\;\"\n" % subdir)
+                for sub_dir in dirs:
+                    if sub_dir.startswith('@'):
+                        f.write("mods=\"${mods}mods.bundeswehr/\\%s\\;\"\n" % sub_dir)
 
         if 'event_mods' in query_dict:
             for event_mod in query_dict['event_mods']:
