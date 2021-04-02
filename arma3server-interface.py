@@ -116,6 +116,8 @@ def select_mods(query_string):
         base_file_path = '/home/arma3server/serverfiles/mods.ironfront/'
     elif query_dict['modpack'] == 'vietnam':
         base_file_path = '/home/arma3server/serverfiles/mods.vietnam/'
+    elif query_dict['modpack'] == 'gm':
+        base_file_path = '/home/arma3server/serverfiles/mods.gm/'
     elif query_dict['modpack'] == 'scifi':
         base_file_path = '/home/arma3server/serverfiles/mods.scifi/'
     elif query_dict['modpack'] == 'special':
