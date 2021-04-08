@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 # -*- coding:utf-8 -*-
 
-__author__ = "Gunk"
+__author__ = "Gunk, Schwaggot"
 
 import datetime
 import json
@@ -107,6 +107,8 @@ class Stammspieler:
             cursor.close()
             connection.close()
             return row
+        else:
+            raise ValueError("unknown arg: " + repr(arg))
 
     def get_spieler(self):
         if len(sys.argv) == 5 or len(sys.argv) == 4:
@@ -293,7 +295,7 @@ class Stammspieler:
             # Finally output formatting depending on admin or individual mode.
             if steam_id:
                 if deserves_stammspieler:
-                    output += 'Ja! Du bist Stammspieler. \nMelde dich bei einem Admin deines Vertrauens.\n\n'
+                    output += 'Ja! Du bist Stammspieler. \n\n'
                 else:
                     output += 'Nein, frag doch einfach später nochmal.\n\n'
                 output += 'Du hast mitgespielt: ' + self._format_participation(player_missions, total_missions)
