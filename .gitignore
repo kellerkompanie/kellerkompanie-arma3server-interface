@@ -2,3 +2,5 @@ venv/
 .idea/
 config.json
 stammspieler_config.json
+__pycache__
+kekosync_config.json
