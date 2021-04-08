@@ -446,5 +446,5 @@ if __name__ == "__main__":
     load_config()
     database = Stammspieler()
     kekosync = KeKoSync()
-    app.run(host=settings['host'], port=settings['port'],
+    app.run(debug=True, host=settings['host'], port=settings['port'],
             ssl_context=(settings['ssl_context_fullchain'], settings['ssl_context_privkey']))
