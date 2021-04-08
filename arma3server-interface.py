@@ -316,23 +316,23 @@ def stammspieler_all():
         abort(403)
 
     response = "<h2>Liste der Stammspieler</h2><pre>"
-    response += database.ausgabe_stammspieler()
+    response += database.output_stammspieler()
     response += "</pre>"
 
     response += "<h2>Missionen</h2><pre>"
-    response += database.ausgabe_mission()
+    response += database.output_mission()
     response += "</pre>"
 
     response += "<h2>Aktivität aller Spieler</h2><pre>"
-    response += database.ausgabe_aktivitaet()
+    response += database.output_activity()
     response += "</pre>"
 
     response += "<h2>Karten</h2><pre>"
-    response += database.ausgabe_karten()
+    response += database.output_maps()
     response += "</pre>"
 
     response += "<h2>Teilnehmer</h2>"
-    response += database.ausgabe_teilnehmer()
+    response += database.output_participants()
 
     return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 

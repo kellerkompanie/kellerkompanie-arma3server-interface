@@ -37,7 +37,7 @@ class Stammspieler:
             with open(CONFIG_FILEPATH, 'w') as outfile:
                 json.dump(self._settings, outfile, sort_keys=True, indent=4)
 
-    def get_missionen(self):
+    def get_missions(self):
         if len(sys.argv) == 5 or len(sys.argv) == 4:
             if sys.argv[3].isdigit() and len(sys.argv[3]) == 8:
                 arg = "vonBis"
@@ -107,10 +107,13 @@ class Stammspieler:
             cursor.close()
             connection.close()
             return row
+
         else:
+            cursor.close()
+            connection.close()
             raise ValueError("unknown arg: " + repr(arg))
 
-    def get_spieler(self):
+    def get_player(self):
         if len(sys.argv) == 5 or len(sys.argv) == 4:
             if sys.argv[3].isdigit() and len(sys.argv[3]) == 8:
                 arg = "vonBis"
@@ -168,8 +171,13 @@ class Stammspieler:
             connection.close()
             return row
 
+        else:
+            cursor.close()
+            connection.close()
+            raise ValueError("unknown arg: " + repr(arg))
+
     @staticmethod
-    def aktivitaet(missionen, spieler):
+    def activity(missionen, spieler):
         teilnehmer = []
         zeitpunkt = []
 
@@ -221,9 +229,9 @@ class Stammspieler:
 
         return condition1 or condition2 or condition3 or condition4
 
-    def ausgabe_stammspieler(self, steam_id=None):
+    def output_stammspieler(self, steam_id=None):
         # Get raw SQL data as list of tuples (mission_name, player_name, mission_date, steam_id).
-        participation = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
+        participation = Stammspieler.get_participations(self.get_missions(), self.get_player())
 
         # Tuples of (mission, mission date) sorted into the 3 time intervals. Has to be sets because mission may appear
         # more than once during iteration.
@@ -306,7 +314,7 @@ class Stammspieler:
 
     def dict_stammspieler(self, steam_id=None):
         # Get raw SQL data as list of tuples (mission_name, player_name, mission_date, steam_id).
-        participation = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
+        participation = Stammspieler.get_participations(self.get_missions(), self.get_player())
 
         # Tuples of (mission, mission date) sorted into the 3 time intervals. Has to be sets because mission may appear
         # more than once during iteration.
@@ -380,51 +388,49 @@ class Stammspieler:
                 for i in range(len(total_missions)):
                     output['interval_participations'].append(
                         {'played_missions': player_missions[i], 'total_missions': total_missions[i]})
-            # elif deserves_stammspieler:
-            #     output += player_name + '\n'
 
         return output
 
     @staticmethod
-    def get_karten(missionen):
-        karten_liste = []
+    def get_maps(missions):
+        maps = []
 
-        for x in missionen:
-            karten_liste.append(x[4])
+        for x in missions:
+            maps.append(x[4])
 
-        karte_anzahl = Counter(karten_liste)
-        karte_anzahl = sorted(karte_anzahl.items(), key=lambda k: (-k[1], k[0]))
-        return karte_anzahl
+        maps_count = Counter(maps)
+        maps_count = sorted(maps_count.items(), key=lambda k: (-k[1], k[0]))
+        return maps_count
 
     @staticmethod
-    def get_teilnehmer(missionen, spieler):
-        mission = []
-        teilnehmer = []
-        mitgespielt = []
+    def get_participations(missionen, players):
+        missions = []
+        participants = []
+        participations = []
 
-        for x in missionen:
-            mission.append(list((x[0], x[3].rsplit(".", 3)[0])))
+        for mission in missionen:
+            missions.append(list((mission[0], mission[3].rsplit(".", 3)[0])))
 
-        for x in spieler:
-            teilnehmer.append(list((x[0], x[2], x[1])))
+        for player in players:
+            participants.append(list((player[0], player[2], player[1])))
 
-        for x in mission:
-            for y in teilnehmer:
-                if x[0] == y[1]:
-                    mitgespielt.append(list((x[1], y[0], x[0], y[2])))
+        for mission in missions:
+            for participant in participants:
+                if mission[0] == participant[1]:
+                    participations.append(list((mission[1], participant[0], mission[0], participant[2])))
 
-        return mitgespielt
+        return participations
 
-    def ausgabe_mission(self):
-        missionen = self.get_missionen()
+    def output_mission(self):
+        missions = self.get_missions()
         date = datetime.datetime.now()
         date_from1 = date - timedelta(days=60)
         date_from = date - timedelta(days=30)
 
         check = 0
         maxlen = 0
-        for x in range(len(missionen)):
-            mlen = len(missionen[x][3].rsplit(".", 3)[0])
+        for x in range(len(missions)):
+            mlen = len(missions[x][3].rsplit(".", 3)[0])
             if mlen > maxlen:
                 maxlen = mlen
 
@@ -432,17 +438,17 @@ class Stammspieler:
         output = header + '\n'
         output += "-" * (len(header) + 14) + '\n'
 
-        for x in range(len(missionen)):
-            mlen = len(missionen[x][3].rsplit(".", 3)[0])
-            if missionen[x][0] > date_from1.date() and check == 0 or missionen[x][0] > date_from.date() and check == 1:
+        for x in range(len(missions)):
+            mlen = len(missions[x][3].rsplit(".", 3)[0])
+            if missions[x][0] > date_from1.date() and check == 0 or missions[x][0] > date_from.date() and check == 1:
                 output += "-" * (len(header) + 14) + '\n'
                 check += 1
-            output += missionen[x][0].strftime("%d.%m.%Y") + " | "
-            output += str(missionen[x][1]) + " | " + str(missionen[x][2]) + " | "
-            output += missionen[x][3].rsplit(".", 3)[0] + " | ".rjust(maxlen + 1 - mlen)
-            output += Stammspieler.replace_map_name(missionen[x][4]) + '\n'
+            output += missions[x][0].strftime("%d.%m.%Y") + " | "
+            output += str(missions[x][1]) + " | " + str(missions[x][2]) + " | "
+            output += missions[x][3].rsplit(".", 3)[0] + " | ".rjust(maxlen + 1 - mlen)
+            output += Stammspieler.replace_map_name(missions[x][4]) + '\n'
 
-        output += "\nAnzahl Missionen: " + str(len(missionen)) + "\n\n"
+        output += "\nAnzahl Missionen: " + str(len(missions)) + "\n\n"
         return output
 
     @staticmethod
@@ -466,10 +472,10 @@ class Stammspieler:
         else:
             return mapname
 
-    def ausgabe_karten(self):
-        karten = Stammspieler.get_karten(self.get_missionen())
+    def output_maps(self):
+        maps = Stammspieler.get_maps(self.get_missions())
         maxlen = 0
-        for x in karten:
+        for x in maps:
             mlen = len(x[0])
             if mlen > maxlen:
                 maxlen = mlen
@@ -478,16 +484,16 @@ class Stammspieler:
         output = header + '\n'
         output += "-" * (len(header) + 5) + '\n'
 
-        for x in karten:
-            mapname = Stammspieler.replace_map_name(x[0])
+        for m in maps:
+            mapname = Stammspieler.replace_map_name(m[0])
             mlen = len(mapname)
-            output += mapname + " | ".rjust(maxlen + 1 - mlen) + str(x[1]) + '\n'
+            output += mapname + " | ".rjust(maxlen + 1 - mlen) + str(m[1]) + '\n'
 
-        output += "\nAnzahl Karten: " + str(len(karten)) + '\n'
+        output += "\nAnzahl Karten: " + str(len(maps)) + '\n'
         return output
 
-    def ausgabe_aktivitaet(self):
-        spieler_anzahl = Stammspieler.aktivitaet(self.get_missionen(), self.get_spieler())
+    def output_activity(self):
+        spieler_anzahl = Stammspieler.activity(self.get_missions(), self.get_player())
         maxlen = 0
         for x in spieler_anzahl:
             mlen = len(x[0][1])
@@ -506,7 +512,7 @@ class Stammspieler:
         return output
 
     def ausgabe_mitgespielt(self, steam_id):
-        mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
+        mitgespielt = Stammspieler.get_participations(self.get_missions(), self.get_player())
         date = datetime.datetime.now()
         date_from1 = date - timedelta(days=60)
         date_from = date - timedelta(days=30)
@@ -531,32 +537,32 @@ class Stammspieler:
         return output
 
     def dict_mitgespielt(self, steam_id):
-        mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
+        participations = Stammspieler.get_participations(self.get_missions(), self.get_player())
         date = datetime.datetime.now()
         date_from1 = date - timedelta(days=60)
         date_from = date - timedelta(days=30)
 
-        zaehler = 0
+        count = 0
         check = 0
-        spieler = ""
+        player = ""
         output = {'missions': []}
 
-        for x in mitgespielt:
-            if steam_id in (x[3]):
-                if spieler != x[3]:
-                    spieler = x[3]
-                if x[2] > date_from1.date() and check == 0 or x[2] > date_from.date() and check == 1:
+        for participation in participations:
+            if steam_id in (participation[3]):
+                if player != participation[3]:
+                    player = participation[3]
+                if participation[2] > date_from1.date() and check == 0 or participation[2] > date_from.date() and check == 1:
                     check += 1
-                date_str = x[2].strftime("%d.%m.%Y")
-                mission_name = x[0]
+                date_str = participation[2].strftime("%d.%m.%Y")
+                mission_name = participation[0]
                 output['missions'].append({'date': date_str, 'name': mission_name})
-                zaehler += 1
+                count += 1
 
-        output['total'] = zaehler
+        output['total'] = count
         return output
 
-    def ausgabe_teilnehmer(self):
-        mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
+    def output_participants(self):
+        mitgespielt = Stammspieler.get_participations(self.get_missions(), self.get_player())
         mission = ''
         output = ''
         for x in mitgespielt:
@@ -572,8 +578,8 @@ class Stammspieler:
             output += str(x[1]) + '\n'
         return output
 
-    def ausgabe_teilnehmer_mission(self, mission_param):
-        mitgespielt = Stammspieler.get_teilnehmer(self.get_missionen(), self.get_spieler())
+    def output_participants_mission(self, mission_param):
+        mitgespielt = Stammspieler.get_participations(self.get_missions(), self.get_player())
         mission = ""
         output = ''
         for x in mitgespielt:
@@ -604,22 +610,22 @@ if __name__ == "__main__":
     stammspieler = Stammspieler()
 
     if sys.argv[1] == "missionen":
-        print(stammspieler.ausgabe_mission())
+        print(stammspieler.output_mission())
 
     elif sys.argv[1] == "aktivitaet":
-        print(stammspieler.ausgabe_aktivitaet())
+        print(stammspieler.output_activity())
 
     elif sys.argv[1] == "stammspieler":
-        print(stammspieler.ausgabe_stammspieler(steam_id=sys.argv[2]))
+        print(stammspieler.output_stammspieler(steam_id=sys.argv[2]))
 
     elif sys.argv[1] == "stammspielerAdmin":
         print(stammspieler.ausgabe_stammspieler_admin())
 
     elif sys.argv[1] == "karten":
-        print(stammspieler.ausgabe_karten())
+        print(stammspieler.output_maps())
 
     elif sys.argv[1] == "teilnehmer":
-        print(stammspieler.ausgabe_teilnehmer())
+        print(stammspieler.output_participants())
 
     elif sys.argv[1] == "spieler":
         print(stammspieler.ausgabe_mitgespielt(steam_id=sys.argv[2]))
