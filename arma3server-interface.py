@@ -112,12 +112,12 @@ def select_mods(query_string):
         base_file_path = '/home/arma3server/serverfiles/mods.main/'
     elif query_dict['modpack'] == 'main-bundeswehr':
         base_file_path = '/home/arma3server/serverfiles/mods.main/'
+    elif query_dict['modpack'] == 'main-gm':
+        base_file_path = '/home/arma3server/serverfiles/mods.main/'
     elif query_dict['modpack'] == 'ironfront':
         base_file_path = '/home/arma3server/serverfiles/mods.ironfront/'
     elif query_dict['modpack'] == 'vietnam':
         base_file_path = '/home/arma3server/serverfiles/mods.vietnam/'
-    elif query_dict['modpack'] == 'gm':
-        base_file_path = '/home/arma3server/serverfiles/mods.gm/'
     elif query_dict['modpack'] == 'scifi':
         base_file_path = '/home/arma3server/serverfiles/mods.scifi/'
     elif query_dict['modpack'] == 'special':
@@ -138,6 +138,12 @@ def select_mods(query_string):
                 for sub_dir in dirs:
                     if sub_dir.startswith('@'):
                         f.write("mods=\"${mods}mods.bundeswehr/\\%s\\;\"\n" % sub_dir)
+
+        if query_dict['modpack'] == 'main-gm':
+            for subdir, dirs, files in os.walk('/home/arma3server/serverfiles/mods.gm/'):
+                for sub_dir in dirs:
+                    if sub_dir.startswith('@'):
+                        f.write("mods=\"${mods}mods.gm/\\%s\\;\"\n" % sub_dir)
 
         if 'event_mods' in query_dict:
             for event_mod in query_dict['event_mods']:
