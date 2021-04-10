@@ -8,6 +8,7 @@ import re
 import subprocess
 import sys
 from flask import Flask, request, abort, jsonify
+import logging
 from werkzeug.utils import secure_filename
 
 import faction_config_generator
@@ -15,6 +16,9 @@ from kekosync import KeKoSync
 from stammspieler import Stammspieler
 
 app = Flask(__name__)
+
+logging.basicConfig(level=logging.DEBUG)
+
 settings = None
 database = None
 kekosync = None
@@ -39,6 +43,7 @@ LOGSHOW_SCRIPT_HC3 = 'tail -n 300 /home/arma3server/log/console/arma3hc3-console
 
 
 def run_shell_command(command):
+    app.logger.debug('run_shell_command: ' + command)
     out = subprocess.Popen(command.split(" "),
                            stdout=subprocess.PIPE,
                            stderr=subprocess.STDOUT)
@@ -46,6 +51,7 @@ def run_shell_command(command):
 
 
 def arma3server_running():
+    app.logger.debug('arma3server_running')
     stdout, stderr = run_shell_command(GET_ARMA_PROCESS)
     if not stdout:
         return False
@@ -54,6 +60,7 @@ def arma3server_running():
 
 
 def is_whitelisted(ip):
+    app.logger.debug('is_whitelisted: ' + ip)
     whitelisted = ip in settings['ip_whitelist']
     if not whitelisted:
         print(ip, "is not whitelisted", file=sys.stderr)
@@ -62,6 +69,7 @@ def is_whitelisted(ip):
 
 @app.route("/")
 def hello():
+    app.logger.debug('hello')
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
@@ -70,6 +78,7 @@ def hello():
 
 @app.route("/running")
 def running():
+    app.logger.debug('running')
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
@@ -81,6 +90,7 @@ def running():
 
 @app.route("/start")
 def start():
+    app.logger.debug('start')
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
@@ -93,6 +103,7 @@ def start():
 
 @app.route("/select_mods/<query_string>")
 def select_mods(query_string):
+    app.logger.debug('select_mods: ' + query_string)
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
@@ -163,6 +174,7 @@ def select_mods(query_string):
 
 @app.route("/stop")
 def stop():
+    app.logger.debug('stop')
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
@@ -175,6 +187,7 @@ def stop():
 
 @app.route("/update")
 def update():
+    app.logger.debug('update')
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
@@ -187,6 +200,7 @@ def update():
 
 @app.route("/run_arma3sync")
 def run_arma3sync():
+    app.logger.debug('run_arma3sync')
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
@@ -196,6 +210,7 @@ def run_arma3sync():
 
 @app.route("/info")
 def info():
+    app.logger.debug('info')
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
@@ -208,6 +223,7 @@ def info():
 
 @app.route("/missions")
 def missions():
+    app.logger.debug('missions')
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
@@ -219,6 +235,7 @@ def missions():
 
 @app.route("/missions/delete/<mission>")
 def missions_delete(mission):
+    app.logger.debug('missions_delete: ' + mission)
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
@@ -232,6 +249,7 @@ def missions_delete(mission):
 
 @app.route("/missions/upload", methods=['POST'])
 def missions_upload():
+    app.logger.debug('missions_upload')
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
@@ -267,6 +285,7 @@ def missions_upload():
 
 @app.route("/logs/<name>")
 def logs(name):
+    app.logger.debug('logs: ' + name)
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
@@ -288,6 +307,7 @@ def logs(name):
 
 @app.route("/ls/<directory>")
 def ls(directory):
+    app.logger.debug('ls: ' + directory)
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
@@ -307,6 +327,7 @@ def ls(directory):
 
 @app.route("/stammspieler/<steam_id>")
 def stammspieler(steam_id):
+    app.logger.debug('stammspieler: ' + steam_id)
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
@@ -318,6 +339,7 @@ def stammspieler(steam_id):
 
 @app.route("/stammspieler")
 def stammspieler_all():
+    app.logger.debug('stammspieler_all')
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
@@ -345,6 +367,7 @@ def stammspieler_all():
 
 @app.route("/addon_group/<uuid>", methods=['GET', 'DELETE'])
 def addon_group(uuid):
+    app.logger.debug('addon_group: ' + uuid)
     if request.method == 'GET':
         response = kekosync.get_addon_group(uuid)
         return jsonify(response), 200, {'Content-Type': 'application/json; charset=utf-8'}
@@ -360,6 +383,7 @@ def addon_group(uuid):
 
 @app.route("/addon_groups", methods=['GET', 'POST'])
 def addon_groups():
+    app.logger.debug('addon_groups')
     if request.method == 'POST':
         if not is_whitelisted(request.remote_addr):
             abort(403)
@@ -382,12 +406,14 @@ def addon_groups():
 
 @app.route("/addons")
 def addons():
+    app.logger.debug('addons')
     response = kekosync.get_all_addons()
     return jsonify(response), 200, {'Content-Type': 'application/json; charset=utf-8'}
 
 
 @app.route("/addon/<name>", methods=['GET'])
 def addon_name(name):
+    app.logger.debug('addon_name: ' + name)
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
@@ -400,6 +426,7 @@ def addon_name(name):
 
 @app.route("/update_addons", methods=['POST'])
 def update_addons():
+    app.logger.debug('update_addons')
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
@@ -410,6 +437,7 @@ def update_addons():
 
 @app.route("/faction_generator", methods=['POST'])
 def faction_generator():
+    app.logger.debug('faction_generator')
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
@@ -420,6 +448,7 @@ def faction_generator():
 
 @app.route("/username/<steam_id>")
 def username(steam_id):
+    app.logger.debug('username: ' + steam_id)
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
@@ -432,6 +461,7 @@ def username(steam_id):
 
 
 def load_config():
+    app.logger.debug('load_config')
     global settings
 
     if os.path.exists(CONFIG_FILEPATH):
@@ -449,8 +479,9 @@ def load_config():
 
 
 if __name__ == "__main__":
+    app.logger.debug('__main__')
     load_config()
     database = Stammspieler()
     kekosync = KeKoSync()
-    app.run(host=settings['host'], port=settings['port'],
+    app.run(host=settings['host'], port=settings['port'], debug=True,
             ssl_context=(settings['ssl_context_fullchain'], settings['ssl_context_privkey']))
