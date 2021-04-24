@@ -333,8 +333,12 @@ def stammspieler(steam_id):
 
     response_dict = database.dict_mitgespielt(steam_id)
     response_dict.update(database.dict_stammspieler(steam_id))
+    app.logger.debug('response_dict: ' + str(response_dict))
 
-    return json.dumps(response_dict), 200, {'Content-Type': 'application/json; charset=utf-8'}
+    json_response = json.dumps(response_dict)
+    app.logger.debug('json_response: ' + json_response)
+
+    return json_response, 200, {'Content-Type': 'application/json; charset=utf-8'}
 
 
 @app.route("/stammspieler")
