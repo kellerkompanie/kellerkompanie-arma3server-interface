@@ -167,6 +167,9 @@ def select_mods(query_string):
         if 'gm' in query_dict:
             f.write("mods=\"gm\\;${mods}\"\n")
 
+        if 'sog' in query_dict:
+            f.write("mods=\"vn\\;${mods}\"\n")
+
         f.close()
 
     return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
