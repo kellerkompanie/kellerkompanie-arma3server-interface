@@ -158,11 +158,11 @@ def select_mods(query_string):
 
     if 'event_mods' in query_dict:
         for event_mod in query_dict['event_mods']:
-            addon_folders.append(os.path.join('mods.event', event_mod))
+            addon_folders.append(os.path.join('mods.event', '\\' + event_mod))
 
     if 'maps' in query_dict:
         for map_mod in query_dict['maps']:
-            addon_folders.append(os.path.join('mods.maps', map_mod))
+            addon_folders.append(os.path.join('mods.maps', '\\' + map_mod))
 
     if 'gm' in query_dict:
         addon_folders.append('gm')
