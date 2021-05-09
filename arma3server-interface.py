@@ -107,6 +107,7 @@ def get_addon_folders(directory):
     for root, dirs, files in os.walk(directory):
         for sub_dir in dirs:
             if sub_dir.startswith('@'):
+                sub_dir = '\\' + sub_dir
                 relative_root = root.replace('/home/arma3server/serverfiles/', '')
                 addon_folders.append(os.path.join(relative_root, sub_dir))
     return addon_folders
@@ -171,7 +172,7 @@ def select_mods(query_string):
 
     with open(MODS_FILE, "w+") as f:
         for addon_folder in addon_folders:
-            f.write("mods=\"${mods}\\%s\\;\"\n" % addon_folder)
+            f.write("mods=\"${mods}%s\\;\"\n" % addon_folder)
 
         if enable_server_mods:
             for subdir, dirs, files in os.walk('/home/arma3server/serverfiles/mods.server/'):
