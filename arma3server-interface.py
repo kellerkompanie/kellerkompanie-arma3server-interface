@@ -12,6 +12,7 @@ import logging
 from werkzeug.utils import secure_filename
 
 import faction_config_generator
+import mission_check
 from kekosync import KeKoSync
 from stammspieler import Stammspieler
 
@@ -289,8 +290,10 @@ def missions_upload():
     mission_name = mission_name + "." + datetime_now.strftime(
         "%Y%m%d.%H%M%S") + "." + "uploaded_by_" + uploader + "." + mission_end
 
-    file.save(os.path.join(MISSIONS_DIR, mission_name))
+    mission_file = os.path.join(MISSIONS_DIR, mission_name)
+    file.save(mission_file)
     stdout, stderr = run_shell_command(FIXPERMISSIONS_SCRIPT)
+    mission_check.check_mission(mission_file)
     return 'Mission erfolgreich hochgeladen als ' + mission_name + ' ' + stdout.decode("utf-8"), 200, {
         'Content-Type': 'text/plain; charset=utf-8'}
 
