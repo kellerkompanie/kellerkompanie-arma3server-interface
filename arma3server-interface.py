@@ -118,6 +118,8 @@ def select_mods(query_string):
         else:
             query_dict[key] = value
 
+    enable_server_mods = True
+
     base_file_path = ''
     if query_dict['modpack'] == 'main':
         base_file_path = '/home/arma3server/serverfiles/mods.main/'
@@ -133,8 +135,10 @@ def select_mods(query_string):
         base_file_path = '/home/arma3server/serverfiles/mods.scifi/'
     elif query_dict['modpack'] == 'special':
         base_file_path = '/home/arma3server/serverfiles/mods.special/'
+        enable_server_mods = False
     elif query_dict['modpack'] == 'vanilla':
         base_file_path = ''
+        enable_server_mods = False
     elif query_dict['modpack'] == 'vindicta':
         base_file_path = '/home/arma3server/serverfiles/mods.vindicta/'
     elif query_dict['modpack'] == 'antistasi':
@@ -169,6 +173,12 @@ def select_mods(query_string):
 
         if 'sog' in query_dict:
             f.write("mods=\"vn\\;${mods}\"\n")
+
+        if enable_server_mods:
+            for subdir, dirs, files in os.walk('/home/arma3server/serverfiles/mods.server/'):
+                for sub_dir in dirs:
+                    if sub_dir.startswith('@'):
+                        f.write("serverMods=\"${serverMods}mods.server/\\%s\\;\"\n" % sub_dir)
 
         f.close()
 
