@@ -25,6 +25,7 @@ kekosync = None
 
 CONFIG_FILEPATH = 'config.json'
 MISSIONS_DIR = '/home/arma3server/serverfiles/mpmissions'
+MODS_FILE = '/home/arma3server/arma3server.mods'
 
 START_SCRIPT = 'sudo -u arma3server /home/arma3server/start_server.sh 2>&1'
 STOP_SCRIPT = 'sudo -u arma3server /home/arma3server/stop_server.sh 2>&1'
@@ -101,6 +102,16 @@ def start():
         return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
+def get_addon_folders(directory):
+    addon_folders = []
+    for root, dirs, files in os.walk(directory):
+        for sub_dir in dirs:
+            if sub_dir.startswith('@'):
+                relative_root = root.removeprefix('/home/arma3server/serverfiles/')
+                addon_folders.append(os.path.join(relative_root, sub_dir))
+    return addon_folders
+
+
 @app.route("/select_mods/<query_string>")
 def select_mods(query_string):
     app.logger.debug('select_mods: ' + query_string)
@@ -118,61 +129,49 @@ def select_mods(query_string):
         else:
             query_dict[key] = value
 
+    addon_folders = []
     enable_server_mods = True
-
-    base_file_path = ''
     if query_dict['modpack'] == 'main':
-        base_file_path = '/home/arma3server/serverfiles/mods.main/'
+        addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.main/'))
     elif query_dict['modpack'] == 'main-bundeswehr':
-        base_file_path = '/home/arma3server/serverfiles/mods.main/'
+        addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.main/'))
+        addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.bundeswehr/'))
     elif query_dict['modpack'] == 'main-gm':
-        base_file_path = '/home/arma3server/serverfiles/mods.main/'
+        addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.main/'))
+        addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.gm/'))
     elif query_dict['modpack'] == 'ironfront':
-        base_file_path = '/home/arma3server/serverfiles/mods.ironfront/'
+        addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.ironfront/'))
     elif query_dict['modpack'] == 'vietnam':
-        base_file_path = '/home/arma3server/serverfiles/mods.vietnam/'
+        addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.vietnam/'))
     elif query_dict['modpack'] == 'scifi':
-        base_file_path = '/home/arma3server/serverfiles/mods.scifi/'
+        addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.scifi/'))
     elif query_dict['modpack'] == 'special':
-        base_file_path = '/home/arma3server/serverfiles/mods.special/'
+        addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.special/'))
         enable_server_mods = False
     elif query_dict['modpack'] == 'vanilla':
-        base_file_path = ''
         enable_server_mods = False
     elif query_dict['modpack'] == 'vindicta':
-        base_file_path = '/home/arma3server/serverfiles/mods.vindicta/'
+        addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.vindicta/'))
     elif query_dict['modpack'] == 'antistasi':
-        base_file_path = '/home/arma3server/serverfiles/mods.antistasi/'
+        addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.antistasi/'))
 
-    stdout, stderr = run_shell_command(SWITCH_MODPACK + ' ' + base_file_path)
+    if 'event_mods' in query_dict:
+        for event_mod in query_dict['event_mods']:
+            addon_folders.append(os.path.join('mods.event', event_mod))
 
-    mods_file_path = '/home/arma3server/arma3server.mods'
-    with open(mods_file_path, "a+") as f:
-        if query_dict['modpack'] == 'main-bundeswehr':
-            for subdir, dirs, files in os.walk('/home/arma3server/serverfiles/mods.bundeswehr/'):
-                for sub_dir in dirs:
-                    if sub_dir.startswith('@'):
-                        f.write("mods=\"${mods}mods.bundeswehr/\\%s\\;\"\n" % sub_dir)
+    if 'maps' in query_dict:
+        for map_mod in query_dict['maps']:
+            addon_folders.append(os.path.join('mods.maps', map_mod))
 
-        if query_dict['modpack'] == 'main-gm':
-            for subdir, dirs, files in os.walk('/home/arma3server/serverfiles/mods.gm/'):
-                for sub_dir in dirs:
-                    if sub_dir.startswith('@'):
-                        f.write("mods=\"${mods}mods.gm/\\%s\\;\"\n" % sub_dir)
+    if 'gm' in query_dict:
+        addon_folders.append('gm')
 
-        if 'event_mods' in query_dict:
-            for event_mod in query_dict['event_mods']:
-                f.write("mods=\"${mods}mods.event/\\%s\\;\"\n" % event_mod)
+    if 'sog' in query_dict:
+        addon_folders.append('vn')
 
-        if 'maps' in query_dict:
-            for map_mod in query_dict['maps']:
-                f.write("mods=\"${mods}mods.maps/\\%s\\;\"\n" % map_mod)
-
-        if 'gm' in query_dict:
-            f.write("mods=\"gm\\;${mods}\"\n")
-
-        if 'sog' in query_dict:
-            f.write("mods=\"vn\\;${mods}\"\n")
+    with open(MODS_FILE, "a+") as f:
+        for addon_folder in addon_folders:
+            f.write("mods=\"${mods}\\%s\\;\"\n" % addon_folder)
 
         if enable_server_mods:
             for subdir, dirs, files in os.walk('/home/arma3server/serverfiles/mods.server/'):
@@ -182,7 +181,7 @@ def select_mods(query_string):
 
         f.close()
 
-    return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    return jsonify(addon_folders), 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/stop")
