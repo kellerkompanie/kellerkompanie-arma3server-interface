@@ -169,7 +169,7 @@ def select_mods(query_string):
     if 'sog' in query_dict:
         addon_folders.append('vn')
 
-    with open(MODS_FILE, "a+") as f:
+    with open(MODS_FILE, "w+") as f:
         for addon_folder in addon_folders:
             f.write("mods=\"${mods}\\%s\\;\"\n" % addon_folder)
 
