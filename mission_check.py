@@ -37,4 +37,4 @@ def check_mission(logger: Logger, mission_file: str):
     mission_sqm = parse_mission_sqm(logger, mission_sqm_file)
     addons = mission_sqm['addons']
     external_addons = list(filter(lambda x: not x.startswith('A3'), addons))
-    logger.info('external addons:', external_addons)
+    logger.info('external addons: ' + str(external_addons))
