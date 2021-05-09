@@ -35,7 +35,6 @@ GET_ARMA_PROCESS = 'sudo -u arma3server /home/arma3server/get_arma_process.sh 2>
 INFO_SCRIPT = 'sudo -u arma3server /home/arma3server/modpack_info.sh 2>&1'
 DELETE_MISSION_SCRIPT = 'sudo -u arma3server /home/arma3server/deletemissions.sh'
 FIXPERMISSIONS_SCRIPT = 'sudo -u root /home/arma3server/fixpermissions.sh 2>&1'
-SWITCH_MODPACK = 'sudo -u arma3server /home/arma3server/switch_modpack.sh'
 
 LOGSHOW_SCRIPT_SERVER = 'tail -n 300 /home/arma3server/log/console/arma3server-console.log'
 LOGSHOW_SCRIPT_HC1 = 'tail -n 300 /home/arma3server/log/console/arma3hc1-console.log'

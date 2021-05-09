@@ -62,7 +62,7 @@ sudo visudo
 Now edit or add the following lines:
 ```
 # Cmnd alias specification
-Cmnd_Alias      ARMACMDS = /home/arma3server/build-armasync.sh, /home/arma3server/update_server.sh, /home/arma3server/stop_server.sh, /home/arma3server/start_server.sh, /home/arma3server/deletemissions.sh, /home/arma3server/switch_modpack.sh, /home/arma3server/modpack_info.sh, /home/arma3server/get_arma_process.sh
+Cmnd_Alias      ARMACMDS = /home/arma3server/build-armasync.sh, /home/arma3server/update_server.sh, /home/arma3server/stop_server.sh, /home/arma3server/start_server.sh, /home/arma3server/deletemissions.sh, /home/arma3server/modpack_info.sh, /home/arma3server/get_arma_process.sh
 Cmnd_Alias      ARMAROOTCMDS = /home/arma3server/fixpermissions.sh, /home/arma3server/fixpermissions_mods.sh
 
 # ...
