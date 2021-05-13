@@ -28,14 +28,13 @@ CONFIG_FILEPATH = 'config.json'
 MISSIONS_DIR = '/home/arma3server/serverfiles/mpmissions'
 MODS_FILE = '/home/arma3server/arma3server.mods'
 
-START_SCRIPT = 'sudo -u arma3server /home/arma3server/start_server.sh 2>&1'
-STOP_SCRIPT = 'sudo -u arma3server /home/arma3server/stop_server.sh 2>&1'
-UPDATE_SCRIPT = 'sudo -u arma3server /home/arma3server/update_server.sh 2>&1'
-RUN_ARMA3SYNC = 'sudo -u arma3server /home/arma3server/build-armasync.sh 2>&1'
-GET_ARMA_PROCESS = 'sudo -u arma3server /home/arma3server/get_arma_process.sh 2>&1'
-INFO_SCRIPT = 'sudo -u arma3server /home/arma3server/modpack_info.sh 2>&1'
-DELETE_MISSION_SCRIPT = 'sudo -u arma3server /home/arma3server/deletemissions.sh'
-FIXPERMISSIONS_SCRIPT = 'sudo -u root /home/arma3server/fixpermissions.sh 2>&1'
+START_SCRIPT = '/home/arma3server/start_server.sh 2>&1'
+STOP_SCRIPT = '/home/arma3server/stop_server.sh 2>&1'
+UPDATE_SCRIPT = '/home/arma3server/update_server.sh 2>&1'
+RUN_ARMA3SYNC = '/home/arma3server/build-armasync.sh 2>&1'
+GET_ARMA_PROCESS = '/home/arma3server/get_arma_process.sh 2>&1'
+INFO_SCRIPT = '/home/arma3server/modpack_info.sh 2>&1'
+DELETE_MISSION_SCRIPT = '/home/arma3server/deletemissions.sh'
 
 LOGSHOW_SCRIPT_SERVER = 'tail -n 300 /home/arma3server/log/console/arma3server-console.log'
 LOGSHOW_SCRIPT_HC1 = 'tail -n 300 /home/arma3server/log/console/arma3hc1-console.log'
@@ -292,9 +291,8 @@ def missions_upload():
 
     mission_file = os.path.join(MISSIONS_DIR, mission_name)
     file.save(mission_file)
-    stdout, stderr = run_shell_command(FIXPERMISSIONS_SCRIPT)
-    # mission_check.check_mission(app.logger, mission_file)
-    return 'Mission erfolgreich hochgeladen als ' + mission_name + ' ' + stdout.decode("utf-8"), 200, {
+    mission_check.check_mission(app.logger, mission_file)
+    return 'Mission erfolgreich hochgeladen als ' + mission_name, 200, {
         'Content-Type': 'text/plain; charset=utf-8'}
 
 

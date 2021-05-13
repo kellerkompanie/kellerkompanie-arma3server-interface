@@ -10,18 +10,18 @@ Linux and Python.
 * Linux distribution (tested with Ubuntu 16.04)
 * Python 3.7 or higher (+packages: flask, werkzeug)
 
-### Create arma3server-interface user
-Create user with disabled-login
+### Create arma3server user
+If not already present, create a user with disabled-login
 ```
-sudo adduser --disabled-login arma3server-interface
+sudo adduser --disabled-login arma3server
 ```
 
-### Clone repository & copy scripts
+### Clone repository
 Go to the home directory of the new user and clone this repository
 ```
-sudo su - arma3server-interface
+sudo su - arma3server
 cd ~
-git clone https://github.com/kellerkompanie/kellerkompanie-arma3server-interface.git
+git clone https://github.com/kellerkompanie/kellerkompanie-arma3server-interface.git arma3server-interface
 ```
 
 The upcoming steps assert a python virtual environment inside the cloned
@@ -32,7 +32,7 @@ sudo apt-get install python3-venv
 ```
 Switch to the freshly cloned repo and initialize a virtual environment:
 ```
-cd /home/arma3server-interface/kellerkompanie-arma3server-interface
+cd /home/arma3server/arma3server-interface
 python3 -m venv venv
 ```
 To install the requirements we switch to the virtual environment and
@@ -44,34 +44,6 @@ pip install werkzeug
 pip install pymysql
 ```
 
-Copy the shell scripts to the arma3server directory. You need to return to a user with sudo privileges using ```CTRL+D``` shortcut.
-```
-sudo cp /home/arma3server-interface/kellerkompanie-arma3server-interface/scripts/*.sh /home/arma3server/
-sudo chmod +x /home/arma3server/*.sh
-sudo chown arma3server:arma3server /home/arma3server/*.sh
-```
-
-
-
-### Allow command execution for arma3server-interface
-Since the arma3server-interface will execute its commands on behalf
-of the arma3server, we need to add the appropriate sudo rights.
-```
-sudo visudo
-```
-Now edit or add the following lines:
-```
-# Cmnd alias specification
-Cmnd_Alias      ARMACMDS = /home/arma3server/build-armasync.sh, /home/arma3server/update_server.sh, /home/arma3server/stop_server.sh, /home/arma3server/start_server.sh, /home/arma3server/deletemissions.sh, /home/arma3server/modpack_info.sh, /home/arma3server/get_arma_process.sh
-Cmnd_Alias      ARMAROOTCMDS = /home/arma3server/fixpermissions.sh, /home/arma3server/fixpermissions_mods.sh
-
-# ...
-
-# User privilege specification
-root    ALL=(ALL:ALL) ALL
-arma3server-interface   ALL=(arma3server:ALL) NOPASSWD:ARMACMDS
-arma3server-interface   ALL=(root:ALL) NOPASSWD:ARMAROOTCMDS
-```
 
 ### SSL certificates
 You can skip this step if you already have SSL certificates for that 
@@ -107,7 +79,7 @@ cert.pem  chain.pem  fullchain.pem  privkey.pem  README
 ### Create startscript
 In order to start the interface we create a little runscript
 ```
-sudo su - arma3server-interface
+sudo su - arma3server
 cd ~
 nano start_interface.sh
 ```
@@ -116,7 +88,7 @@ followed by ```y``` and ```ENTER```
 ```
 #!/usr/bin/env bash
 
-cd /home/arma3server-interface/kellerkompanie-arma3server-interface
+cd /home/arma3server/arma3server-interface
 git pull
 source venv/bin/activate
 python arma3server-interface.py > /var/log/arma3server-interface.log 2>&1
@@ -128,7 +100,7 @@ chmod +x start_interface.sh
 Crate the log file and set permissions for arma3server-interface to be able to write:
 ```
 sudo touch /var/log/arma3server-interface.log
-sudo chown arma3server-interface:arma3server-interface /var/log/arma3server-interface.log
+sudo chown arma3server:arma3server /var/log/arma3server-interface.log
 ```
 Now you can run the interface using
 ```
@@ -138,7 +110,7 @@ Now you can run the interface using
 ### Configure
 On initial startup the config file will be created, adjust it so that the webpage server IP is whitelisted:
 ```
-nano /home/arma3server-interface/kellerkompanie-arma3server-interface/config.json
+nano /home/arma3server/arma3server-interface/config.json
 ```
 Default config:
 ```
@@ -169,8 +141,8 @@ After=network.target
 
 [Service]
 User=arma3server-interface
-ExecStart=/home/arma3server-interface/start_interface.sh
-WorkingDirectory=/home/arma3server-interface
+ExecStart=/home/arma3server/start_interface.sh
+WorkingDirectory=/home/arma3server
 Restart=always
 
 [Install]
