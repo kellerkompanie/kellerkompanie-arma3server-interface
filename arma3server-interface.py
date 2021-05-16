@@ -180,6 +180,9 @@ def select_mods(query_string):
                     if sub_dir.startswith('@'):
                         f.write("serverMods=\"${serverMods}mods.server/\\%s\\;\"\n" % sub_dir)
 
+        if 'disable_logs' in query_dict:
+            f.write("disableLogs=true\n")
+
         f.close()
 
     return jsonify(addon_folders), 200, {'Content-Type': 'text/plain; charset=utf-8'}
