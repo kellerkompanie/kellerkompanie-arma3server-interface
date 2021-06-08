@@ -144,6 +144,9 @@ def select_mods(query_string):
     elif query_dict['modpack'] == 'vietnam':
         addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.vietnam/'))
         enable_server_mods = False
+    elif query_dict['modpack'] == 'vietnam-liquidblaze':
+        addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.vietnam-liquidblaze/'))
+        enable_server_mods = False
     elif query_dict['modpack'] == 'scifi':
         addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.scifi/'))
     elif query_dict['modpack'] == 'special':
