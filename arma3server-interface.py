@@ -232,7 +232,7 @@ def run_arma3sync():
 
 
 @app.route("/run_kekosync")
-def run_arma3sync():
+def run_kekosync():
     app.logger.debug('run_kekosync')
     if not is_whitelisted(request.remote_addr):
         abort(403)
