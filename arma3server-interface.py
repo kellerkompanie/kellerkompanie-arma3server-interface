@@ -32,6 +32,7 @@ START_SCRIPT = '/home/arma3server/start_server.sh 2>&1'
 STOP_SCRIPT = '/home/arma3server/stop_server.sh 2>&1'
 UPDATE_SCRIPT = '/home/arma3server/update_server.sh 2>&1'
 RUN_ARMA3SYNC = '/home/arma3server/build-armasync.sh 2>&1'
+RUN_KEKOSYNC = '/home/arma3server/run-kekosync.sh 2>&1'
 GET_ARMA_PROCESS = '/home/arma3server/get_arma_process.sh 2>&1'
 INFO_SCRIPT = '/home/arma3server/modpack_info.sh 2>&1'
 DELETE_MISSION_SCRIPT = '/home/arma3server/deletemissions.sh'
@@ -227,6 +228,16 @@ def run_arma3sync():
         abort(403)
 
     stdout, stderr = run_shell_command(RUN_ARMA3SYNC)
+    return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+
+@app.route("/run_kekosync")
+def run_arma3sync():
+    app.logger.debug('run_kekosync')
+    if not is_whitelisted(request.remote_addr):
+        abort(403)
+
+    stdout, stderr = run_shell_command(RUN_KEKOSYNC)
     return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
