@@ -312,7 +312,12 @@ def missions_upload():
 
     mission_file = os.path.join(MISSIONS_DIR, mission_name)
     file.save(mission_file)
-    mission_check.check_mission(app.logger, mission_file)
+
+    try:
+        mission_check.check_mission(app.logger, mission_file)
+    except UnicodeDecodeError:
+        app.logger.error("unable to perform mission check, mission pbo is probably binarized")
+
     return 'Mission erfolgreich hochgeladen als ' + mission_name, 200, {
         'Content-Type': 'text/plain; charset=utf-8'}
 
