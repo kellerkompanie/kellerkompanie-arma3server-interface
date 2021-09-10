@@ -7,6 +7,8 @@ import os.path
 import re
 import subprocess
 import sys
+from json import JSONDecodeError
+
 from flask import Flask, request, abort, jsonify
 import logging
 from werkzeug.utils import secure_filename
@@ -315,7 +317,7 @@ def missions_upload():
 
     try:
         mission_check.check_mission(app.logger, mission_file)
-    except UnicodeDecodeError:
+    except (UnicodeDecodeError, JSONDecodeError):
         app.logger.error("unable to perform mission check, mission pbo is probably binarized")
 
     return 'Mission erfolgreich hochgeladen als ' + mission_name, 200, {
