@@ -157,6 +157,7 @@ def select_mods(query_string):
         addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.vindicta/'))
     elif query_dict['modpack'] == 'antistasi':
         addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.antistasi/'))
+        enable_server_mods = False
 
     if 'event_mods' in query_dict:
         for event_mod in query_dict['event_mods']:
