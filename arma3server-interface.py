@@ -176,6 +176,9 @@ def select_mods(query_string):
     if 'csla' in query_dict:
         addon_folders.append('csla')
 
+    if 'ws' in query_dict:
+        addon_folders.append('ws')
+
     with open(MODS_FILE, "w+") as f:
         for addon_folder in addon_folders:
             f.write("mods=\"${mods}%s\\;\"\n" % addon_folder)
