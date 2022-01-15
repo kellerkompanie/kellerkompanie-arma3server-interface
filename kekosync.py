@@ -3,11 +3,14 @@
 
 import json
 import os
+import re
 import uuid
 from datetime import datetime
 
 import pymysql
 import pymysql.cursors
+import requests
+from bs4 import BeautifulSoup
 
 CONFIG_FILEPATH = 'kekosync_config.json'
 
@@ -212,3 +215,58 @@ class KeKoSync:
             cursor.execute("DELETE FROM addon_group_member WHERE addon_group_id=%s;", (addon_group_id,))
             cursor.executemany("INSERT INTO addon_group_member(addon_group_id, addon_id) values (%s, %s);", vals)
             connection.commit()
+
+    @staticmethod
+    def get_workshopitem_info(workshopitem_id: str):
+        """
+        Example:
+        curl --location --request POST 'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/' \
+            --form 'itemcount="1"' \
+            --form 'publishedfileids[0]="705986840"'
+        """
+        if not bool(re.match(r'^\d+$', workshopitem_id)):
+            raise ValueError('expected numeric workshopitem_id, but got: ' + workshopitem_id)
+
+        url = 'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/'
+
+        response = requests.post(url, data={'itemcount': '1', 'publishedfileids[0]': workshopitem_id}, allow_redirects=True)
+
+        if response.status_code != 200:
+            raise RuntimeError('expected status code 200 for {}, but got {}'.format(url, response.status_code))
+        if '<div class="error_ctn">' in response.text:
+            raise RuntimeError('request to {} resulted in unexpected error')
+
+        return response.json()
+
+    @staticmethod
+    def get_workshopitem_dependencies(workshopitem_id: str):
+        if not bool(re.match(r'^\d+$', workshopitem_id)):
+            raise ValueError('expected numeric workshopitem_id, but got: ' + workshopitem_id)
+
+        url = "https://steamcommunity.com/workshop/filedetails/?id={}".format(workshopitem_id)
+        response = requests.get(url)
+
+        if response.status_code != 200:
+            raise RuntimeError('expected status code 200 for {}, but got {}'.format(url, response.status_code))
+        if '<div class="error_ctn">' in response.text:
+            raise RuntimeError('request to {} resulted in unexpected error')
+
+        soup = BeautifulSoup(response.text, 'html.parser')
+        required_items_div = soup.find("div", {"id": "RequiredItems"})
+
+        if required_items_div is None:
+            return []
+
+        required_items_hrefs = required_items_div.findChildren("a", recursive=False)
+        dependencies = []
+        for required_item_href in required_items_hrefs:
+            dependency_name = required_item_href.text.strip()
+            dependency_url = required_item_href['href']
+            dependency_workshopitem_id = re.search(r'https://steamcommunity\.com/workshop/filedetails/\?id=([0-9]*)',
+                                                   dependency_url).group(1)
+            dependencies.append({
+                'name': dependency_name,
+                'url': dependency_url,
+                'workshopitem_id': dependency_workshopitem_id
+            })
+        return dependencies

@@ -2,6 +2,7 @@
 import datetime
 import glob
 import json
+import logging
 import os
 import os.path
 import re
@@ -10,7 +11,6 @@ import sys
 from json import JSONDecodeError
 
 from flask import Flask, request, abort, jsonify
-import logging
 from werkzeug.utils import secure_filename
 
 import faction_config_generator
@@ -480,6 +480,36 @@ def update_addons():
     return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
+@app.route("/workshopitem_info/<workshopitem_id>", methods=['GET'])
+def workshopitem_info(workshopitem_id):
+    app.logger.debug('steam_info: ' + workshopitem_id)
+    if not is_whitelisted(request.remote_addr):
+        abort(403)
+
+    try:
+        response = kekosync.get_workshopitem_info(workshopitem_id)
+        return jsonify(response), 200, {'Content-Type': 'application/json; charset=utf-8'}
+    except ValueError as e:
+        return jsonify(e), 400, {'Content-Type': 'application/json; charset=utf-8'}
+    except RuntimeError as e:
+        return jsonify(e), 500, {'Content-Type': 'application/json; charset=utf-8'}
+
+
+@app.route("/workshopitem_dependencies/<workshopitem_id>", methods=['GET'])
+def workshopitem_dependencies(workshopitem_id):
+    app.logger.debug('steam_info: ' + workshopitem_id)
+    if not is_whitelisted(request.remote_addr):
+        abort(403)
+
+    try:
+        response = kekosync.get_workshopitem_dependencies(workshopitem_id)
+        return jsonify(response), 200, {'Content-Type': 'application/json; charset=utf-8'}
+    except ValueError as e:
+        return jsonify(e), 400, {'Content-Type': 'application/json; charset=utf-8'}
+    except RuntimeError as e:
+        return jsonify(e), 500, {'Content-Type': 'application/json; charset=utf-8'}
+
+
 @app.route("/faction_generator", methods=['POST'])
 def faction_generator():
     app.logger.debug('faction_generator')
@@ -528,5 +558,9 @@ if __name__ == "__main__":
     load_config()
     database = Stammspieler()
     kekosync = KeKoSync()
-    app.run(host=settings['host'], port=settings['port'], debug=True,
-            ssl_context=(settings['ssl_context_fullchain'], settings['ssl_context_privkey']))
+
+    if 'ssl_context_fullchain' in settings:
+        app.run(host=settings['host'], port=settings['port'], debug=True,
+                ssl_context=(settings['ssl_context_fullchain'], settings['ssl_context_privkey']))
+    else:
+        app.run(host=settings['host'], port=settings['port'], debug=True)

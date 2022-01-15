@@ -1,3 +1,5 @@
-pymysql
-werkzeug
-flask
+pymysql~=1.0.2
+werkzeug~=1.0.1
+flask~=1.1.2
+requests~=2.27.1
+beautifulsoup4~=4.10.0
