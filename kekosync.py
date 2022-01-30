@@ -92,7 +92,7 @@ class KeKoSync:
 
         addons_map = {}
         for row in rows:
-            row['addon_dependency'] = []
+            row['addon_dependencies'] = []
             row['addon_steamid'] = None
             addons_map[row['addon_id']] = row
 
