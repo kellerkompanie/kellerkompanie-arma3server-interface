@@ -450,7 +450,7 @@ def addon_groups():
 
 
 @app.route("/addon_dependency/<addon_id>", methods=['GET', 'DELETE'])
-def addon_group(addon_id):
+def addon_dependency(addon_id):
     app.logger.debug('addon_dependency: ' + addon_id)
     if request.method == 'DELETE':
         if not is_whitelisted(request.remote_addr):
