@@ -22,7 +22,7 @@ app = Flask(__name__)
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s')
 
-settings = None
+settings = {}
 database = None
 kekosync = None
 
