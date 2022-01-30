@@ -96,13 +96,13 @@ class KeKoSync:
             row['addon_steamid'] = None
             addons_map[row['addon_id']] = row
 
-        cursor.execute("SELECT * FROM addon_dependency")
+        cursor.execute("SELECT * FROM addon_dependency;")
         rows = cursor.fetchall()
         for row in rows:
             addon = addons_map[row['addon_id']]
             addon['addon_dependencies'].push(row['addon_dependency'])
 
-        cursor.execute("SELECT * FROM addon_meta")
+        cursor.execute("SELECT * FROM addon_meta;")
         for row in rows:
             addon = addons_map[row['addon_id']]
             addon['addon_steamid'].push(row['addon_steamid'])
