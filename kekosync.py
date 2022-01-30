@@ -103,8 +103,8 @@ class KeKoSync:
             addon['addon_dependencies'].push(row['addon_dependency'])
 
         cursor.execute("SELECT * FROM addon_meta;")
-        rows = cursor.fetchone()
-        for row in rows:
+        row = cursor.fetchone()
+        if row:
             addon = addons_map[row['addon_id']]
             addon['addon_steamid'] = row['addon_steamid']
 
@@ -130,7 +130,7 @@ class KeKoSync:
 
         cursor.execute("SELECT * FROM addon_meta WHERE addon_id = %s;", (addon_id,))
         row = cursor.fetchone()
-        if 'addon_steamid' in row:
+        if row:
             addon['addon_steamid'] = row['addon_steamid']
 
         cursor.close()
