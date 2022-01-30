@@ -87,12 +87,29 @@ class KeKoSync:
         connection = self.create_connection()
         cursor = connection.cursor()
 
-        query = "SELECT * FROM addon;"
-        cursor.execute(query)
-        row = cursor.fetchall()
+        cursor.execute("SELECT * FROM addon;")
+        rows = cursor.fetchall()
+
+        addons_map = {}
+        for row in rows:
+            row['addon_dependency'] = []
+            row['addon_steamid'] = None
+            addons_map[row['addon_id']] = row
+
+        cursor.execute("SELECT * FROM addon_dependency")
+        rows = cursor.fetchall()
+        for row in rows:
+            addon = addons_map[row['addon_id']]
+            addon['addon_dependencies'].push(row['addon_dependency'])
+
+        cursor.execute("SELECT * FROM addon_meta")
+        for row in rows:
+            addon = addons_map[row['addon_id']]
+            addon['addon_steamid'].push(row['addon_steamid'])
+
         cursor.close()
         connection.close()
-        return row
+        return rows
 
     def get_group_addons(self, addon_group_id):
         connection = self.create_connection()
