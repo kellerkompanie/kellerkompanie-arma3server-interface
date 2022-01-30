@@ -492,6 +492,13 @@ def addons():
     return jsonify(response), 200, {'Content-Type': 'application/json; charset=utf-8'}
 
 
+@app.route("/addons/<addon_id>")
+def addons_addon_id(addon_id):
+    app.logger.debug('addons_addon_id: ' + addon_id)
+    response = kekosync.get_addon(addon_id)
+    return jsonify(response), 200, {'Content-Type': 'application/json; charset=utf-8'}
+
+
 @app.route("/addon/<name>", methods=['GET'])
 def addon_name(name):
     app.logger.debug('addon_name: ' + name)

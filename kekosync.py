@@ -103,13 +103,39 @@ class KeKoSync:
             addon['addon_dependencies'].push(row['addon_dependency'])
 
         cursor.execute("SELECT * FROM addon_meta;")
+        rows = cursor.fetchone()
         for row in rows:
             addon = addons_map[row['addon_id']]
-            addon['addon_steamid'].push(row['addon_steamid'])
+            addon['addon_steamid'] = row['addon_steamid']
 
         cursor.close()
         connection.close()
         return addons_map
+
+    def get_addon(self, addon_id):
+        connection = self.create_connection()
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM addon WHERE addon_id = %s;", (addon_id,))
+        row = cursor.fetchone()
+
+        addon = row
+        addon['addon_dependencies'] = []
+        addon['addon_steamid'] = None
+
+        cursor.execute("SELECT * FROM addon_dependency WHERE addon_id = %s;", (addon_id,))
+        rows = cursor.fetchall()
+        for row in rows:
+            addon['addon_dependencies'].push(row['addon_dependency'])
+
+        cursor.execute("SELECT * FROM addon_meta WHERE addon_id = %s;", (addon_id,))
+        row = cursor.fetchone()
+        if 'addon_steamid' in row:
+            addon['addon_steamid'] = row['addon_steamid']
+
+        cursor.close()
+        connection.close()
+        return addon
 
     def get_group_addons(self, addon_group_id):
         connection = self.create_connection()
@@ -291,7 +317,8 @@ class KeKoSync:
 
         url = 'https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/'
 
-        response = requests.post(url, data={'itemcount': '1', 'publishedfileids[0]': workshopitem_id}, allow_redirects=True)
+        response = requests.post(url, data={'itemcount': '1', 'publishedfileids[0]': workshopitem_id},
+                                 allow_redirects=True)
 
         if response.status_code != 200:
             raise RuntimeError('expected status code 200 for {}, but got {}'.format(url, response.status_code))
