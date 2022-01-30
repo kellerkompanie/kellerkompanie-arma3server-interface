@@ -449,6 +449,42 @@ def addon_groups():
         return jsonify(response), 200, {'Content-Type': 'application/json; charset=utf-8'}
 
 
+@app.route("/addon_dependency/<addon_id>", methods=['GET', 'DELETE'])
+def addon_group(addon_id):
+    app.logger.debug('addon_dependency: ' + addon_id)
+    if request.method == 'DELETE':
+        if not is_whitelisted(request.remote_addr):
+            abort(403)
+
+        addon_id = request.form.get('addon_id')
+        addon_dependency = request.form.get('addon_dependency')
+
+        response = kekosync.delete_addon_dependency(addon_id, addon_dependency)
+
+        return jsonify(response), 200, {'Content-Type': 'application/json; charset=utf-8'}
+    if request.method == 'GET':
+        response = kekosync.get_addon_dependency(addon_id)
+        return jsonify(response), 200, {'Content-Type': 'application/json; charset=utf-8'}
+
+
+@app.route("/addon_dependencies", methods=['GET', 'POST'])
+def addon_dependencies():
+    app.logger.debug('addon_dependencies ' + request.method)
+    if request.method == 'POST':
+        if not is_whitelisted(request.remote_addr):
+            abort(403)
+
+        addon_id = request.form.get('addon_id')
+        addon_dependency = request.form.get('addon_dependency')
+
+        response = kekosync.insert_addon_dependency(addon_id, addon_dependency)
+
+        return jsonify(response), 200, {'Content-Type': 'application/json; charset=utf-8'}
+    else:
+        response = kekosync.get_addon_dependencies()
+        return jsonify(response), 200, {'Content-Type': 'application/json; charset=utf-8'}
+
+
 @app.route("/addons")
 def addons():
     app.logger.debug('addons')

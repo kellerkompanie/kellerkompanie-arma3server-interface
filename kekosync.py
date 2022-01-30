@@ -147,6 +147,51 @@ class KeKoSync:
         connection.close()
         return "OK"
 
+    def get_addon_dependencies(self):
+        connection = self.create_connection()
+        cursor = connection.cursor()
+
+        query = "SELECT * FROM addon_dependency;"
+        cursor.execute(query)
+        row = cursor.fetchall()
+        cursor.close()
+        connection.close()
+        return row
+
+    def get_addon_dependency(self, addon_id):
+        connection = self.create_connection()
+        cursor = connection.cursor()
+
+        query = "SELECT * FROM addon_dependency WHERE addon_id = %s;"
+        cursor.execute(query, (addon_id,))
+        row = cursor.fetchall()
+        cursor.close()
+        connection.close()
+        return row
+
+    def insert_addon_dependency(self, addon_id, addon_dependency):
+        connection = self.create_connection()
+        cursor = connection.cursor()
+
+        sql = "INSERT INTO addon_dependency (addon_id, addon_dependency) " \
+              "VALUES (%s, %s);"
+        cursor.execute(sql, (addon_id, addon_dependency))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return "OK"
+
+    def delete_addon_dependency(self, addon_id, addon_dependency):
+        connection = self.create_connection()
+        cursor = connection.cursor()
+
+        sql = "DELETE FROM addon_dependency WHERE addon_id = %s AND addon_dependency = %s;"
+        cursor.execute(sql, (addon_id, addon_dependency))
+        connection.commit()
+        cursor.close()
+        connection.close()
+        return "OK"
+
     @staticmethod
     def _generate_uuid():
         return str(uuid.uuid4())
