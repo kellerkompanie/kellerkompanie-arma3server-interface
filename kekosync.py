@@ -109,7 +109,7 @@ class KeKoSync:
 
         cursor.close()
         connection.close()
-        return rows
+        return addons_map
 
     def get_group_addons(self, addon_group_id):
         connection = self.create_connection()
