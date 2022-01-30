@@ -154,3 +154,15 @@ sudo systemctl daemon-reload
 sudo systemctl start arma3server-interface.service
 sudo systemctl enable arma3server-interface.service
 ```
+
+### Whitelisting local IP
+If you need to access the API from an external source, like your local computer, you will need to whitelist your ip 
+not only in the config.json, but also add an ufw rule. 
+Make sure it is inserted above the deny all rules (here at index 3):
+```
+ufw insert 3 allow from 1.2.3.4 proto tcp to any port 5000
+```
+You can check the currently active rules using:
+```
+ufw status numbered
+```
