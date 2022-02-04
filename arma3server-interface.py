@@ -136,6 +136,8 @@ def select_mods(query_string):
     enable_server_mods = True
     if query_dict['modpack'] == 'main':
         addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.main/'))
+    elif query_dict['modpack'] == 'violencia-rupununi':
+        addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.violencia-rupununi/'))
     elif query_dict['modpack'] == 'main-bundeswehr':
         addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.main/'))
         addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.bundeswehr/'))
