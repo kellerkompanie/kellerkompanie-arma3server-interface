@@ -6,10 +6,11 @@ __author__ = "Gunk, Schwaggot"
 import datetime
 import json
 import os
-import pymysql
 import sys
 from collections import Counter
 from datetime import timedelta
+
+import pymysql
 
 CONFIG_FILEPATH = 'stammspieler_config.json'
 
@@ -465,7 +466,9 @@ class Stammspieler:
             "tem_kujari": "Kujari", "tem_summa": "Summa", "isladuala3": "Isla Duala", "porto": "Porto",
             "swu_kokoda_map": "Kokoda Trail (IFA3)", "enoch": "Livonia", "thirsk": "Thirsk", "tembelan": "Tembelan",
             "woodland_acr": "Bystrica", "i44_merderet_v2": "Merderet (IFA3)", "mcn_neaville": "Neaville (IFA3)",
-            "swu_greece_pella_region": "Greece (IFA3)", "clafghan": "CLA Afghan", "fdf_isle1_a": "Podagorsk"}
+            "swu_greece_pella_region": "Greece (IFA3)", "clafghan": "CLA Afghan", "fdf_isle1_a": "Podagorsk",
+            "Cam_Lao_Nam": "Cam Lao Nam (VN DLC)", "cup_chernarus_A3": "Chernarus 2020", "SefrouRamal": "Sefrou Ramal",
+            "vn_khe_sanh": "Khe Sanh (VN DLC)", "rhspkl": "Prei Khmaoch Luong (RHSPKL)"}
 
         if mapname.lower() in map_translations:
             return map_translations[mapname.lower()]
@@ -551,7 +554,8 @@ class Stammspieler:
             if steam_id in (participation[3]):
                 if player != participation[3]:
                     player = participation[3]
-                if participation[2] > date_from1.date() and check == 0 or participation[2] > date_from.date() and check == 1:
+                if participation[2] > date_from1.date() and check == 0 or participation[
+                    2] > date_from.date() and check == 1:
                     check += 1
                 date_str = participation[2].strftime("%d.%m.%Y")
                 mission_name = participation[0]
