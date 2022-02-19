@@ -467,7 +467,7 @@ class Stammspieler:
             "swu_kokoda_map": "Kokoda Trail (IFA3)", "enoch": "Livonia", "thirsk": "Thirsk", "tembelan": "Tembelan",
             "woodland_acr": "Bystrica", "i44_merderet_v2": "Merderet (IFA3)", "mcn_neaville": "Neaville (IFA3)",
             "swu_greece_pella_region": "Greece (IFA3)", "clafghan": "CLA Afghan", "fdf_isle1_a": "Podagorsk",
-            "Cam_Lao_Nam": "Cam Lao Nam (VN DLC)", "cup_chernarus_A3": "Chernarus 2020", "SefrouRamal": "Sefrou Ramal",
+            "cam_lao_nam": "Cam Lao Nam (VN DLC)", "cup_chernarus_a3": "Chernarus 2020", "sefrouramal": "Sefrou Ramal",
             "vn_khe_sanh": "Khe Sanh (VN DLC)", "rhspkl": "Prei Khmaoch Luong (RHSPKL)"}
 
         if mapname.lower() in map_translations:
