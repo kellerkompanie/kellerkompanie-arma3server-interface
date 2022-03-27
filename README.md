@@ -42,6 +42,7 @@ source venv/bin/activate
 pip install flask
 pip install werkzeug
 pip install pymysql
+pip install requests
 ```
 
 
