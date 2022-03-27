@@ -142,7 +142,7 @@ Description=arma3server-interface Flask API
 After=network.target
 
 [Service]
-User=arma3server-interface
+User=arma3server
 ExecStart=/home/arma3server/start_interface.sh
 WorkingDirectory=/home/arma3server
 Restart=always
