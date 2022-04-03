@@ -185,7 +185,7 @@ def select_mods(query_string):
 
     with open(MODS_FILE, "w+") as f:
         for addon_folder in addon_folders:
-            f.write("mods=\"${mods}%s\\;\"\n" % shlex.quote(addon_folder))
+            f.write("mods=\"${mods}%s\\;\"\n" % shlex.quote(addon_folder.replace("(", "\\(").replace(")", "\\)")))
 
         if enable_server_mods:
             for subdir, dirs, files in os.walk('/home/arma3server/serverfiles/mods.server/'):
