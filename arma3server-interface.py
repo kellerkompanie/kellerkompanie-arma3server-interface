@@ -8,7 +8,6 @@ import os.path
 import re
 import subprocess
 import sys
-import shlex
 from json import JSONDecodeError
 
 from flask import Flask, request, abort, jsonify
@@ -185,7 +184,6 @@ def select_mods(query_string):
 
     with open(MODS_FILE, "w+") as f:
         for addon_folder in addon_folders:
-            addon_folder = shlex.quote(addon_folder)
             f.write("mods=\"${mods}%s\\;\"\n" % addon_folder)
 
         if enable_server_mods:
