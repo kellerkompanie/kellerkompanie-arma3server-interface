@@ -186,9 +186,6 @@ def select_mods(query_string):
     with open(MODS_FILE, "w+") as f:
         for addon_folder in addon_folders:
             addon_folder = shlex.quote(addon_folder)
-            if '(' in addon_folder or ')' in addon_folder:
-                addon_folder = addon_folder.replace('(', '\\(')
-                addon_folder = addon_folder.replace(')', '\\)')
             f.write("mods=\"${mods}%s\\;\"\n" % addon_folder)
 
         if enable_server_mods:
