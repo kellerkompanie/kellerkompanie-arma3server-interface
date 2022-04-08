@@ -1,0 +1,12 @@
+[Unit]
+Description=arma3hc1
+After=arma3server.service
+
+[Service]
+User=arma3server
+ExecStart=/home/arma3server/arma3hc1 start
+ExecStop=/home/arma3server/arma3hc1 stop
+WorkingDirectory=/home/arma3server
+
+[Install]
+WantedBy=multi-user.target
