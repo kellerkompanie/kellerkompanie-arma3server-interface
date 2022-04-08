@@ -109,10 +109,7 @@ def get_addon_folders(directory):
     for root, dirs, files in os.walk(directory):
         for sub_dir in dirs:
             if sub_dir.startswith('@'):
-                sub_dir = '\\' + sub_dir
-                sub_dir = sub_dir.replace(' ', '\\ ')
-                relative_root = root.replace('/home/arma3server/serverfiles/', '')
-                addon_folders.append(os.path.join(relative_root, sub_dir))
+                addon_folders.append(os.path.join(root, sub_dir))
     return addon_folders
 
 
