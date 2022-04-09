@@ -190,7 +190,7 @@ def select_mods(query_string):
         f.write("\"\n")
 
         if enable_server_mods:
-            f.write("-serverMods=\"")
+            f.write("serverMods=\"")
             for root, dirs, files in os.walk('/home/arma3server/serverfiles/mods.server/'):
                 for sub_dir in dirs:
                     if sub_dir.startswith('@'):
