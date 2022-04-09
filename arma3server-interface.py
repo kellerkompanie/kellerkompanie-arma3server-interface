@@ -182,16 +182,22 @@ def select_mods(query_string):
         addon_folders.append('ws')
 
     with open(MODS_FILE, "w+") as f:
+        f.write("mods=\"")
         for addon_folder in addon_folders:
-            f.write("-mod=%s\n" % addon_folder.replace('/home/arma3server/serverfiles/', '').replace(" ", r"\ "))
+            addon_folder = addon_folder.replace('/home/arma3server/serverfiles/', '')
+            addon_folder = addon_folder.replace(' ', '\\ ')
+            f.write("-mod=%s " % addon_folder)
+        f.write("\"\n")
 
         if enable_server_mods:
+            f.write("-serverMods=\"")
             for root, dirs, files in os.walk('/home/arma3server/serverfiles/mods.server/'):
                 for sub_dir in dirs:
                     if sub_dir.startswith('@'):
-                        f.write(
-                            "-serverMod=%s\n" % os.path.join(root, sub_dir).replace('/home/arma3server/serverfiles/',
-                                                                                    ''))
+                        addon_folder = os.path.join(root, sub_dir)
+                        addon_folder = addon_folder.replace('/home/arma3server/serverfiles/', '')
+                        f.write("-serverMod=%s " % addon_folder)
+            f.write("\"\n")
 
         if 'disable_logs' in query_dict:
             f.write("disableLogs=true\n")
