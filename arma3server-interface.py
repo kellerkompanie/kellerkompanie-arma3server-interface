@@ -278,7 +278,8 @@ def info():
     if arma3server_running():
         with open(MODS_FILE, 'r') as fp:
             content = fp.read()
-            content.replace('-mod', '\n')
+            content = content.replace('-mod=', '\n')
+            content = content.replace('-serverMod=', '\n')
         return 'Aktuell laufende Mods:\n\n' + content, 200, {'Content-Type': 'text/plain; charset=utf-8'}
     else:
         return 'Der Server ist aktuell offline.', 200, {'Content-Type': 'text/plain; charset=utf-8'}
