@@ -280,6 +280,10 @@ def info():
             content = fp.read()
             content = content.replace('-mod=', '\n')
             content = content.replace('-serverMod=', '\n')
+            content = content.replace('\\ ', ' ')
+            content = content.replace('mods="', '')
+            content = content.replace('serverMods="', '')
+            content = content.replace('"', '')
         return 'Aktuell laufende Mods:\n\n' + content, 200, {'Content-Type': 'text/plain; charset=utf-8'}
     else:
         return 'Der Server ist aktuell offline.', 200, {'Content-Type': 'text/plain; charset=utf-8'}
