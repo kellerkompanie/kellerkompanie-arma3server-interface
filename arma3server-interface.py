@@ -276,11 +276,12 @@ def info():
         abort(403)
 
     if arma3server_running():
-        # TODO replace shell script with python code
-        stdout, stderr = run_shell_command(INFO_SCRIPT)
-        return "Aktuell laufende Mods:\n\n" + stdout.decode("utf-8"), 200, {'Content-Type': 'text/plain; charset=utf-8'}
+        with open(MODS_FILE, 'r') as fp:
+            content = fp.read()
+            content.replace('-mod', '\n')
+        return 'Aktuell laufende Mods:\n\n' + content, 200, {'Content-Type': 'text/plain; charset=utf-8'}
     else:
-        return "Der Server ist aktuell offline.", 200, {'Content-Type': 'text/plain; charset=utf-8'}
+        return 'Der Server ist aktuell offline.', 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
 @app.route("/missions")
