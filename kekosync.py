@@ -83,7 +83,7 @@ class KeKoSync:
         connection.close()
         return "OK"
 
-    def get_all_addons(self):
+    def get_all_addons(self) -> dict:
         connection = self.create_connection()
         cursor = connection.cursor()
 
@@ -248,7 +248,7 @@ class KeKoSync:
         return addon_name1.lower() == addon_name2.lower()
 
     def match_addon_name(self, addon_name) -> str:
-        for addon in self.get_all_addons():
+        for addon_id, addon in self.get_all_addons().items():
             other_addon_name = addon["addon_name"]
             if self._is_name_similar(addon_name, other_addon_name):
                 return addon["addon_uuid"]
