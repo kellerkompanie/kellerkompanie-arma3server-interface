@@ -198,6 +198,8 @@ def select_mods(query_string):
         for addon_folder in addon_folders:
             addon_folder = addon_folder.replace('/home/arma3server/serverfiles/', '')
             addon_folder = addon_folder.replace(' ', '\\ ')
+            addon_folder = addon_folder.replace('(', '\\(')
+            addon_folder = addon_folder.replace(')', '\\)')
             f.write("-mod=%s " % addon_folder)
         f.write("\"\n")
 
