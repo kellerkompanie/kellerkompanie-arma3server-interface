@@ -625,7 +625,7 @@ def load_config():
                     'port': 5000,
                     'ssl_context_fullchain': '/etc/letsencrypt/live/kellerkompanie.com/fullchain.pem',
                     'ssl_context_privkey': '/etc/letsencrypt/live/kellerkompanie.com/privkey.pem',
-                    'ip_whitelist': ['0.0.0.0']}
+                    'ip_whitelist': ['0.0.0.0', '127.0.0.1']}
 
         with open(CONFIG_FILEPATH, 'w') as outfile:
             json.dump(settings, outfile, sort_keys=True, indent=4)
