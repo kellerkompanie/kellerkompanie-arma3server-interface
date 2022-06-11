@@ -623,8 +623,8 @@ def load_config():
     else:
         settings = {'host': '0.0.0.0',
                     'port': 5000,
-                    # 'ssl_context_fullchain': '/etc/letsencrypt/live/server.kellerkompanie.com/fullchain.pem',
-                    # 'ssl_context_privkey': '/etc/letsencrypt/live/server.kellerkompanie.com/privkey.pem',
+                    'ssl_context_fullchain': '/etc/letsencrypt/live/server.kellerkompanie.com/fullchain.pem',
+                    'ssl_context_privkey': '/etc/letsencrypt/live/server.kellerkompanie.com/privkey.pem',
                     'ip_whitelist': ['0.0.0.0']}
 
         with open(CONFIG_FILEPATH, 'w') as outfile:
