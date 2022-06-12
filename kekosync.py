@@ -1,6 +1,6 @@
 #! /usr/bin/python3
 # -*- coding:utf-8 -*-
-
+import base64
 import json
 import os
 import re
@@ -45,10 +45,14 @@ class KeKoSync:
 
         query = "SELECT * FROM addon_group;"
         cursor.execute(query)
-        row = cursor.fetchall()
+        rows = cursor.fetchall()
         cursor.close()
         connection.close()
-        return row
+
+        for row in rows:
+            row['addon_group_author'] = base64.b64encode(row['addon_group_author'].encode('utf-8'))
+
+        return rows
 
     def get_addon_group(self, uuid):
         connection = self.create_connection()
