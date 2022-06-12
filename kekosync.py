@@ -271,8 +271,7 @@ class KeKoSync:
         connection.close()
         return addon_uuid
 
-    def update_addons(self, updated_addons_json):
-        updated_addons = json.loads(updated_addons_json)
+    def update_addons(self, updated_addons):
         sql = "UPDATE addon " \
               "SET addon_version = %s " \
               "WHERE addon_uuid = %s;"
