@@ -1,6 +1,5 @@
 #! /usr/bin/python3
 # -*- coding:utf-8 -*-
-import base64
 import json
 import os
 import re
@@ -48,10 +47,6 @@ class KeKoSync:
         rows = cursor.fetchall()
         cursor.close()
         connection.close()
-
-        for row in rows:
-            row['addon_group_author'] = base64.b64encode(row['addon_group_author'].encode('utf-8'))
-
         return rows
 
     def get_addon_group(self, uuid):
