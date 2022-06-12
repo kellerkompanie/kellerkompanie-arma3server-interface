@@ -288,7 +288,7 @@ class KeKoSync:
         vals = []
         addon_dict = dict()
         addons = self.get_all_addons()
-        for addon in addons:
+        for _, addon in addons.items():
             addon_uuid = addon['addon_uuid']
             addon_id = addon['addon_id']
             addon_dict[addon_uuid] = addon_id
