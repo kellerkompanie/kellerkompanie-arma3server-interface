@@ -553,7 +553,7 @@ def update_addons():
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
-    updated_addons = request.form.get('updated_addons')
+    updated_addons = request.json['updated_addons']
     response = kekosync.update_addons(updated_addons)
     return response, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
