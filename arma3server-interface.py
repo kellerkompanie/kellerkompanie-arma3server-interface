@@ -542,11 +542,8 @@ def addon_name(name):
     if not is_whitelisted(request.remote_addr):
         abort(403)
 
-    if request.method == 'GET':
-        response = {'uuid': kekosync.match_addon_name(name)}
-        return jsonify(response), 200, {'Content-Type': 'application/json; charset=utf-8'}
-    else:
-        return jsonify("unknown method"), 403, {'Content-Type': 'application/json; charset=utf-8'}
+    response = {'uuid': kekosync.get_or_create_addon_uuid(name)}
+    return jsonify(response), 200, {'Content-Type': 'application/json; charset=utf-8'}
 
 
 @app.route("/update_addons", methods=['POST'])
