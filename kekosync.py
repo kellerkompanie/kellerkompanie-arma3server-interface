@@ -119,6 +119,8 @@ class KeKoSync:
         row = cursor.fetchone()
 
         addon = row
+        if addon is None:
+            return None
         addon['addon_dependencies'] = []
         addon['addon_steamid'] = None
 
