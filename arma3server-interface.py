@@ -237,10 +237,6 @@ def stop():
 
     if arma3server_running():
         stdout, stderr = run_shell_command(STOP_SCRIPT)
-        # stdout, stderr = run_shell_command(STOP_ARMA3SERVER)
-        # run_shell_command(STOP_ARMA3HC1)
-        # run_shell_command(STOP_ARMA3HC2)
-        # run_shell_command(STOP_ARMA3HC3)
         return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
     else:
         return "server is not running", 200, {'Content-Type': 'text/plain; charset=utf-8'}
