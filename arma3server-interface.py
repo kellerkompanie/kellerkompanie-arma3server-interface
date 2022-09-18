@@ -31,10 +31,7 @@ MISSIONS_DIR = '/home/arma3server/serverfiles/mpmissions'
 MODS_FILE = '/home/arma3server/arma3server.mods'
 
 START_SCRIPT = '/home/arma3server/start_server.sh 2>&1'
-START_ARMA3SERVER = 'sudo systemctl start arma3server.service'
-START_ARMA3HC1 = 'sudo systemctl start arma3hc1.service'
-START_ARMA3HC2 = 'sudo systemctl start arma3hc2.service'
-START_ARMA3HC3 = 'sudo systemctl start arma3hc3.service'
+START_WITH_HEADLESS_SCRIPT = '/home/arma3server/start_server.sh true 2>&1'
 STOP_SCRIPT = '/home/arma3server/stop_server.sh 2>&1'
 STOP_ARMA3SERVER = 'sudo systemctl stop arma3server.service'
 STOP_ARMA3HC1 = 'sudo systemctl stop arma3hc1.service'
@@ -109,10 +106,19 @@ def start():
         return "server is already running", 200, {'Content-Type': 'text/plain; charset=utf-8'}
     else:
         stdout, stderr = run_shell_command(START_SCRIPT)
-        # stdout, stderr = run_shell_command(START_ARMA3SERVER)
-        # run_shell_command(START_ARMA3HC1)
-        # run_shell_command(START_ARMA3HC2)
-        # run_shell_command(START_ARMA3HC3)
+        return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
+
+
+@app.route("/start_with_headless")
+def start_with_headless():
+    app.logger.debug('start_with_headless')
+    if not is_whitelisted(request.remote_addr):
+        abort(403)
+
+    if arma3server_running():
+        return "server is already running", 200, {'Content-Type': 'text/plain; charset=utf-8'}
+    else:
+        stdout, stderr = run_shell_command(START_WITH_HEADLESS_SCRIPT)
         return stdout, 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 
