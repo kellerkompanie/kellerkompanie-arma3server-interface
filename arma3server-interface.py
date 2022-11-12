@@ -159,8 +159,7 @@ def select_mods(query_string):
     elif query_dict['modpack'] == 'main-bundeswehr':
         addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.main/'))
         addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.bundeswehr/'))
-    elif query_dict['modpack'] == 'main-gm':
-        addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.main/'))
+    elif query_dict['modpack'] == 'gm':
         addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.gm/'))
     elif query_dict['modpack'] == 'ironfront':
         addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.ironfront/'))
