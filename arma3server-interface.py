@@ -203,6 +203,9 @@ def select_mods(query_string):
     if 'ws' in query_dict:
         addon_folders.append('ws')
 
+    if 'spe' in query_dict:
+        addon_folders.append('spe')
+
     with open(MODS_FILE, "w+") as f:
         f.write("mods=\"")
         for addon_folder in addon_folders:
