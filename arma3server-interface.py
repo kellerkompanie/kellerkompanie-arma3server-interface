@@ -169,7 +169,7 @@ def select_mods(query_string):
         addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.scifi/'))
     elif query_dict['modpack'] == 'special':
         addon_folders.extend(get_addon_folders('/home/arma3server/serverfiles/mods.special/'))
-        enable_server_mods = False
+        #enable_server_mods = False
     elif query_dict['modpack'] == 'vanilla':
         enable_server_mods = False
     elif query_dict['modpack'] == 'vindicta':
@@ -228,7 +228,10 @@ def select_mods(query_string):
 
         if enable_server_mods:
             f.write("serverMods=\"")
-            for root, dirs, files in os.walk('/home/arma3server/serverfiles/mods.server/'):
+            server_mods_dir = '/home/arma3server/serverfiles/mods.server/'
+            if query_dict['modpack'] == 'special':
+                server_mods_dir += '/home/arma3server/serverfiles/mods.special.server/'
+            for root, dirs, files in os.walk(server_mods_dir):
                 for sub_dir in dirs:
                     if sub_dir.startswith('@'):
                         addon_folder = os.path.join(root, sub_dir)
